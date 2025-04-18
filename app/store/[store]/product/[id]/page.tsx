@@ -1,0 +1,398 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/ui/use-toast"
+import { useCart } from "@/context/cart-context"
+import { CartButton } from "@/components/cart-button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { Loader2, ShoppingBag, ShoppingCart, Star, Truck, AlertTriangle } from "lucide-react"
+import { useTheme } from "@/context/theme-context"
+
+export default function ProductPage({ params }: any) {
+  const { toast } = useToast()
+  const { addItem } = useCart()
+  const [quantity, setQuantity] = useState(1)
+  const [isAdding, setIsAdding] = useState(false)
+  const { currentTheme, storePreviewTheme } = useTheme()
+
+  // Use preview theme if available, otherwise use current theme
+  const theme = storePreviewTheme || currentTheme
+
+  // In a real app, you would fetch product data based on the ID
+  const storeName = params.store || "demo-store"
+  const productId = Number.parseInt(params.id) || 1
+
+  // Sample product data
+  const product = {
+    id: productId,
+    name: "Premium Leather Backpack",
+    price: 79.99,
+    discount: 10,
+    description:
+      "A stylish and durable leather backpack perfect for daily use. Features multiple compartments for organization, padded laptop sleeve, and adjustable shoulder straps for comfort.",
+    features: [
+      "Genuine full-grain leather",
+      "Water-resistant coating",
+      "15-inch laptop compartment",
+      "Multiple interior pockets",
+      "Adjustable shoulder straps",
+      "Front quick-access pocket",
+    ],
+    specifications: {
+      Material: "Full-grain leather",
+      Dimensions: '18" x 12" x 6"',
+      Weight: "2.3 lbs",
+      Capacity: "25L",
+      Warranty: "1 year",
+    },
+    images: [
+      "/placeholder.svg?height=500&width=500",
+      "/placeholder.svg?height=500&width=500",
+      "/placeholder.svg?height=500&width=500",
+    ],
+    inventory: productId === 3 ? 0 : 24, // Product ID 3 is out of stock
+    rating: 4.5,
+    reviews: 128,
+  }
+
+  const discountedPrice =
+    product.discount > 0 ? (product.price * (1 - product.discount / 100)).toFixed(2) : product.price.toFixed(2)
+
+  const isOutOfStock = product.inventory <= 0
+
+  // Ensure quantity doesn't exceed available inventory
+  useEffect(() => {
+    if (quantity > product.inventory && product.inventory > 0) {
+      setQuantity(product.inventory)
+      toast({
+        title: "Quantity adjusted",
+        description: `Only ${product.inventory} items available in stock.`,
+      })
+    }
+  }, [quantity, product.inventory, toast])
+
+  const handleAddToCart = () => {
+    // Check if product is in stock
+    if (isOutOfStock) {
+      toast({
+        title: "Out of stock",
+        description: "Sorry, this product is currently out of stock.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Check if requested quantity is available
+    if (quantity > product.inventory) {
+      toast({
+        title: "Not enough stock",
+        description: `Only ${product.inventory} items available. Please adjust your quantity.`,
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsAdding(true)
+
+    // Simulate a small delay for better UX
+    setTimeout(() => {
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0],
+        quantity: quantity,
+        discount: product.discount,
+        inventory: product.inventory,
+      })
+
+      setIsAdding(false)
+
+      toast({
+        title: "Added to cart",
+        description: `${quantity} ${quantity === 1 ? "item" : "items"} added to your cart.`,
+      })
+    }, 600)
+  }
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 z-10 bg-white border-b">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link href={`/store/${storeName}`} className="flex items-center space-x-2">
+            <ShoppingBag className="h-6 w-6" />
+            <span className="font-bold text-xl capitalize">{storeName.replace(/-/g, " ")}</span>
+          </Link>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link href={`/store/${storeName}`} className="text-sm font-medium hover:text-gray-600">
+              Home
+            </Link>
+            <Link href={`/store/${storeName}/products`} className="text-sm font-medium hover:text-gray-600">
+              All Products
+            </Link>
+            <Link href={`/store/${storeName}/categories`} className="text-sm font-medium hover:text-gray-600">
+              Categories
+            </Link>
+            <Link href={`/store/${storeName}/about`} className="text-sm font-medium hover:text-gray-600">
+              About
+            </Link>
+          </nav>
+          <div className="flex items-center space-x-4">
+            <CartButton storeName={storeName} />
+          </div>
+        </div>
+      </header>
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="md:w-1/2">
+              <div className="relative aspect-square overflow-hidden rounded-lg mb-4">
+                <Image src={product.images[0] || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
+                {product.discount > 0 && (
+                  <div className="absolute top-4 right-4 bg-red-500 text-white text-sm font-bold px-2 py-1 rounded">
+                    {product.discount}% OFF
+                  </div>
+                )}
+                {isOutOfStock && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <Badge
+                      className="bg-gray-800 text-white px-3 py-1.5 text-sm font-semibold"
+                      style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
+                    >
+                      Out of Stock
+                    </Badge>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {product.images.map((image, index) => (
+                  <div key={index} className="aspect-square rounded-md overflow-hidden border cursor-pointer">
+                    <Image
+                      src={image || "/placeholder.svg"}
+                      alt={`${product.name} - Image ${index + 1}`}
+                      width={150}
+                      height={150}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="md:w-1/2">
+              <h1 className="text-3xl font-bold">{product.name}</h1>
+              <div className="flex items-center mt-2 mb-4">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-5 w-5 ${
+                        i < Math.floor(product.rating)
+                          ? "text-yellow-400 fill-yellow-400"
+                          : i < product.rating
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="ml-2 text-sm text-gray-600">{product.reviews} reviews</span>
+              </div>
+              <div className="flex items-center mt-4 mb-6">
+                {product.discount > 0 ? (
+                  <>
+                    <span className="text-3xl font-bold">${discountedPrice}</span>
+                    <span className="text-gray-500 line-through ml-3 text-xl">${product.price.toFixed(2)}</span>
+                  </>
+                ) : (
+                  <span className="text-3xl font-bold">${product.price.toFixed(2)}</span>
+                )}
+              </div>
+              <p className="text-gray-700 mb-6">{product.description}</p>
+
+              {/* Inventory Status */}
+              <div className="mb-4">
+                {isOutOfStock ? (
+                  <div className="flex items-center text-red-600">
+                    <AlertTriangle className="h-5 w-5 mr-2" />
+                    <span className="font-medium">Out of Stock</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center text-green-600">
+                    <div className="h-2 w-2 rounded-full bg-green-600 mr-2"></div>
+                    <span>In Stock: {product.inventory} available</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center text-sm text-gray-600 mb-6">
+                <Truck className="h-5 w-5 mr-2" />
+                <span>Free shipping on orders over $50</span>
+              </div>
+              <div className="mb-6">
+                <h3 className="font-medium mb-2">Features:</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  {product.features.map((feature, index) => (
+                    <li key={index} className="text-gray-700">
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {/* Quantity selector */}
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-24">
+                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
+                    Quantity
+                  </label>
+                  <select
+                    id="quantity"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number.parseInt(e.target.value))}
+                    disabled={isOutOfStock}
+                  >
+                    {[...Array(isOutOfStock ? 1 : Math.min(10, product.inventory))].map((_, i) => (
+                      <option key={i} value={isOutOfStock ? 0 : i + 1}>
+                        {isOutOfStock ? 0 : i + 1}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={handleAddToCart}
+                    disabled={isAdding || isOutOfStock}
+                    style={{
+                      backgroundColor: isOutOfStock ? "#d1d5db" : theme.primary,
+                      color: "#ffffff",
+                    }}
+                  >
+                    {isAdding ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Adding to Cart...
+                      </>
+                    ) : isOutOfStock ? (
+                      "Out of Stock"
+                    ) : (
+                      <>
+                        <ShoppingCart className="mr-2 h-5 w-5" />
+                        Add to Cart
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-12">
+            <Tabs defaultValue="details">
+              <TabsList className="w-full justify-start">
+                <TabsTrigger value="details">Product Details</TabsTrigger>
+                <TabsTrigger value="specifications">Specifications</TabsTrigger>
+                <TabsTrigger value="reviews">Reviews</TabsTrigger>
+              </TabsList>
+              <TabsContent value="details" className="mt-6">
+                <div className="prose max-w-none">
+                  <p>
+                    Our Premium Leather Backpack combines style, durability, and functionality. Crafted from
+                    high-quality full-grain leather, this backpack is designed to withstand daily use while maintaining
+                    its elegant appearance.
+                  </p>
+                  <p>
+                    The spacious main compartment easily accommodates your essentials, while the dedicated laptop sleeve
+                    keeps your device secure. Multiple interior pockets help you stay organized, and the front
+                    quick-access pocket is perfect for items you need to reach in a hurry.
+                  </p>
+                  <p>
+                    Comfort is key with this backpack. The adjustable shoulder straps are padded for extended wear, and
+                    the back panel is designed to provide support and airflow.
+                  </p>
+                </div>
+              </TabsContent>
+              <TabsContent value="specifications" className="mt-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(product.specifications).map(([key, value]) => (
+                    <div key={key} className="flex border-b pb-2">
+                      <span className="font-medium w-1/3">{key}:</span>
+                      <span className="text-gray-600">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+              <TabsContent value="reviews" className="mt-6">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-medium">Customer Reviews</h3>
+                    <Button>Write a Review</Button>
+                  </div>
+                  <div className="border rounded-lg p-6">
+                    <p className="text-gray-500 italic">No reviews yet. Be the first to review this product!</p>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </main>
+      <footer className="bg-gray-100 py-8 mt-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+              <h3 className="font-bold text-lg mb-4 capitalize">{storeName.replace(/-/g, " ")}</h3>
+              <p className="text-gray-600">
+                Quality products for every need. Shop with confidence on our secure platform.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href={`/store/${storeName}`} className="text-gray-600 hover:text-gray-900">
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/store/${storeName}/products`} className="text-gray-600 hover:text-gray-900">
+                    Products
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/store/${storeName}/about`} className="text-gray-600 hover:text-gray-900">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href={`/store/${storeName}/contact`} className="text-gray-600 hover:text-gray-900">
+                    Contact
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-4">Contact</h3>
+              <address className="not-italic text-gray-600">
+                <p>123 Store Street</p>
+                <p>City, State 12345</p>
+                <p className="mt-2">Email: info@{storeName}.com</p>
+                <p>Phone: (123) 456-7890</p>
+              </address>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500 text-sm">
+            <p>
+              © {new Date().getFullYear()} {storeName.replace(/-/g, " ")}. All rights reserved.
+            </p>
+            <p className="mt-1">Powered by StoreBuilder</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
