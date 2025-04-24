@@ -1,8 +1,20 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, ShoppingBag } from "lucide-react"
+"use client";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, ShoppingBag } from "lucide-react";
+import "aos/dist/aos.css";
+import AOS from "aos";
+import { useEffect } from "react";
 
 export default function Home() {
+  useEffect(() => {
+    AOS.init({
+      duration: 800, // animation duration
+      once: true, // animate only once
+      offset: 120, // adjust how far from viewport before triggering
+    });
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b">
@@ -11,13 +23,22 @@ export default function Home() {
           <span className="font-bold">StoreBuilder</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/features">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="/features"
+          >
             Features
           </Link>
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/pricing">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="/pricing"
+          >
             Pricing
           </Link>
-          <Link className="text-sm font-medium hover:underline underline-offset-4" href="/about">
+          <Link
+            className="text-sm font-medium hover:underline underline-offset-4"
+            href="/about"
+          >
             About
           </Link>
         </nav>
@@ -34,15 +55,20 @@ export default function Home() {
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+          <div className="px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
-              <div className="flex flex-col justify-center space-y-4">
+              <div
+                className="flex flex-col justify-center space-y-4"
+                data-aos="fade-up"
+                data-aos-delay="200"
+              >
                 <div className="space-y-2">
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                     Create your online store in minutes
                   </h1>
                   <p className="max-w-[600px] text-gray-500 md:text-xl">
-                    No coding required. Upload products, set prices, and start selling today with your own custom store.
+                    No coding required. Upload products, set prices, and start
+                    selling today with your own custom store.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -59,7 +85,11 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-              <div className="flex items-center justify-center">
+              <div
+                className="flex justify-end"
+                data-aos="flip-left"
+                data-aos-delay="300"
+              >
                 <img
                   alt="Store Builder Dashboard"
                   className="rounded-lg object-cover shadow-lg"
@@ -79,12 +109,17 @@ export default function Home() {
                   Features designed for non-technical users
                 </h2>
                 <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Everything you need to create and manage your online store without any coding knowledge.
+                  Everything you need to create and manage your online store
+                  without any coding knowledge.
                 </p>
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
+              <div
+                className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm"
+                data-aos="zoom-in"
+                data-aos-delay="300"
+              >
                 <div className="rounded-full bg-gray-100 p-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -105,10 +140,15 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Easy Product Management</h3>
                 <p className="text-center text-gray-500">
-                  Upload photos, set prices, and manage inventory with a simple interface.
+                  Upload photos, set prices, and manage inventory with a simple
+                  interface.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
+              <div
+                className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm"
+                data-aos="zoom-in"
+                data-aos-delay="300"
+              >
                 <div className="rounded-full bg-gray-100 p-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -127,10 +167,15 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Secure Checkout</h3>
                 <p className="text-center text-gray-500">
-                  Built-in payment processing with a secure and streamlined checkout experience.
+                  Built-in payment processing with a secure and streamlined
+                  checkout experience.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
+              <div
+                className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm"
+                data-aos="zoom-in"
+                data-aos-delay="300"
+              >
                 <div className="rounded-full bg-gray-100 p-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -156,11 +201,17 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Mobile Friendly</h3>
                 <p className="text-center text-gray-500">
-                  Manage your store and products from any device, including smartphones and tablets.
+                  Manage your store and products from any device, including
+                  smartphones and tablets.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <div className="rounded-full bg-gray-100 p-3">
+              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm"
+              data-aos="zoom-in"
+              data-aos-delay="300"
+              >
+                <div
+                  className="rounded-full bg-gray-100 p-3"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -181,11 +232,18 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Custom Domain</h3>
                 <p className="text-center text-gray-500">
-                  Get your own subdomain or connect your custom domain for a professional look.
+                  Get your own subdomain or connect your custom domain for a
+                  professional look.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <div className="rounded-full bg-gray-100 p-3">
+              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm"
+              data-aos="zoom-in"
+              data-aos-delay="300"
+              >
+                <div
+                  className="rounded-full bg-gray-100 p-3"
+                  
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -204,11 +262,15 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Order Notifications</h3>
                 <p className="text-center text-gray-500">
-                  Get notified instantly when customers place orders on your store.
+                  Get notified instantly when customers place orders on your
+                  store.
                 </p>
               </div>
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-                <div className="rounded-full bg-gray-100 p-3">
+              <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm"
+              data-aos="zoom-in"
+              data-aos-delay="300">
+                <div
+                  className="rounded-full bg-gray-100 p-3">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -227,7 +289,8 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Sales Analytics</h3>
                 <p className="text-center text-gray-500">
-                  Simple analytics to track your sales, popular products, and customer behavior.
+                  Simple analytics to track your sales, popular products, and
+                  customer behavior.
                 </p>
               </div>
             </div>
@@ -235,7 +298,9 @@ export default function Home() {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full border-t px-4 md:px-6">
-        <p className="text-xs text-gray-500">© 2025 StoreBuilder. All rights reserved.</p>
+        <p className="text-xs text-gray-500">
+          © 2025 StoreBuilder. All rights reserved.
+        </p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link className="text-xs hover:underline underline-offset-4" href="#">
             Terms of Service
@@ -246,5 +311,5 @@ export default function Home() {
         </nav>
       </footer>
     </div>
-  )
+  );
 }

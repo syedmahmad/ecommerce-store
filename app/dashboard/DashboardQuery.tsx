@@ -11,6 +11,7 @@ import { GET } from "../utils/Axios";
 
 export default function DashboardPage() {
   const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
@@ -18,17 +19,13 @@ export default function DashboardPage() {
       const user = lcData && JSON.parse(lcData);
       if (user?.id) {
         setUserId(user.id);
+        setUserName(user.name);
       }
     }
   }, [userId]);
 
-//   const queryClient = useQueryClient();
-//   //   const reFetch = () => {
-//   //     // fetch again so UI update automatically.
-//   //     queryClient.invalidateQueries({ queryKey: ["get-product"] });
-//   //   };
 
-  const getSenderQuery = useQuery({
+  const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
       const endpoint = `product?id=${userId}`;
@@ -37,12 +34,12 @@ export default function DashboardPage() {
     enabled: !!userId,
   });
 
-  const productsData = getSenderQuery?.data?.data;
+  const productsData = getAllProducts?.data?.data;
 
   const { isLoading } = useAuthStatus({ required: true });
 
-  const lcData = localStorage.getItem("user");
-  const lcUser = lcData && JSON.parse(lcData);
+  // const lcData = localStorage.getItem("user");
+  // const lcUser = lcData && JSON.parse(lcData);
 
   const handleLogout = async () => {
     Cookies.remove("authToken");
@@ -62,7 +59,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">
             {" "}
-            Welcome, {`${lcUser?.name}` || "User"}!{" "}
+            Welcome, {`${userName}` || "User"}!{" "}
           </h1>
           <Button variant="outline" onClick={handleLogout}>
             Sign Out
@@ -77,7 +74,7 @@ export default function DashboardPage() {
             <div className="text-sm font-medium text-muted-foreground">
               Total Products
             </div>
-            <div className="text-2xl font-bold">{productsData.length}</div>
+            <div className="text-2xl font-bold">{productsData?.length > 0 ? productsData?.length : 0}</div>
           </div>
           <div className="rounded-lg border bg-card p-6">
             <div className="text-sm font-medium text-muted-foreground">

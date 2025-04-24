@@ -7,13 +7,10 @@ import { StoreLayout } from "@/components/store-layout";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
-import React, {useState, useEffect } from "react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
+import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +19,7 @@ export default function StorePage({ params }: any) {
 
   const [userId, setUserId] = useState<string | null>(null);
 
-  let storeName = "Store"
+  let storeName = "Store";
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
       const lcData = localStorage.getItem("user");
@@ -34,13 +31,7 @@ export default function StorePage({ params }: any) {
     }
   }, [userId]);
 
-  //   const queryClient = useQueryClient();
-  //   //   const reFetch = () => {
-  //   //     // fetch again so UI update automatically.
-  //   //     queryClient.invalidateQueries({ queryKey: ["get-product"] });
-  //   //   };
-
-  const getSenderQuery = useQuery({
+  const getAllProductsData = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
       const endpoint = `product?id=${userId}`;
@@ -49,73 +40,48 @@ export default function StorePage({ params }: any) {
     enabled: !!userId,
   });
 
-  const featuredProducts = getSenderQuery?.data?.data;
+  const featuredProducts = getAllProductsData?.data?.data;
 
   const { currentTheme } = useTheme();
 
-  // Sample products for the store
-  // const featuredProducts = [
+  const getSaleProductInfo = useQuery({
+    queryKey: ["sale-product"],
+    queryFn: async () => {
+      const endpoint = `sale-product?id=${userId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const saleData = getSaleProductInfo?.data?.data;
+
+  // Sample categories
+  // const categories = [
   //   {
   //     id: 1,
-  //     name: "Leather Backpack",
-  //     price: 79.99,
-  //     image: "/placeholder.svg?height=300&width=300",
-  //     discount: 0,
-  //     inventory: 24,
+  //     name: "Electronics",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     count: 24,
   //   },
   //   {
   //     id: 2,
-  //     name: "Wireless Headphones",
-  //     price: 129.99,
-  //     image: "/placeholder.svg?height=300&width=300",
-  //     discount: 10,
-  //     inventory: 15,
+  //     name: "Clothing",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     count: 18,
   //   },
   //   {
   //     id: 3,
-  //     name: "Smart Watch",
-  //     price: 199.99,
-  //     image: "/placeholder.svg?height=300&width=300",
-  //     discount: 0,
-  //     inventory: 0, // Out of stock
+  //     name: "Home & Kitchen",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     count: 32,
   //   },
   //   {
   //     id: 4,
-  //     name: "Cotton T-Shirt",
-  //     price: 24.99,
-  //     image: "/placeholder.svg?height=300&width=300",
-  //     discount: 0,
-  //     inventory: 50,
+  //     name: "Beauty",
+  //     image: "/placeholder.svg?height=200&width=200",
+  //     count: 15,
   //   },
   // ];
-
-  // Sample categories
-  const categories = [
-    {
-      id: 1,
-      name: "Electronics",
-      image: "/placeholder.svg?height=200&width=200",
-      count: 24,
-    },
-    {
-      id: 2,
-      name: "Clothing",
-      image: "/placeholder.svg?height=200&width=200",
-      count: 18,
-    },
-    {
-      id: 3,
-      name: "Home & Kitchen",
-      image: "/placeholder.svg?height=200&width=200",
-      count: 32,
-    },
-    {
-      id: 4,
-      name: "Beauty",
-      image: "/placeholder.svg?height=200&width=200",
-      count: 15,
-    },
-  ];
 
   // Sample testimonials
   const testimonials = [
@@ -148,6 +114,21 @@ export default function StorePage({ params }: any) {
     },
   ];
 
+
+  const getBannerInfoData = useQuery({
+    queryKey: ["banner-info"],
+    queryFn: async () => {
+      const endpoint = `customise-store-banner?id=${userId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const bannerData = getBannerInfoData?.data?.data;
+
+
+  
+
   return (
     <StoreLayout storeName={storeName}>
       {/* Hero Section */}
@@ -155,7 +136,7 @@ export default function StorePage({ params }: any) {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
         <div className="relative h-[500px] w-full">
           <Image
-            src="/placeholder.svg?height=500&width=1200"
+            src={bannerData?.imageUrl || "/placeholder.svg?height=500&width=1200"}
             alt="Store banner"
             fill
             className="object-cover"
@@ -172,11 +153,10 @@ export default function StorePage({ params }: any) {
                 New Collection
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Welcome to {storeName.replace(/-/g, " ")}
+                 {bannerData?.title || "Welcome to Our Store"}
               </h1>
               <p className="text-lg text-white/90 mb-6">
-                Discover our curated collection of premium products designed for
-                your lifestyle.
+              {bannerData?.description}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href={`/store/${storeName}/products`}>
@@ -184,10 +164,10 @@ export default function StorePage({ params }: any) {
                     size="lg"
                     style={{ backgroundColor: currentTheme.primary }}
                   >
-                    Shop Now
+                    {bannerData?.buttonText}
                   </Button>
                 </Link>
-                <Link href={`/store/${storeName}/categories`}>
+                {/* <Link href={`/store/${storeName}/categories`}>
                   <Button
                     size="lg"
                     variant="outline"
@@ -195,7 +175,7 @@ export default function StorePage({ params }: any) {
                   >
                     Browse Categories
                   </Button>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>
@@ -275,25 +255,40 @@ export default function StorePage({ params }: any) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {featuredProducts && featuredProducts?.length && featuredProducts.map((product: any) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                storeName={storeName}
-              />
-            ))}
+            {featuredProducts &&
+              featuredProducts?.length &&
+              featuredProducts.map((product: any) => {
+                if (product.status === 1 ) {
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      storeName={storeName}
+                    />
+                  );
+                } else {
+                  return (
+                    <div>
+                      <p className="text-red-500">
+                        Product are there but not active. Go to the dashboard
+                        and mark product as active.
+                      </p>
+                    </div>
+                  );
+                }
+              })}
           </div>
         </div>
       </section>
 
       {/* Promotional Banner */}
-      <section className="py-16">
+      {saleData?.campaigns?.length && (<section className="py-16">
         <div className="container mx-auto px-4">
           <div className="relative rounded-xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
             <div className="relative h-[300px] w-full">
               <Image
-                src="/placeholder.svg?height=300&width=1200"
+                src={saleData?.campaigns[0]?.bannerImageUrl || "/placeholder.svg?height=300&width=1200"}
                 alt="Promotional banner"
                 fill
                 className="object-cover"
@@ -302,133 +297,27 @@ export default function StorePage({ params }: any) {
             <div className="absolute inset-0 z-20 flex items-center">
               <div className="w-full max-w-xl mx-auto px-4 md:ml-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Summer Sale
+                  {saleData?.campaigns[0]?.title || "Sale Section"}            
                 </h2>
                 <p className="text-lg text-white/90 mb-6">
-                  Get up to 40% off on selected items. Limited time offer!
+                {saleData?.campaigns[0]?.description || ""} 
                 </p>
                 <Link href={`/store/${storeName}/products?sale=true`}>
                   <Button
                     size="lg"
                     style={{ backgroundColor: "var(--accent-color)" }}
                   >
-                    Shop the Sale
+                    View the Sale
                   </Button>
                 </Link>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </section>)}
 
       {/* Features */}
-      <section
-        className="py-16 bg-opacity-5"
-        style={{ backgroundColor: "var(--secondary-color)" }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Shop With Us</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              We're committed to providing the best shopping experience for our
-              customers
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div
-                className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-                style={{
-                  backgroundColor: "var(--primary-color)",
-                  color: "white",
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-8 w-8"
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="M12 5v14"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Free Shipping</h3>
-              <p className="text-muted-foreground">
-                Free shipping on all orders over $50. We deliver to your
-                doorstep.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div
-                className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-                style={{
-                  backgroundColor: "var(--primary-color)",
-                  color: "white",
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-8 w-8"
-                >
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Secure Payments</h3>
-              <p className="text-muted-foreground">
-                Your payment information is processed securely. We never store
-                your details.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div
-                className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-                style={{
-                  backgroundColor: "var(--primary-color)",
-                  color: "white",
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-8 w-8"
-                >
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2">24/7 Support</h3>
-              <p className="text-muted-foreground">
-                Our customer support team is available 24/7 to help with any
-                questions.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      < WhyShopWithUsStoreFrontUI />
 
       {/* Testimonials */}
       <section className="py-16">

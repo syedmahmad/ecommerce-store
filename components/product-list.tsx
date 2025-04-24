@@ -40,61 +40,62 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Edit, MoreHorizontal, Plus, Trash } from "lucide-react";
-import { GET, POST } from "@/app/utils/Axios";
+import { DELETE, GET, PATCH, POST } from "@/app/utils/Axios";
+import { toast } from "react-toastify";
 
 // Sample product data
-const initialProducts = [
-  {
-    id: 1,
-    name: "Leather Backpack",
-    price: 79.99,
-    inventory: 24,
-    status: "Active",
-    image: "/placeholder.svg?height=50&width=50",
-    description: "Stylish leather backpack with multiple compartments",
-    discount: 0,
-  },
-  {
-    id: 2,
-    name: "Wireless Headphones",
-    price: 129.99,
-    inventory: 15,
-    status: "Active",
-    image: "/placeholder.svg?height=50&width=50",
-    description: "Premium noise-cancelling wireless headphones",
-    discount: 10,
-  },
-  {
-    id: 3,
-    name: "Smart Watch",
-    price: 199.99,
-    inventory: 8,
-    status: "Low Stock",
-    image: "/placeholder.svg?height=50&width=50",
-    description: "Feature-rich smartwatch with health tracking",
-    discount: 0,
-  },
-  {
-    id: 4,
-    name: "Cotton T-Shirt",
-    price: 24.99,
-    inventory: 50,
-    status: "Active",
-    image: "/placeholder.svg?height=50&width=50",
-    description: "Comfortable 100% cotton t-shirt",
-    discount: 0,
-  },
-  {
-    id: 5,
-    name: "Ceramic Coffee Mug",
-    price: 14.99,
-    inventory: 32,
-    status: "Active",
-    image: "/placeholder.svg?height=50&width=50",
-    description: "Elegant ceramic coffee mug",
-    discount: 0,
-  },
-];
+// const initialProducts = [
+//   {
+//     id: 1,
+//     name: "Leather Backpack",
+//     price: 79.99,
+//     inventory: 24,
+//     status: "Active",
+//     image: "/placeholder.svg?height=50&width=50",
+//     description: "Stylish leather backpack with multiple compartments",
+//     discount: 0,
+//   },
+//   {
+//     id: 2,
+//     name: "Wireless Headphones",
+//     price: 129.99,
+//     inventory: 15,
+//     status: "Active",
+//     image: "/placeholder.svg?height=50&width=50",
+//     description: "Premium noise-cancelling wireless headphones",
+//     discount: 10,
+//   },
+//   {
+//     id: 3,
+//     name: "Smart Watch",
+//     price: 199.99,
+//     inventory: 8,
+//     status: "Low Stock",
+//     image: "/placeholder.svg?height=50&width=50",
+//     description: "Feature-rich smartwatch with health tracking",
+//     discount: 0,
+//   },
+//   {
+//     id: 4,
+//     name: "Cotton T-Shirt",
+//     price: 24.99,
+//     inventory: 50,
+//     status: "Active",
+//     image: "/placeholder.svg?height=50&width=50",
+//     description: "Comfortable 100% cotton t-shirt",
+//     discount: 0,
+//   },
+//   {
+//     id: 5,
+//     name: "Ceramic Coffee Mug",
+//     price: 14.99,
+//     inventory: 32,
+//     status: "Active",
+//     image: "/placeholder.svg?height=50&width=50",
+//     description: "Elegant ceramic coffee mug",
+//     discount: 0,
+//   },
+// ];
 
 export const ProductList = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -115,7 +116,7 @@ export const ProductList = () => {
     queryClient.invalidateQueries({ queryKey: ["get-product"] });
   };
 
-  const getSenderQuery = useQuery({
+  const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
       const endpoint = `product?id=${userId}`;
@@ -124,7 +125,7 @@ export const ProductList = () => {
     enabled: !!userId,
   });
 
-  const productsData = getSenderQuery?.data?.data;
+  const productsData = getAllProducts?.data?.data;
 
   useEffect(() => {
     if (userId && productsData?.length) {
@@ -140,8 +141,16 @@ export const ProductList = () => {
     name: "",
     price: 0,
     description: "",
+    discount: 0,
     stock: "",
+    status: 0,
     imageUrls: [] as string[], // optional, can start as empty array
+    isOnSale: 0,
+    saleTitle: "",
+    saleDescription: "",
+    startDate: "",
+    endDate: "",
+    bannerImageUrl:""
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,12 +191,47 @@ export const ProductList = () => {
     }));
   };
 
+
+
+  const handleBannerImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const formData = new FormData();
+    formData.append("file", file);
+  
+    try {
+      const response = await POST(
+        "http://localhost:3000/product/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
+      const data = response?.data;
+      if (data?.url) {
+        setNewProduct((prev) => ({
+          ...prev,
+          bannerImageUrl: data.url,
+        }));
+      } else {
+        console.error("Banner image upload failed:", data);
+      }
+    } catch (error) {
+      console.error("Error uploading banner image:", error);
+    }
+  };
+  
+
   const handleAddProduct = async () => {
     const lcData = localStorage.getItem("user");
     const user = lcData && JSON.parse(lcData);
     try {
-      console.log("Adding product:", newProduct);
-
       const response = await POST(`/product?id=${user.id}`, newProduct);
 
       if (response?.status === 201 || response?.status === 200) {
@@ -197,13 +241,20 @@ export const ProductList = () => {
           name: "",
           price: 0,
           description: "",
+          discount: 0,
+          status: 0,
           imageUrls: [],
           stock: "",
+          isOnSale: 0,
+          saleTitle: "",
+          saleDescription: "",
+          startDate: "",
+          endDate: "",
+          bannerImageUrl:""
         });
         setIsAddProductOpen(false);
 
-        // Optionally refresh product list or show success toast
-        // fetchProducts(); or toast.success("Product added!");
+        toast.success("Product added!");
       } else {
         console.error("Product creation failed:", response?.data);
       }
@@ -217,16 +268,50 @@ export const ProductList = () => {
     setIsEditProductOpen(true);
   };
 
-  const saveEditedProduct = () => {
-    const updatedProducts = products.map((p: any) =>
-      p.id === currentProduct?.id ? currentProduct : p
-    );
-    setProducts(updatedProducts);
-    setIsEditProductOpen(false);
+  const saveEditedProduct = async () => {
+    if (!currentProduct || !currentProduct.id) return;
+
+    try {
+      const response = await PATCH(
+        `/product/${currentProduct.id}`,
+        currentProduct
+      );
+
+      // Assuming backend returns the updated product
+      const updatedProduct = response?.data;
+
+      // Update product list with the new product data
+      const updatedProducts = products.map((p: any) =>
+        p.id === updatedProduct.id ? updatedProduct : p
+      );
+
+      setProducts(updatedProducts);
+      toast.success("Product updated successfully!");
+      reFetch();
+      setIsEditProductOpen(false);
+    } catch (error) {
+      console.error("Error updating product:", error);
+      // Optionally show error feedback to the user
+    }
   };
 
-  const handleDeleteProduct = (id: any) => {
-    setProducts(products.filter((product) => product.id !== id));
+  // const handleDeleteProduct = (id: any) => {
+  //   setProducts(products.filter((product) => product.id !== id));
+  // };
+
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      await DELETE(`/product/${productId}`);
+
+      // Remove from local state after successful delete
+      const updatedProducts = products.filter((p: any) => p.id !== productId);
+      setProducts(updatedProducts);
+      toast.success("Product deleted successfully!");
+      reFetch();
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+      // Optionally show a user-facing error message
+    }
   };
 
   return (
@@ -251,14 +336,14 @@ export const ProductList = () => {
                 <TableHead className="w-[80px]">Image</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Price</TableHead>
-                {/* <TableHead>Discount</TableHead> */}
+                <TableHead>Discount</TableHead>
                 <TableHead>Inventory</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {products?.length &&
+              {products?.length > 0 &&
                 products.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell>
@@ -274,19 +359,21 @@ export const ProductList = () => {
                       {product.name}
                     </TableCell>
                     <TableCell>${product.price.toFixed(2)}</TableCell>
-                    {/* <TableCell>
+                    <TableCell>
                       {product.discount > 0 ? `${product.discount}%` : "-"}
-                    </TableCell> */}
+                    </TableCell>
                     <TableCell>{product.stock}</TableCell>
                     <TableCell>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          product.stock > 0
+                          product.status !== 0 && product.stock > 0
                             ? "bg-green-100 text-green-800"
                             : "bg-yellow-100 text-yellow-800"
                         }`}
                       >
-                        {product.stock > 0 ? "Active" : "Out of Stock"}
+                        {product.status !== 0 && product.stock > 0
+                          ? "Active"
+                          : "In Active"}
                       </span>
                     </TableCell>
 
@@ -326,93 +413,321 @@ export const ProductList = () => {
 
       {/* Add Product Dialog */}
       <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-auto lg:max-w-[925px]">
           <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-center mb-2">
+              Add New Product
+            </DialogTitle>
+            <DialogDescription className="text-center mb-2">
               Add a new product to your store. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            {/* Name */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={newProduct.name}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, name: e.target.value })
-                }
-                className="col-span-3"
-              />
+            {/* Name & Price */}
+            <div className="flex gap-4">
+              {/* Name */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="name" className="text-right col-span-1">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  value={newProduct.name}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, name: e.target.value })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+
+              {/* Price */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="price" className="text-right col-span-1">
+                  Price
+                </Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={newProduct.price}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      price: Number(e.target.value),
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
             </div>
 
-            {/* Price */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="price" className="text-right">
-                Price
-              </Label>
-              <Input
-                id="price"
-                type="number"
-                value={newProduct.price}
-                onChange={(e) =>
-                  setNewProduct({
-                    ...newProduct,
-                    price: Number(e.target.value),
-                  })
-                }
-                className="col-span-3"
-              />
+            {/* Stock & Status */}
+            <div className="flex gap-4">
+              {/* Stock */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="stock" className="text-right col-span-1">
+                  Stock
+                </Label>
+                <Input
+                  id="stock"
+                  value={newProduct.stock || ""}
+                  onChange={(e) =>
+                    setNewProduct({ ...newProduct, stock: e.target.value })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+
+              {/* Status */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="status" className="text-right col-span-1">
+                  Status
+                </Label>
+                <select
+                  id="status"
+                  value={newProduct.status ?? "0"}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      status: parseInt(e.target.value),
+                    })
+                  }
+                  className="col-span-3 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="0">Inactive</option>
+                  <option value="1">Active</option>
+                </select>
+              </div>
             </div>
 
-            {/* Description (Optional) */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="stock" className="text-right">
-                Stock
-              </Label>
-              <Input
-                id="stock"
-                value={newProduct.stock || ""}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, stock: e.target.value })
-                }
-                className="col-span-3"
-              />
+            {/* Discount & Description */}
+            <div className="flex gap-4">
+              {/* Discount */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="discount" className="text-right col-span-1">
+                  Discount
+                </Label>
+                <Input
+                  id="discount"
+                  type="number"
+                  placeholder="0"
+                  value={newProduct.discount || ""}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      discount: Number(e.target.value),
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+
+              {/* Description */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="description" className="text-right col-span-1">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  value={newProduct.description || ""}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      description: e.target.value,
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
             </div>
 
-            {/* Description (Optional) */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                value={newProduct.description || ""}
-                onChange={(e) =>
-                  setNewProduct({ ...newProduct, description: e.target.value })
-                }
-                className="col-span-3"
-              />
+            {/* IS SALE ON & Upload Images */}
+            <div className="flex gap-4">
+              {/* IS SALE ON */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="isOnSale" className="text-right col-span-1">
+                  IS SALE ON
+                </Label>
+                <select
+                  id="isOnSale"
+                  value={newProduct.isOnSale ?? "0"}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      isOnSale: parseInt(e.target.value, 10),
+                    })
+                  }
+                  className="col-span-3 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+
+              {/* Upload Images */}
+              <div className="flex-1 grid grid-cols-4 items-center gap-2 ml-4">
+                <Label htmlFor="imageUpload" className="text-right col-span-1">
+                  Upload Images
+                </Label>
+                <input
+                  id="imageUpload"
+                  type="file"
+                  name="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="col-span-3"
+                />
+              </div>
             </div>
 
-            {/* Image URLs (Optional) */}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="imageUpload" className="text-right">
-                Upload Images
-              </Label>
-              <input
-                id="imageUpload"
-                type="file"
-                name="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageUpload}
-                className="col-span-3"
-              />
-            </div>
+            {newProduct.isOnSale === 1 && (
+              <>
+                <div className="flex gap-4">
+                  {/* IS SALE ON */}
+                  <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                    <Label htmlFor="isOnSale" className="text-right col-span-1">
+                      Sale Title
+                    </Label>
+                    <Input
+                      id="saleTitle"
+                      value={newProduct.saleTitle || ""}
+                      onChange={(e) =>
+                        setNewProduct({
+                          ...newProduct,
+                          saleTitle: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                    <Label htmlFor="edit-description" className="text-right">
+                      Sale Description
+                    </Label>
+                    <Textarea
+                      id="saleDescription"
+                      value={newProduct.saleDescription || ""}
+                      onChange={(e) =>
+                        setNewProduct({
+                          ...newProduct,
+                          saleDescription: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  {/* IS SALE ON */}
+
+                  {/* Upload Images */}
+                  <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                    <Label
+                      htmlFor="imageUpload"
+                      className="text-right col-span-1"
+                    >
+                      Banner Image
+                    </Label>
+                    <input
+                      id="imageUpload"
+                      type="file"
+                      name="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleBannerImageUpload}
+                      className="col-span-3"
+                    />
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                    <Label htmlFor="edit-description" className="text-right">
+                      Start Date
+                    </Label>
+                    <Input
+                      id="startDate"
+                      type="date"
+                      value={newProduct.startDate}
+                      onChange={(e) =>
+                        setNewProduct({
+                          ...newProduct,
+                          startDate: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                    <Label htmlFor="edit-description" className="text-right">
+                      End Date
+                    </Label>
+                    <Input
+                      id="endDate"
+                      type="date"
+                      value={newProduct.endDate}
+                      onChange={(e) =>
+                        setNewProduct({
+                          ...newProduct,
+                          endDate: e.target.value,
+                        })
+                      }
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="flex-1 grid grid-cols-4 items-center gap-2" />
+                </div>
+              </>
+            )}
+
+            {/* IS SALE ON */}
+            {/* <div className="flex gap-4">
+
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="discount" className="text-right col-span-1">
+                  IS SALE ON
+                </Label>
+                <select
+                  id="isOnSale"
+                  value={newProduct.isOnSale ?? "0"}
+                  onChange={(e) =>
+                    setNewProduct({
+                      ...newProduct,
+                      isOnSale: parseInt(e.target.value, 10),
+                    })
+                  }
+                  className="col-span-3 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="0">No</option>
+                  <option value="1">YES</option>
+                </select>
+              </div>
+
+            </div> */}
+
+            {/* Upload Images (single field) */}
+            {/* <div className="flex gap-4 ">
+              <div className="flex-1 grid grid-cols-4 items-center gap-2">
+                <Label htmlFor="imageUpload" className="text-right col-span-1">
+                  Upload Images
+                </Label>
+                <input
+                  id="imageUpload"
+                  type="file"
+                  name="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="col-span-3"
+                />
+              </div>
+
+
+              <div className="flex-1" />
+            </div> */}
           </div>
 
           <DialogFooter>
@@ -427,8 +742,10 @@ export const ProductList = () => {
       <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Edit Product</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-center font-medium">
+              Edit Product
+            </DialogTitle>
+            <DialogDescription className="text-center mt-2">
               Make changes to your product here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
@@ -474,11 +791,11 @@ export const ProductList = () => {
                 <Input
                   id="edit-inventory"
                   type="number"
-                  value={currentProduct.inventory}
+                  value={currentProduct.stock}
                   onChange={(e) =>
                     setCurrentProduct({
                       ...currentProduct,
-                      inventory: Number.parseInt(e.target.value),
+                      stock: Number.parseInt(e.target.value),
                     })
                   }
                   className="col-span-3"
@@ -517,17 +834,18 @@ export const ProductList = () => {
                   className="col-span-3"
                 />
               </div>
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="edit-status" className="text-right">
                   Active
                 </Label>
                 <Switch
                   id="edit-status"
-                  checked={currentProduct.status === "Active"}
+                  checked={currentProduct.status === 1}
                   onCheckedChange={(checked) =>
                     setCurrentProduct({
                       ...currentProduct,
-                      status: checked ? "Active" : "Inactive",
+                      status: checked ? 1 : 0,
                     })
                   }
                 />

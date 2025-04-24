@@ -1,42 +1,51 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Minus, Plus, ShoppingBag, Trash } from "lucide-react"
-import { useCart } from "@/context/cart-context"
-import { useToast } from "@/components/ui/use-toast"
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft, Minus, Plus, ShoppingBag, Trash } from "lucide-react";
+import { useCart } from "@/context/cart-context";
+import { useToast } from "@/components/ui/use-toast";
+import { useParams } from "next/navigation";
 
-export default function CartPage({ params }) {
-  const storeName = params?.store || "demo-store"
-  const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart()
-  const { toast } = useToast()
-  const [couponCode, setCouponCode] = useState("")
-  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false)
+export default function CartPage({ params }: any) {
+  const storeInfo = useParams();
+  const storeName: any = storeInfo.store || "demo-store";
+  // const productId: any = storeInfo?.id || 1;
 
-  const shipping = subtotal > 50 ? 0 : 5.99
-  const total = subtotal + shipping
+  const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart();
+  const { toast } = useToast();
+  const [couponCode, setCouponCode] = useState("");
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
-  const handleApplyCoupon = () => {
-    if (!couponCode.trim()) return
+  const shipping = subtotal > 50 ? 0 : 5.99;
+  const total = subtotal + shipping;
 
-    setIsApplyingCoupon(true)
+  // const handleApplyCoupon = () => {
+  //   if (!couponCode.trim()) return
 
-    // Simulate coupon application
-    setTimeout(() => {
-      setIsApplyingCoupon(false)
-      toast({
-        title: "Invalid coupon code",
-        description: "The coupon code you entered is invalid or has expired.",
-        variant: "destructive",
-      })
-      setCouponCode("")
-    }, 1000)
-  }
+  //   setIsApplyingCoupon(true)
+
+  //   // Simulate coupon application
+  //   setTimeout(() => {
+  //     setIsApplyingCoupon(false)
+  //     toast({
+  //       title: "Invalid coupon code",
+  //       description: "The coupon code you entered is invalid or has expired.",
+  //       variant: "destructive",
+  //     })
+  //     setCouponCode("")
+  //   }, 1000)
+  // }
 
   const handleProceedToCheckout = () => {
     if (items.length === 0) {
@@ -44,21 +53,28 @@ export default function CartPage({ params }) {
         title: "Your cart is empty",
         description: "Add some products to your cart before checking out.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     // Navigate to checkout
-    window.location.href = `/store/${storeName}/checkout`
-  }
+    window.location.href = `/store/${storeName}/checkout`;
+  };
+
+  console.log("items", items);
 
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-10 bg-white border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href={`/store/${storeName}`} className="flex items-center space-x-2">
+          <Link
+            href={`/store/${storeName}`}
+            className="flex items-center space-x-2"
+          >
             <ShoppingBag className="h-6 w-6" />
-            <span className="font-bold text-xl capitalize">{storeName.replace(/-/g, " ")}</span>
+            <span className="font-bold text-xl capitalize">
+              {storeName.replace(/-/g, " ")}
+            </span>
           </Link>
         </div>
       </header>
@@ -79,15 +95,19 @@ export default function CartPage({ params }) {
               <div className="md:col-span-2">
                 <div className="rounded-lg border">
                   <div className="p-4 md:p-6">
-                    <h2 className="text-xl font-semibold mb-4">Cart Items ({items.length})</h2>
+                    <h2 className="text-xl font-semibold mb-4">
+                      Cart Items ({items.length})
+                    </h2>
                     <div className="space-y-4">
-                      {items.map((item) => {
+                      {items.map((item: any) => {
                         const discountedPrice = item.discount
                           ? (item.price * (1 - item.discount / 100)).toFixed(2)
-                          : item.price.toFixed(2)
+                          : item.price.toFixed(2);
 
                         // Check if item has inventory issues
-                        const hasInventoryIssue = item.inventory !== undefined && item.quantity > item.inventory
+                        const hasInventoryIssue =
+                          item.inventory !== undefined &&
+                          item.quantity > item.inventory;
 
                         return (
                           <div
@@ -98,7 +118,9 @@ export default function CartPage({ params }) {
                           >
                             <div className="flex-shrink-0 mr-4 mb-4 sm:mb-0">
                               <Image
-                                src={item.image || "/placeholder.svg"}
+                                src={
+                                  item.image[0]?.imageUrl! || "/placeholder.svg"
+                                }
                                 alt={item.name}
                                 width={80}
                                 height={80}
@@ -109,33 +131,54 @@ export default function CartPage({ params }) {
                               <h3 className="font-medium">{item.name}</h3>
                               <p className="text-gray-600 text-sm mt-1">
                                 Unit Price: ${discountedPrice}
-                                {item.discount > 0 && (
-                                  <span className="text-gray-500 line-through ml-2">${item.price.toFixed(2)}</span>
+                                {item?.discount! > 0 && (
+                                  <span className="text-gray-500 line-through ml-2">
+                                    ${item.price.toFixed(2)}
+                                  </span>
                                 )}
                               </p>
                               {hasInventoryIssue && (
                                 <p className="text-red-600 text-sm mt-1">
-                                  Only {item.inventory} in stock. Quantity will be adjusted at checkout.
+                                  Only {item.inventory} in stock. Quantity will
+                                  be adjusted at checkout.
                                 </p>
                               )}
-                              {item.inventory !== undefined && item.inventory <= 5 && item.inventory > 0 && (
-                                <p className="text-amber-600 text-sm mt-1">Only {item.inventory} left in stock!</p>
-                              )}
+                              {item.inventory !== undefined &&
+                                item.inventory <= 5 &&
+                                item.inventory > 0 && (
+                                  <p className="text-amber-600 text-sm mt-1">
+                                    Only {item.inventory} left in stock!
+                                  </p>
+                                )}
                             </div>
                             <div className="flex items-center mt-4 sm:mt-0">
                               <div className="flex items-center border rounded-md mr-4">
                                 <button
                                   className="px-2 py-1"
-                                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                  onClick={() =>
+                                    updateQuantity(item.id, item.quantity - 1)
+                                  }
                                   aria-label="Decrease quantity"
                                 >
                                   <Minus className="h-4 w-4" />
                                 </button>
-                                <span className="px-4 py-1">{item.quantity}</span>
+                                <span className="px-4 py-1">
+                                  {item.quantity}
+                                </span>
                                 <button
-                                  className={`px-2 py-1 ${item.inventory !== undefined && item.quantity >= item.inventory ? "opacity-50 cursor-not-allowed" : ""}`}
-                                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                  disabled={item.inventory !== undefined && item.quantity >= item.inventory}
+                                  className={`px-2 py-1 ${
+                                    item.inventory !== undefined &&
+                                    item.quantity >= item.inventory
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : ""
+                                  }`}
+                                  onClick={() =>
+                                    updateQuantity(item.id, item.quantity + 1)
+                                  }
+                                  disabled={
+                                    item.inventory !== undefined &&
+                                    item.quantity >= item.inventory
+                                  }
                                   aria-label="Increase quantity"
                                 >
                                   <Plus className="h-4 w-4" />
@@ -143,7 +186,11 @@ export default function CartPage({ params }) {
                               </div>
                               <div className="text-right min-w-[80px]">
                                 <div className="font-medium">
-                                  ${(Number.parseFloat(discountedPrice) * item.quantity).toFixed(2)}
+                                  $
+                                  {(
+                                    Number.parseFloat(discountedPrice) *
+                                    item.quantity
+                                  ).toFixed(2)}
                                 </div>
                                 <button
                                   className="text-red-500 text-sm flex items-center mt-1"
@@ -156,7 +203,7 @@ export default function CartPage({ params }) {
                               </div>
                             </div>
                           </div>
-                        )
+                        );
                       })}
                     </div>
                   </div>
@@ -174,9 +221,12 @@ export default function CartPage({ params }) {
                     </div>
                     <div className="flex justify-between">
                       <span>Shipping</span>
-                      <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                      <span>
+                        {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+                      </span>
                     </div>
-                    <div className="flex items-center">
+                    {/* TODO Will add this... */}
+                    {/* <div className="flex items-center">
                       <Input
                         placeholder="Discount code"
                         className="mr-2"
@@ -190,7 +240,7 @@ export default function CartPage({ params }) {
                       >
                         Apply
                       </Button>
-                    </div>
+                    </div> */}
                     <Separator />
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total</span>
@@ -198,7 +248,11 @@ export default function CartPage({ params }) {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button className="w-full" size="lg" onClick={handleProceedToCheckout}>
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      onClick={handleProceedToCheckout}
+                    >
                       Proceed to Checkout
                     </Button>
                   </CardFooter>
@@ -210,8 +264,12 @@ export default function CartPage({ params }) {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
                 <ShoppingBag className="h-8 w-8 text-gray-500" />
               </div>
-              <h2 className="text-2xl font-semibold mb-2">Your cart is empty</h2>
-              <p className="text-gray-600 mb-6">Looks like you haven't added any products to your cart yet.</p>
+              <h2 className="text-2xl font-semibold mb-2">
+                Your cart is empty
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Looks like you haven't added any products to your cart yet.
+              </p>
               <Link href={`/store/${storeName}`}>
                 <Button>Continue Shopping</Button>
               </Link>
@@ -223,12 +281,13 @@ export default function CartPage({ params }) {
         <div className="container mx-auto px-4">
           <div className="border-t border-gray-200 pt-8 text-center text-gray-500 text-sm">
             <p>
-              © {new Date().getFullYear()} {storeName.replace(/-/g, " ")}. All rights reserved.
+              © {new Date().getFullYear()} {storeName.replace(/-/g, " ")}. All
+              rights reserved.
             </p>
             <p className="mt-1">Powered by StoreBuilder</p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }

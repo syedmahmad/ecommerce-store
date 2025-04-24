@@ -19,9 +19,9 @@ export function StoreLayout({ children, storeName = "My Store" }: any) {
 
   const categories = [
     { name: "All Products", path: `/store/${storeName}/products` },
-    { name: "New Arrivals", path: `/store/${storeName}/categories/new` },
-    { name: "Best Sellers", path: `/store/${storeName}/categories/best` },
-    { name: "Sale", path: `/store/${storeName}/categories/sale` },
+    // { name: "New Arrivals", path: `/store/${storeName}/categories/new` },
+    // { name: "Best Sellers", path: `/store/${storeName}/categories/best` },
+    // { name: "Sale", path: `/store/${storeName}/categories/sale` },
   ]
 
   return (

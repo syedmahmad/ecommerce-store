@@ -89,9 +89,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const navItems = [
     { id: "overview", label: "Overview", icon: Home, href: "/dashboard" },
     { id: "products", label: "Products", icon: Package, href: "/dashboard/products" },
-    { id: "orders", label: "Orders", icon: ShoppingCart, href: "/dashboard/orders" },
-    { id: "customers", label: "Customers", icon: Users, href: "/dashboard/customers" },
-    { id: "analytics", label: "Analytics", icon: BarChart, href: "/dashboard/analytics" },
+    { id: "customize-dashboard", label: "Customize Dashboard", icon: Users, href: "/dashboard/customize-dashboard" },
+    // { id: "orders", label: "Orders", icon: ShoppingCart, href: "/dashboard/orders" },
+    // { id: "customers", label: "Customers", icon: Users, href: "/dashboard/customers" },
+    // { id: "analytics", label: "Analytics", icon: BarChart, href: "/dashboard/analytics" },
     { id: "theme", label: "Theme", icon: Palette, href: "/dashboard/theme" },
     { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
   ]

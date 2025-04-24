@@ -10,49 +10,69 @@ import { useToast } from "@/components/ui/use-toast"
 import { useCart } from "@/context/cart-context"
 import { useTheme } from "@/context/theme-context"
 import { Loader2 } from "lucide-react"
+import { POST } from "@/app/utils/Axios"
+import { toast } from "react-toastify"
 
 export function ProductCard({ product, storeName }: any) {
-  const { toast } = useToast()
+  // const { toast } = useToast()
   const { addItem } = useCart()
   const [isAdding, setIsAdding] = useState(false)
-  const { currentTheme, storePreviewTheme } = useTheme()
+  const { currentTheme, storePreviewTheme } = useTheme();
+
+  console.log('product',product)
 
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme
 
-  const handleAddToCart = () => {
-    // Check if product is in stock
+
+  const handleAddToCart = async (product: any) => {
     if (product.stock <= 0) {
-      toast({
-        title: "Out of stock",
-        description: "Sorry, this product is currently out of stock.",
-        variant: "destructive",
-      })
+      toast.error("Sorry, this product is currently out of stock.")
       return
     }
-
+  
     setIsAdding(true)
+  
+    try {
+      const lcData = localStorage.getItem('user')
+      const parsedLCData = lcData && JSON.parse(lcData)
+      const currentUser = parsedLCData
+  
+      const userId = currentUser?.id
+      if (!userId) throw new Error("User not authenticated")
+  
+      const payload = {
+        userId,
+        productId: product.id,
+        quantity: 1,
+      }
+  
+      const response = await POST('/cart/add', payload);
+      console.log('response',response);
+  
+      if (!response || response.status !== 201) {
+        throw new Error('Failed to add item to cart')
+      }
 
-    // Simulate a small delay for better UX
-    setTimeout(() => {
       addItem({
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image,
+        image: product.images,
         quantity: 1,
         discount: product.discount,
-        inventory: product.inventory,
-      })
+        inventory: product.stock,
+      });
 
+      toast.success('Item Added To The Cart !')
+    } catch (error: any) {
+      toast.error('An error occurred while adding the item to the cart. Try Again');
+    } finally {
       setIsAdding(false)
-
-      toast({
-        title: "Added to cart",
-        description: `${product.name} has been added to your cart.`,
-      })
-    }, 600)
+    }
   }
+  
+  
 
   const discountedPrice =
     product.discount > 0 ? (product.price * (1 - product.discount / 100)).toFixed(2) : product.price.toFixed(2)
@@ -60,7 +80,6 @@ export function ProductCard({ product, storeName }: any) {
   const isOutOfStock = product.stock <= 0
   const lowStock = product.inventory !== undefined && product.inventory <= 5 && product.inventory > 0
 
-  console.log('product',product)
   return (
     <Card className="overflow-hidden h-full flex flex-col">
       <Link href={`/store/${storeName}/product/${product.id}`} className="relative block">
@@ -114,7 +133,7 @@ export function ProductCard({ product, storeName }: any) {
       <CardFooter className="p-4 pt-0">
         <Button
           className="w-full"
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(product)}
           disabled={isAdding || isOutOfStock}
           style={{
             backgroundColor: isOutOfStock ? "#d1d5db" : theme.primary,

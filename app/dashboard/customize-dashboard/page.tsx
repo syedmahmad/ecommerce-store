@@ -1,14 +1,15 @@
 "use client";
+import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import SingleProduct from "../SelectedProductInfo";
+import { CustomizeDashboard0 } from "./CustomiseDashboard";
 
 const queryClient = new QueryClient();
-
-export default function StoreDataQuery() {
-
+const CustomizeDashboard = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <SingleProduct />
+      <CustomizeDashboard0 />
     </QueryClientProvider>
   );
-}
+};
+
+export default CustomizeDashboard;

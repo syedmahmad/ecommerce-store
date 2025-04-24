@@ -51,7 +51,13 @@ export default function CategoryPage({ params }: any) {
   });
 
   const productsData = getSenderQuery?.data?.data;
-  console.log('productsData',productsData);
+  console.log("productsData", productsData);
+
+  useEffect(() => {
+    if (productsData.length) {
+      setProducts(productsData);
+    }
+  }, [productsData]);
 
   // Sample categories with products
   const categories = [
@@ -261,7 +267,7 @@ export default function CategoryPage({ params }: any) {
         break;
     }
 
-    setProducts(filtered);
+    // setProducts(filtered);
   }, [categoryId, sortOption]);
 
   return (
@@ -321,13 +327,15 @@ export default function CategoryPage({ params }: any) {
 
         {products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product: any) => (
+            {products.map((product: any) => {
+              console.log('....Product in category page', product);
+              return (
               <ProductCard
                 key={product.id}
                 product={product}
                 storeName={storeName}
               />
-            ))}
+            )})}
           </div>
         ) : (
           <div className="text-center py-12">
