@@ -11,7 +11,7 @@ import { ExternalLink } from "lucide-react"
 
 export default function ThemePage() {
   const [activeTab, setActiveTab] = useState("themes")
-  const storeName = "demo-store" // In a real app, this would come from the user's store settings
+  const storeName = "store" // In a real app, this would come from the user's store settings
 
   return (
     <DashboardLayout>

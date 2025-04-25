@@ -4,7 +4,7 @@ import { StoreLayout } from "@/components/store-layout"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
-export default function CategoriesPage({ params }) {
+export default function CategoriesPage({ params }: any) {
   const storeName = params.store || "demo-store"
 
   // Sample categories with products

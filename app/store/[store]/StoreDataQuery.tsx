@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react";
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
+import { OurCustomerStoreFront } from "./_components/OurCustomerStoreFront";
 
 const queryClient = new QueryClient();
 
@@ -114,7 +115,6 @@ export default function StorePage({ params }: any) {
     },
   ];
 
-
   const getBannerInfoData = useQuery({
     queryKey: ["banner-info"],
     queryFn: async () => {
@@ -126,9 +126,6 @@ export default function StorePage({ params }: any) {
 
   const bannerData = getBannerInfoData?.data?.data;
 
-
-  
-
   return (
     <StoreLayout storeName={storeName}>
       {/* Hero Section */}
@@ -136,7 +133,9 @@ export default function StorePage({ params }: any) {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
         <div className="relative h-[500px] w-full">
           <Image
-            src={bannerData?.imageUrl || "/placeholder.svg?height=500&width=1200"}
+            src={
+              bannerData?.imageUrl || "/placeholder.svg?height=500&width=1200"
+            }
             alt="Store banner"
             fill
             className="object-cover"
@@ -153,10 +152,10 @@ export default function StorePage({ params }: any) {
                 New Collection
               </Badge>
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                 {bannerData?.title || "Welcome to Our Store"}
+                {bannerData?.title || "Welcome to Our Store"}
               </h1>
               <p className="text-lg text-white/90 mb-6">
-              {bannerData?.description}
+                {bannerData?.description}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href={`/store/${storeName}/products`}>
@@ -255,123 +254,77 @@ export default function StorePage({ params }: any) {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {featuredProducts &&
-              featuredProducts?.length &&
-              featuredProducts.map((product: any) => {
-                if (product.status === 1 ) {
-                  return (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      storeName={storeName}
-                    />
-                  );
-                } else {
-                  return (
-                    <div>
-                      <p className="text-red-500">
-                        Product are there but not active. Go to the dashboard
-                        and mark product as active.
-                      </p>
-                    </div>
-                  );
-                }
-              })}
+            {featuredProducts && featuredProducts?.length
+              ? featuredProducts.map((product: any) => {
+                  if (product.status === 1) {
+                    return (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        storeName={storeName}
+                      />
+                    );
+                  } else {
+                    return (
+                      <div>
+                        <p className="text-red-500">
+                          Product are there but not active. Go to the dashboard
+                          and mark product as active.
+                        </p>
+                      </div>
+                    );
+                  }
+                })
+              : null}
           </div>
         </div>
       </section>
 
       {/* Promotional Banner */}
-      {saleData?.campaigns?.length && (<section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="relative rounded-xl overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
-            <div className="relative h-[300px] w-full">
-              <Image
-                src={saleData?.campaigns[0]?.bannerImageUrl || "/placeholder.svg?height=300&width=1200"}
-                alt="Promotional banner"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="absolute inset-0 z-20 flex items-center">
-              <div className="w-full max-w-xl mx-auto px-4 md:ml-16">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  {saleData?.campaigns[0]?.title || "Sale Section"}            
-                </h2>
-                <p className="text-lg text-white/90 mb-6">
-                {saleData?.campaigns[0]?.description || ""} 
-                </p>
-                <Link href={`/store/${storeName}/products?sale=true`}>
-                  <Button
-                    size="lg"
-                    style={{ backgroundColor: "var(--accent-color)" }}
-                  >
-                    View the Sale
-                  </Button>
-                </Link>
+      {saleData?.campaigns?.length && (
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="relative rounded-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
+              <div className="relative h-[300px] w-full">
+                <Image
+                  src={
+                    saleData?.campaigns[0]?.bannerImageUrl ||
+                    "/placeholder.svg?height=300&width=1200"
+                  }
+                  alt="Promotional banner"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="absolute inset-0 z-20 flex items-center">
+                <div className="w-full max-w-xl mx-auto px-4 md:ml-16">
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                    {saleData?.campaigns[0]?.title || "Sale Section"}
+                  </h2>
+                  <p className="text-lg text-white/90 mb-6">
+                    {saleData?.campaigns[0]?.description || ""}
+                  </p>
+                  <Link href={`/store/${storeName}/products/sale`}>
+                    <Button
+                      size="lg"
+                      className="backdrop-blur-sm bg-[var(--accent-color)/70] hover:bg-[var(--accent-color)] text-white font-semibold px-6 py-3 rounded-xl shadow-lg border border-white/20 transition duration-200 ease-in-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-white/30"
+                    >
+                      View the Sale
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>)}
+        </section>
+      )}
 
       {/* Features */}
-      < WhyShopWithUsStoreFrontUI />
+      <WhyShopWithUsStoreFrontUI />
 
       {/* Testimonials */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Don't just take our word for it. Here's what our customers have to
-              say about their shopping experience.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <div
-                key={testimonial.id}
-                className="bg-opacity-5 p-6 rounded-lg"
-                style={{ backgroundColor: "var(--secondary-color)" }}
-              >
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-5 w-5 mr-1"
-                      fill={
-                        i < testimonial.rating ? "var(--accent-color)" : "none"
-                      }
-                      style={{ color: "var(--accent-color)" }}
-                    />
-                  ))}
-                </div>
-                <p className="mb-6 italic">"{testimonial.content}"</p>
-                <div className="flex items-center">
-                  <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4">
-                    <Image
-                      src={testimonial.image || "/placeholder.svg"}
-                      alt={testimonial.name}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="font-bold">{testimonial.name}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      <OurCustomerStoreFront />
       {/* Newsletter */}
       <section
         className="py-16 bg-opacity-10"

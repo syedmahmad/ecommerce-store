@@ -19,7 +19,6 @@ export function ProductCard({ product, storeName }: any) {
   const [isAdding, setIsAdding] = useState(false)
   const { currentTheme, storePreviewTheme } = useTheme();
 
-  console.log('product',product)
 
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme

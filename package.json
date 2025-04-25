@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/core": "latest",
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "latest",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",

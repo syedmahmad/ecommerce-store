@@ -20,7 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 
 export const ProductsDataPage = () => {
-  const storeName = "demo-store";
+  const storeName = "store";
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("featured");

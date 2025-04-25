@@ -31,7 +31,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState("")
 
   // Define a constant store name to use throughout the application
-  const storeName = "demo-store"
+  const storeName = "store"
 
   // Use preview theme if available, otherwise use current theme
   const theme = previewTheme || currentTheme
