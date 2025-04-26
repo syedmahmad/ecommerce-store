@@ -5,7 +5,8 @@ import React from "react";
 export const WhyShopWithUsStoreFrontUI = () => {
   let userId: string | null = null;
   try {
-    const userData = typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
+    const userData =
+      typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
     const user = userData && JSON.parse(userData);
     userId = user?.id || null;
   } catch (error) {
@@ -34,7 +35,9 @@ export const WhyShopWithUsStoreFrontUI = () => {
         ) : sectionData ? (
           <>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">{sectionData.sectionTitle}</h2>
+              <h2 className="text-3xl font-bold mb-4">
+                {sectionData.sectionTitle}
+              </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 {sectionData.description}
               </p>
@@ -72,7 +75,9 @@ export const WhyShopWithUsStoreFrontUI = () => {
                       </svg>
                     </div>
                     <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
+                    <p className="text-muted-foreground">
+                      {feature.description}
+                    </p>
                   </div>
                 )
               )}
@@ -80,7 +85,7 @@ export const WhyShopWithUsStoreFrontUI = () => {
           </>
         ) : (
           <div className="text-center text-muted-foreground">
-            No data available for this section.
+            Go to the Dashboard and customise the Store{" "}
           </div>
         )}
       </div>

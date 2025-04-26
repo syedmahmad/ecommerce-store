@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Search, Menu, X } from "lucide-react";
@@ -27,18 +27,40 @@ export function StoreLayout({ children, storeName = "My Store" }: any) {
     // { name: "Sale", path: `/store/${storeName}/categories/sale` },
   ];
 
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 20) {
+        // Scrolling down
+        setShowHeader(false);
+      } else {
+        // Scrolling up
+        setShowHeader(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
     <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: theme.background, color: theme.text }}
     >
       {/* Header */}
+
       <header
-        className="sticky top-0 z-10 border-b"
-        style={{
-          backgroundColor: theme.secondary,
-          borderColor: `${theme.primary}33`,
-        }}
+        className={`sticky top-0 z-10 border-b transition-transform duration-300 ${
+          showHeader ? "translate-y-0" : "-translate-y-full"
+        }`}
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">

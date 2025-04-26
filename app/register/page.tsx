@@ -1,21 +1,35 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { useAuth } from "@/context/auth-context"
-import { Loader2, AlertCircle } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useAuth } from "@/context/auth-context";
+import { Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
 const registerSchema = z
   .object({
@@ -24,21 +38,25 @@ const registerSchema = z
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
-      .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-      .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+      .regex(/[A-Z]/, {
+        message: "Password must contain at least one uppercase letter",
+      })
+      .regex(/[a-z]/, {
+        message: "Password must contain at least one lowercase letter",
+      })
       .regex(/[0-9]/, { message: "Password must contain at least one number" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  })
+  });
 
 export default function RegisterPage() {
-  const router = useRouter()
-  const { register, loginWithGoogle } = useAuth()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const { register, loginWithGoogle } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -48,25 +66,24 @@ export default function RegisterPage() {
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   const onSubmit = async (data: any) => {
-
-    console.log('data',data)
-    setIsLoading(true)
-    setError("")
+    console.log("data", data);
+    setIsLoading(true);
+    setError("");
 
     try {
-      const success = await register(data.name, data.email, data.password)
+      const success = await register(data.name, data.email, data.password);
       if (success) {
-        router.push("/dashboard")
+        router.push("/dashboard");
       }
     } catch (error: any) {
-      setError(error.message || "Registration failed")
+      setError(error.message || "Registration failed");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // const handleGoogleLogin = async () => {
   //   setIsLoading(true)
@@ -80,43 +97,47 @@ export default function RegisterPage() {
   //   }
   // }
 
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setIsLoading(true);
+    setError("");
 
-   const handleGoogleSuccess = async (credentialResponse: any) => {
-      setIsLoading(true)
-      setError('')
-    
-      try {
-        const response = await axios.post('http://localhost:3000/auth/google', {
-          credential: credentialResponse.credential,
-        })
-    
-        if (response.status === 201) {
-          const { token } = response.data
-    
-          // ✅ Store the token in a cookie
-          Cookies.set('authToken', token, {
-            expires: 7, // 7 days
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Strict',
-            path: '/',
-          })
-    
-          router.push('/dashboard')
-        }
-      } catch (error: any) {
-        console.error('Google login failed:', error)
-        setError(error.response?.data?.message || 'Google login failed')
-      } finally {
-        setIsLoading(false)
+    try {
+      const response = await axios.post("http://localhost:3000/auth/google", {
+        credential: credentialResponse.credential,
+      });
+
+      if (response.status === 201) {
+        const { token, user } = response.data;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // ✅ Store the token in a cookie
+        Cookies.set("authToken", token, {
+          expires: 7, // 7 days
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          path: "/",
+        });
+
+        router.push("/dashboard");
       }
+    } catch (error: any) {
+      console.error("Google login failed:", error);
+      setError(error.response?.data?.message || "Google login failed");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
-          <CardDescription className="text-center">Enter your information to create an account</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">
+            Create an account
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your information to create an account
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
@@ -135,7 +156,11 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} disabled={isLoading} />
+                      <Input
+                        placeholder="John Doe"
+                        {...field}
+                        disabled={isLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,7 +173,11 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} disabled={isLoading} />
+                      <Input
+                        placeholder="name@example.com"
+                        {...field}
+                        disabled={isLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,7 +190,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                        disabled={isLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -174,7 +208,12 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                        disabled={isLoading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -198,10 +237,12 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-500">Or continue with</span>
+              <span className="bg-white px-2 text-gray-500">
+                Or continue with
+              </span>
             </div>
           </div>
-         <GoogleLogin
+          <GoogleLogin
             onSuccess={handleGoogleSuccess}
             onError={() => {
               console.log("Login Failed");
@@ -211,12 +252,15 @@ export default function RegisterPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-primary hover:underline">
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
+            >
               Sign in
             </Link>
           </p>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

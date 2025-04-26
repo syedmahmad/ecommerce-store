@@ -5,9 +5,9 @@ import Image from "next/image";
 import { Star } from "lucide-react";
 
 export const OurCustomerStoreFront = () => {
-  const lcData = localStorage.getItem("user");
+  const lcData = typeof window !== "undefined" && localStorage.getItem("user");
   const parseLCData = lcData && JSON.parse(lcData);
-  const userId = parseLCData.id;
+  const userId = parseLCData?.id;
   const { data } = useQuery({
     queryKey: ["our-customer-section", userId],
     queryFn: async () => {
@@ -18,7 +18,6 @@ export const OurCustomerStoreFront = () => {
   });
 
   const testimonials = data?.data;
-  console.log("testimonials,testimonials", testimonials);
 
   return (
     <div>
@@ -80,7 +79,7 @@ export const OurCustomerStoreFront = () => {
             </div>
           </section>
         </>
-      ): null}
+      ) : null}
     </div>
   );
 };

@@ -24,7 +24,6 @@ export default function DashboardPage() {
     }
   }, [userId]);
 
-
   const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
@@ -34,12 +33,20 @@ export default function DashboardPage() {
     enabled: !!userId,
   });
 
+  const { data } = useQuery({
+    queryKey: ["our-customer-section", userId],
+    queryFn: async () => {
+      const endpoint = `our-customer-section/${userId}`;
+      return GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const testimonials = data?.data;
+
   const productsData = getAllProducts?.data?.data;
 
   const { isLoading } = useAuthStatus({ required: true });
-
-  // const lcData = localStorage.getItem("user");
-  // const lcUser = lcData && JSON.parse(lcData);
 
   const handleLogout = async () => {
     Cookies.remove("authToken");
@@ -74,7 +81,9 @@ export default function DashboardPage() {
             <div className="text-sm font-medium text-muted-foreground">
               Total Products
             </div>
-            <div className="text-2xl font-bold">{productsData?.length > 0 ? productsData?.length : 0}</div>
+            <div className="text-2xl font-bold">
+              {productsData?.length > 0 ? productsData?.length : 0}
+            </div>
           </div>
           <div className="rounded-lg border bg-card p-6">
             <div className="text-sm font-medium text-muted-foreground">
@@ -92,7 +101,11 @@ export default function DashboardPage() {
             <div className="text-sm font-medium text-muted-foreground">
               Customers
             </div>
-            <div className="text-2xl font-bold">0</div>
+            <div className="text-2xl font-bold">
+              {testimonials && testimonials?.length > 0
+                ? testimonials?.length
+                : 0}
+            </div>
           </div>
         </div>
       </div>

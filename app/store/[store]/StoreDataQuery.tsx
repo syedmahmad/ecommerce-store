@@ -12,6 +12,7 @@ import { QueryClient, useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
 import { OurCustomerStoreFront } from "./_components/OurCustomerStoreFront";
+import { SubscribeToNewLetter } from "./_components/NewLetter";
 
 const queryClient = new QueryClient();
 
@@ -155,7 +156,8 @@ export default function StorePage({ params }: any) {
                 {bannerData?.title || "Welcome to Our Store"}
               </h1>
               <p className="text-lg text-white/90 mb-6">
-                {bannerData?.description}
+                {bannerData?.description ||
+                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href={`/store/${storeName}/products`}>
@@ -163,7 +165,7 @@ export default function StorePage({ params }: any) {
                     size="lg"
                     style={{ backgroundColor: currentTheme.primary }}
                   >
-                    {bannerData?.buttonText}
+                    {bannerData?.buttonText || "Show Now"}
                   </Button>
                 </Link>
                 {/* <Link href={`/store/${storeName}/categories`}>
@@ -326,34 +328,7 @@ export default function StorePage({ params }: any) {
       {/* Testimonials */}
       <OurCustomerStoreFront />
       {/* Newsletter */}
-      <section
-        className="py-16 bg-opacity-10"
-        style={{ backgroundColor: "var(--primary-color)" }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">Join Our Newsletter</h2>
-            <p className="mb-6 opacity-80">
-              Subscribe to our newsletter to receive updates on new products,
-              special offers, and more.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-md border focus:outline-none focus:ring-2"
-                style={{
-                  borderColor: "var(--primary-color)",
-                  color: "var(--text-color)",
-                }}
-              />
-              <Button style={{ backgroundColor: "var(--primary-color)" }}>
-                Subscribe
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* <SubscribeToNewLetter /> */}
     </StoreLayout>
   );
 }
