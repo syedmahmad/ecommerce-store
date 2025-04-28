@@ -42,6 +42,7 @@ import { Switch } from "@/components/ui/switch";
 import { Edit, MoreHorizontal, Plus, Trash } from "lucide-react";
 import { DELETE, GET, PATCH, POST } from "@/app/utils/Axios";
 import { toast } from "react-toastify";
+import { DashboardLayout } from "./dashboard-layout";
 
 // Sample product data
 // const initialProducts = [
@@ -150,7 +151,7 @@ export const ProductList = () => {
     saleDescription: "",
     startDate: "",
     endDate: "",
-    bannerImageUrl:""
+    bannerImageUrl: "",
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -191,17 +192,15 @@ export const ProductList = () => {
     }));
   };
 
-
-
   const handleBannerImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
       const response = await POST(
         "http://localhost:3000/product/upload",
@@ -212,7 +211,7 @@ export const ProductList = () => {
           },
         }
       );
-  
+
       const data = response?.data;
       if (data?.url) {
         setNewProduct((prev) => ({
@@ -226,7 +225,6 @@ export const ProductList = () => {
       console.error("Error uploading banner image:", error);
     }
   };
-  
 
   const handleAddProduct = async () => {
     const lcData = localStorage.getItem("user");
@@ -250,7 +248,7 @@ export const ProductList = () => {
           saleDescription: "",
           startDate: "",
           endDate: "",
-          bannerImageUrl:""
+          bannerImageUrl: "",
         });
         setIsAddProductOpen(false);
 
@@ -315,6 +313,7 @@ export const ProductList = () => {
   };
 
   return (
+    // <DashboardLayout>
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center">
@@ -860,5 +859,6 @@ export const ProductList = () => {
         </DialogContent>
       </Dialog>
     </div>
+    // </DashboardLayout>
   );
 };

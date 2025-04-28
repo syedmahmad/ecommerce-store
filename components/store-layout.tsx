@@ -183,87 +183,71 @@ export function StoreLayout({ children, storeName = "My Store" }: any) {
         }}
       >
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
+          <div className="grid grid-cols-12 gap-x-6">
+            {/* About Us Section */}
+            <div className="col-span-12 md:col-span-4">
               <h3 className="font-bold mb-4">About Us</h3>
               <p className="text-sm text-muted-foreground">
                 We provide high-quality products at affordable prices.
               </p>
             </div>
-            <div>
+
+            {/* Customer Service Section */}
+            <div className="col-span-12 md:col-span-4">
               <h3 className="font-bold mb-4">Customer Service</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    FAQs
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    Shipping Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    Returns & Refunds
-                  </Link>
-                </li>
+                {[
+                  "Contact Us",
+                  "FAQs",
+                  "Shipping Policy",
+                  "Returns & Refunds",
+                ].map((item, index) => (
+                  <li key={index}>
+                    <Link
+                      href="#"
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      {item}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
-            <div>
+
+            {/* Quick Links Section */}
+            <div className="col-span-12 md:col-span-4">
               <h3 className="font-bold mb-4">Quick Links</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    Terms of Service
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="#"
-                    className="text-muted-foreground hover:text-primary"
-                    // style={{ "&:hover": { color: theme.primary } }}
-                  >
-                    Blog
-                  </Link>
-                </li>
+                {["Privacy Policy", "Terms of Service", "Blog"].map(
+                  (item, index) => (
+                    <li key={index}>
+                      <Link
+                        href="#"
+                        className="text-muted-foreground hover:text-primary"
+                      >
+                        {item}
+                      </Link>
+                    </li>
+                  )
+                )}
               </ul>
             </div>
-            <div>
+          </div>
+
+          <div
+            className="mt-8 pt-4 border-t text-center text-sm text-muted-foreground"
+            style={{ borderColor: `${theme.primary}33` }}
+          >
+            © {new Date().getFullYear()} {storeName}. All rights reserved.
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+{
+  /* <div>
               <h3 className="font-bold mb-4">Newsletter</h3>
               <p className="text-sm text-muted-foreground mb-2">
                 Subscribe to receive updates on new products and special
@@ -286,16 +270,5 @@ export function StoreLayout({ children, storeName = "My Store" }: any) {
                   Subscribe
                 </Button>
               </div>
-            </div>
-          </div>
-          <div
-            className="mt-8 pt-4 border-t text-center text-sm text-muted-foreground"
-            style={{ borderColor: `${theme.primary}33` }}
-          >
-            © {new Date().getFullYear()} {storeName}. All rights reserved.
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
+            </div> */
 }

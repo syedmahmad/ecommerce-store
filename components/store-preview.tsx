@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { ShoppingBag, Search, ShoppingCart, Menu } from "lucide-react"
+import { ShoppingBag, Search, ShoppingCart, Menu } from "lucide-react";
 
 interface StorePreviewProps {
   theme: {
-    primary: string
-    secondary: string
-    background: string
-    text: string
-    accent: string
-  }
+    primary: string;
+    secondary: string;
+    background: string;
+    text: string;
+    accent: string;
+  };
 }
 
 export function StorePreview({ theme }: StorePreviewProps) {
@@ -47,9 +47,12 @@ export function StorePreview({ theme }: StorePreviewProps) {
           className="rounded-md p-3 flex items-center justify-center"
           style={{ backgroundColor: theme.primary + "22" }} // Add transparency
         >
-          <div className="text-center">
-            <div className="text-[10px] font-bold" style={{ color: theme.primary }}>
-              Welcome to our store
+          <div>
+            <div
+              className="text-[10px] font-bold"
+              style={{ color: theme.primary }}
+            >
+              <p className="text-center"> Welcome to our store </p>
             </div>
             <div className="text-[8px]">Discover amazing products</div>
           </div>
@@ -63,7 +66,10 @@ export function StorePreview({ theme }: StorePreviewProps) {
               className="rounded-md p-2 border"
               style={{ borderColor: theme.primary + "33" }} // Add transparency
             >
-              <div className="h-10 rounded-md mb-1" style={{ backgroundColor: theme.secondary }}></div>
+              <div
+                className="h-10 rounded-md mb-1"
+                style={{ backgroundColor: theme.secondary }}
+              ></div>
               <div className="text-[8px] font-medium">Product {i}</div>
               <div className="text-[7px]" style={{ color: theme.accent }}>
                 $19.99
@@ -79,10 +85,13 @@ export function StorePreview({ theme }: StorePreviewProps) {
         </div>
 
         {/* Footer */}
-        <div className="rounded-md p-2 mt-2 text-center text-[7px]" style={{ backgroundColor: theme.secondary }}>
+        <div
+          className="rounded-md p-2 mt-2 text-center text-[7px]"
+          style={{ backgroundColor: theme.secondary }}
+        >
           © 2023 My Store. All rights reserved.
         </div>
       </div>
     </div>
-  )
+  );
 }

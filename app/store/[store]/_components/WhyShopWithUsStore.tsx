@@ -1,17 +1,23 @@
+"use client";
 import { GET } from "@/app/utils/Axios";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export const WhyShopWithUsStoreFrontUI = () => {
-  let userId: string | null = null;
-  try {
-    const userData =
-      typeof localStorage !== "undefined" ? localStorage.getItem("user") : null;
-    const user = userData && JSON.parse(userData);
-    userId = user?.id || null;
-  } catch (error) {
-    console.error("Error parsing user from localStorage:", error);
-  }
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const userData =
+        typeof localStorage !== "undefined"
+          ? localStorage.getItem("user")
+          : null;
+      const user = userData && JSON.parse(userData);
+      setUserId(user?.id || null);
+    } catch (error) {
+      console.error("Error parsing user from localStorage:", error);
+    }
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ["why-shop-with-us", userId],
@@ -19,10 +25,18 @@ export const WhyShopWithUsStoreFrontUI = () => {
       const endpoint = `why-shop-with-us?id=${userId}`;
       return GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!userId, // Will only run once userId is set
   });
 
   const sectionData = data?.data?.[0];
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Optional: Show a loading state
+  }
+
+  if (!sectionData) {
+    return null; // or show fallback UI if no section data
+  }
 
   return (
     <section
@@ -31,7 +45,9 @@ export const WhyShopWithUsStoreFrontUI = () => {
     >
       <div className="container mx-auto px-4">
         {isLoading ? (
-          <div className="text-center">Loading...</div>
+          <div>
+            <p className="text-center">Loading...</p>
+          </div>
         ) : sectionData ? (
           <>
             <div className="text-center mb-12">
@@ -49,7 +65,7 @@ export const WhyShopWithUsStoreFrontUI = () => {
                   feature: { title: string; description: string },
                   index: number
                 ) => (
-                  <div key={index} className="text-center">
+                  <div key={index}>
                     <div
                       className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
                       style={{
@@ -84,8 +100,10 @@ export const WhyShopWithUsStoreFrontUI = () => {
             </div>
           </>
         ) : (
-          <div className="text-center text-muted-foreground">
-            Go to the Dashboard and customise the Store{" "}
+          <div>
+            <p className="text-center text-muted-foreground">
+              Go to the Dashboard and customise the Store{" "}
+            </p>
           </div>
         )}
       </div>

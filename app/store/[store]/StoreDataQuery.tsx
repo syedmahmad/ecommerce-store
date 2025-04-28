@@ -5,19 +5,19 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import { StoreLayout } from "@/components/store-layout";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Star } from "lucide-react";
+// import { ArrowRight, Star } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
 import React, { useState, useEffect } from "react";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
 import { OurCustomerStoreFront } from "./_components/OurCustomerStoreFront";
-import { SubscribeToNewLetter } from "./_components/NewLetter";
-
-const queryClient = new QueryClient();
+import { useRouter } from "next/navigation";
+// import { SubscribeToNewLetter } from "./_components/NewLetter";
 
 export default function StorePage({ params }: any) {
   // Get the store name from params or use a default
+  const router = useRouter();
 
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -127,6 +127,12 @@ export default function StorePage({ params }: any) {
 
   const bannerData = getBannerInfoData?.data?.data;
 
+  const handleButtonClick = () => {
+    if (featuredProducts && featuredProducts.length > 0) {
+      router.push(`/store/${storeName}/products`);
+    }
+  };
+
   return (
     <StoreLayout storeName={storeName}>
       {/* Hero Section */}
@@ -160,14 +166,16 @@ export default function StorePage({ params }: any) {
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href={`/store/${storeName}/products`}>
-                  <Button
-                    size="lg"
-                    style={{ backgroundColor: currentTheme.primary }}
-                  >
-                    {bannerData?.buttonText || "Show Now"}
-                  </Button>
-                </Link>
+                {/* <Link href={`/store/${storeName}/products`}> */}
+                <Button
+                  size="lg"
+                  onClick={handleButtonClick}
+                  disabled={featuredProducts && featuredProducts?.length === 0}
+                  style={{ backgroundColor: currentTheme.primary }}
+                >
+                  {bannerData?.buttonText || "Show Now"}
+                </Button>
+                {/* </Link> */}
                 {/* <Link href={`/store/${storeName}/categories`}>
                   <Button
                     size="lg"
@@ -243,16 +251,18 @@ export default function StorePage({ params }: any) {
             <div>
               <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
               <p className="text-muted-foreground">
-                Our handpicked selection of premium products
+                {featuredProducts && featuredProducts?.length
+                  ? "Our handpicked selection of premium products"
+                  : "You can add products from dashboard."}
               </p>
             </div>
-            <Link
+            {/* <Link
               href={`/store/${storeName}/products`}
               className="mt-4 md:mt-0 flex items-center text-sm font-medium hover:underline"
               style={{ color: currentTheme.primary }}
             >
               View All Products <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
+            </Link> */}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">

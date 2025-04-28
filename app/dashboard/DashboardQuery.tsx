@@ -43,7 +43,6 @@ export default function DashboardPage() {
   });
 
   const testimonials = data?.data;
-
   const productsData = getAllProducts?.data?.data;
 
   const { isLoading } = useAuthStatus({ required: true });

@@ -1,59 +1,57 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { useAdminTheme } from "@/context/admin-theme-context"
-import { useTheme } from "@/context/theme-context"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { useAdminTheme } from "@/context/admin-theme-context";
+import { useTheme } from "@/context/theme-context";
 import {
-  BarChart,
   Bell,
   Home,
   Package,
   Palette,
   Settings,
   ShoppingBag,
-  ShoppingCart,
   Users,
   Menu,
   X,
   ExternalLink,
-} from "lucide-react"
+} from "lucide-react";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const { currentTheme, previewTheme } = useAdminTheme()
-  const { setStorePreviewTheme } = useTheme()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("")
+  const pathname = usePathname();
+  const { currentTheme, previewTheme } = useAdminTheme();
+  const { setStorePreviewTheme } = useTheme();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("");
 
   // Define a constant store name to use throughout the application
-  const storeName = "store"
+  const storeName = "store";
 
   // Use preview theme if available, otherwise use current theme
-  const theme = previewTheme || currentTheme
+  const theme = previewTheme || currentTheme;
 
   // Set active tab based on pathname
   useEffect(() => {
     if (pathname.includes("/dashboard/products")) {
-      setActiveTab("products")
+      setActiveTab("products");
     } else if (pathname.includes("/dashboard/orders")) {
-      setActiveTab("orders")
+      setActiveTab("orders");
     } else if (pathname.includes("/dashboard/customers")) {
-      setActiveTab("customers")
+      setActiveTab("customers");
     } else if (pathname.includes("/dashboard/analytics")) {
-      setActiveTab("analytics")
+      setActiveTab("analytics");
     } else if (pathname.includes("/dashboard/theme")) {
-      setActiveTab("theme")
+      setActiveTab("theme");
     } else if (pathname.includes("/dashboard/settings")) {
-      setActiveTab("settings")
+      setActiveTab("settings");
     } else {
-      setActiveTab("overview")
+      setActiveTab("overview");
     }
-  }, [pathname])
+  }, [pathname]);
 
   // Sync admin theme with store preview theme when in preview mode
   useEffect(() => {
@@ -67,12 +65,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         background: previewTheme.backgroundColor,
         text: previewTheme.textColor,
         accent: previewTheme.accentColor,
-      })
+      });
     } else {
       // Clear store preview theme when not in preview mode
-      setStorePreviewTheme(null)
+      setStorePreviewTheme(null);
     }
-  }, [previewTheme, setStorePreviewTheme])
+  }, [previewTheme, setStorePreviewTheme]);
+
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      const lcData = localStorage.getItem("user");
+      const user = lcData && JSON.parse(lcData);
+      if (user?.email) {
+        setUserEmail(user.email);
+        // storeName = user.name;
+      }
+    }
+  }, [userEmail]);
 
   // Create CSS variables for the theme
   const themeStyles = {
@@ -84,18 +95,46 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     "--admin-sidebar-color": theme.sidebarColor,
     "--admin-accent-color": theme.accentColor,
     "--admin-border-color": theme.borderColor,
-  } as React.CSSProperties
+  } as React.CSSProperties;
 
   const navItems = [
     { id: "overview", label: "Overview", icon: Home, href: "/dashboard" },
-    { id: "products", label: "Products", icon: Package, href: "/dashboard/products" },
-    { id: "customize-dashboard", label: "Customize Dashboard", icon: Users, href: "/dashboard/customize-dashboard" },
+    {
+      id: "products",
+      label: "Products",
+      icon: Package,
+      href: "/dashboard/products",
+    },
+    {
+      id: "customize-dashboard",
+      label: "Customize Dashboard",
+      icon: Users,
+      href: "/dashboard/customize-dashboard",
+    },
     // { id: "orders", label: "Orders", icon: ShoppingCart, href: "/dashboard/orders" },
     // { id: "customers", label: "Customers", icon: Users, href: "/dashboard/customers" },
     // { id: "analytics", label: "Analytics", icon: BarChart, href: "/dashboard/analytics" },
     { id: "theme", label: "Theme", icon: Palette, href: "/dashboard/theme" },
-    { id: "settings", label: "Settings", icon: Settings, href: "/dashboard/settings" },
-  ]
+    {
+      id: "settings",
+      label: "Settings",
+      icon: Settings,
+      href: "/dashboard/settings",
+    },
+    {
+      id: "merchants",
+      label: "View Merchants",
+      icon: Users,
+      href: "/dashboard/merchants",
+    },
+  ];
+
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.id === "merchants") {
+      return userEmail === "devm.ahmad@gmail.com"; // Only show 'View Merchants' for specific email
+    }
+    return true; // Show all other items
+  });
 
   return (
     <div
@@ -113,17 +152,25 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           borderColor: theme.borderColor,
         }}
       >
-        <Link className="flex items-center gap-2 font-semibold" href="/dashboard">
-          <ShoppingBag className="h-6 w-6" style={{ color: theme.primaryColor }} />
+        <Link
+          className="flex items-center gap-2 font-semibold"
+          href="/dashboard"
+        >
+          <ShoppingBag
+            className="h-6 w-6"
+            style={{ color: theme.primaryColor }}
+          />
           <span>StoreBuilder</span>
         </Link>
 
         <nav className="hidden flex-1 md:flex">
-          {navItems.map((item) => (
+          {filteredNavItems.map((item) => (
             <Link
               key={item.id}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === item.id ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                activeTab === item.id
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
               href={item.href}
               style={{
@@ -175,7 +222,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               color: theme.textColor,
             }}
           >
-            {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {isMobileMenuOpen ? (
+              <X className="h-4 w-4" />
+            ) : (
+              <Menu className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </header>
@@ -193,7 +244,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.id}
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium ${
-                  activeTab === item.id ? "text-primary" : "text-muted-foreground"
+                  activeTab === item.id
+                    ? "text-primary"
+                    : "text-muted-foreground"
                 }`}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -211,5 +264,5 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1 p-6">{children}</main>
     </div>
-  )
+  );
 }
