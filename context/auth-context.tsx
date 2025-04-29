@@ -53,10 +53,9 @@ export function AuthProvider({ children }: any) {
       const user = response.data;
 
       if (response.status === 201) {
-
-        toast.success( `Weclome Back ${user.name}`)
+        toast.success(`Weclome Back ${user.name}`);
         const { token } = response.data;
-        console.log('response.data;',response.data);
+        console.log("response.data;", response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
 
         // ✅ Store the token in a cookie
@@ -71,10 +70,8 @@ export function AuthProvider({ children }: any) {
         return true;
       }
     } catch (error: any) {
-      
-      const message = error.response?.data?.message || "Something went wrong during login";
-      toast.error(message || "Wrong Credentials");
-
+      const message = error.response?.data?.message;
+      toast.error(message || "User with this information not found");
       return false;
     }
     return false;
@@ -105,7 +102,7 @@ export function AuthProvider({ children }: any) {
 
       // Auto login after registration
       const loginResult = await login(email, password);
-      console.log('loginResult',loginResult)
+      console.log("loginResult", loginResult);
 
       return loginResult;
     } catch (error: any) {
