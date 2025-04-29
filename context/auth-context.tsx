@@ -45,7 +45,8 @@ export function AuthProvider({ children }: any) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const response = await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });
@@ -89,8 +90,9 @@ export function AuthProvider({ children }: any) {
   };
 
   const register = async (name: string, email: string, password: string) => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
     try {
-      const response = await axios.post("http://localhost:3000/auth/register", {
+      const response = await axios.post(`${API_URL}/auth/register`, {
         name,
         email,
         password,

@@ -90,15 +90,12 @@ export const CustomiseBanner = () => {
       formData.append("file", file);
 
       try {
-        const response = await POST(
-          "http://localhost:3000/product/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const response = await POST(`${API_URL}/product/upload`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         const data = response?.data;
         console.log("data?.url", data?.url);
@@ -139,9 +136,10 @@ export const CustomiseBanner = () => {
         storeBannerButtonText: bannerData.storeBannerButtonText,
         storeBannerImageUrl: bannerData.imageUrl, // from uploaded image
       };
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
       const response = await POST(
-        `http://localhost:3000/customise-store-banner?id=${parseLCData.id}`,
+        `${API_URL}/customise-store-banner?id=${parseLCData.id}`,
         payload
       );
       console.log("response", response?.data);

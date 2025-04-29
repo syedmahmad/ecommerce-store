@@ -165,15 +165,12 @@ export const ProductList = () => {
       formData.append("file", file);
 
       try {
-        const response = await POST(
-          "http://localhost:3000/product/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data", // Axios will manage this for FormData
-            },
-          }
-        );
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        const response = await POST(`${API_URL}/product/upload`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Axios will manage this for FormData
+          },
+        });
 
         const data = response?.data; // Assuming the response is { url: "..." }
         if (data?.url) {
@@ -202,15 +199,12 @@ export const ProductList = () => {
     formData.append("file", file);
 
     try {
-      const response = await POST(
-        "http://localhost:3000/product/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const response = await POST(`${API_URL}/product/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       const data = response?.data;
       if (data?.url) {

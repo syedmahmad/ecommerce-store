@@ -77,7 +77,8 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3000/auth/google", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const response = await axios.post(`${API_URL}/auth/google`, {
         credential: credentialResponse.credential,
       });
 

@@ -67,8 +67,9 @@ export const CustomerSection = () => {
       uploadForm.append("file", file);
 
       try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
         const response = await axios.post(
-          "http://localhost:3000/product/upload",
+          `${API_URL}/product/upload`,
           uploadForm,
           {
             headers: {
