@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -24,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 import { useAuth } from "@/context/auth-context";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -38,8 +37,6 @@ const loginSchema = z.object({
     .min(6, { message: "Password must be at least 6 characters" }),
 });
 
-
-
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -49,7 +46,7 @@ export default function LoginPage() {
 
   // Get error message from URL if present
   const errorMessage = searchParams.get("error");
-  const callbackUrl =  "/dashboard";
+  const callbackUrl = "/dashboard";
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -60,7 +57,6 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: any) => {
-    console.log('data',data)
     setIsLoading(true);
     setError("");
 
@@ -76,38 +72,36 @@ export default function LoginPage() {
     }
   };
 
-
-  
   const handleGoogleSuccess = async (credentialResponse: any) => {
-    setIsLoading(true)
-    setError('')
-  
+    setIsLoading(true);
+    setError("");
+
     try {
-      const response = await axios.post('http://localhost:3000/auth/google', {
+      const response = await axios.post("http://localhost:3000/auth/google", {
         credential: credentialResponse.credential,
-      })
-  
+      });
+
       if (response.status === 201) {
-        const { token, user } = response.data
-        localStorage.setItem('user', JSON.stringify(user))
-  
+        const { token, user } = response.data;
+        localStorage.setItem("user", JSON.stringify(user));
+
         // ✅ Store the token in a cookie
-        Cookies.set('authToken', token, {
+        Cookies.set("authToken", token, {
           expires: 7, // 7 days
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'Strict',
-          path: '/',
-        })
-  
-        router.push('/dashboard')
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          path: "/",
+        });
+
+        router.push("/dashboard");
       }
     } catch (error: any) {
-      console.error('Google login failed:', error)
-      setError(error.response?.data?.message || 'Google login failed')
+      console.error("Google login failed:", error);
+      setError(error.response?.data?.message || "Google login failed");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">

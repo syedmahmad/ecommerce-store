@@ -11,7 +11,7 @@ const TABS = [
   { id: "customerSection", label: "Customize Customer Section" },
 ];
 
-export const CustomizeDashboard0 = () => {
+export const CustomizeStoreFront = () => {
   const [activeTab, setActiveTab] = useState("storeBanner");
 
   const renderContent = () => {
@@ -30,8 +30,7 @@ export const CustomizeDashboard0 = () => {
   return (
     <DashboardLayout>
       <div className="max-w-3xl mx-auto py-6 px-4">
-        <h1 className="text-2xl font-bold mb-6">Customize Dashboard</h1>
-
+        <h1 className="text-2xl font-bold mb-6">Customize Store</h1>
         <div className="flex space-x-2 mb-6">
           {TABS.map((tab) => (
             <button
@@ -53,4 +52,3 @@ export const CustomizeDashboard0 = () => {
     </DashboardLayout>
   );
 };
-

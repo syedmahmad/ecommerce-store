@@ -106,10 +106,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       href: "/dashboard/products",
     },
     {
-      id: "customize-dashboard",
-      label: "Customize Dashboard",
+      id: "customize-store",
+      label: "Customize Store",
       icon: Users,
-      href: "/dashboard/customize-dashboard",
+      href: "/dashboard/customize-store",
     },
     // { id: "orders", label: "Orders", icon: ShoppingCart, href: "/dashboard/orders" },
     // { id: "customers", label: "Customers", icon: Users, href: "/dashboard/customers" },

@@ -102,11 +102,21 @@ export const MerchantsData = () => {
                   </p>
                 ) : (
                   <ul className="list-disc list-inside">
-                    {merchant.products.map((product: any, index: number) => (
-                      <li key={index} className="text-gray-700 text-sm">
-                        {product.name} {/* Assuming product has a name */}
-                      </li>
-                    ))}
+                    {/* First, show the count */}
+                    <li className="text-gray-800 text-sm font-semibold mb-2">
+                      Active Products:{" "}
+                      {
+                        merchant.products.filter(
+                          (product: any) => product.status === 1
+                        ).length
+                      }
+                    </li>
+
+                    {/* Now, list only active products */}
+                    {merchant.products.map((product: any) => {
+                      if (product.status !== 1) return null; // Skip non-active products
+                      return null;
+                    })}
                   </ul>
                 )}
               </div>

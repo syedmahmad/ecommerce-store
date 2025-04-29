@@ -43,7 +43,6 @@ export const CustomiseBanner = () => {
     }
   }, [saveBannerData]);
 
-
   const [bannerData, setBannerData] = useState({
     storeBannerTitle: "Welcome to Store",
     storeBannerDescription:
@@ -72,35 +71,59 @@ export const CustomiseBanner = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
+    // Step 1: Read image dimensions before upload
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
 
-    try {
-      const response = await POST(
-        "http://localhost:3000/product/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    image.onload = async () => {
+      const { width, height } = image;
 
-      const data = response?.data;
-      console.log("data?.url", data?.url);
-      if (data?.url) {
-        setBannerData((prev) => ({
-          ...prev,
-          imageUrl: data.url,
-        }));
-        toast.success("Image uploaded successfully");
-      } else {
-        console.error("Image upload failed", data);
-        toast.error("Image upload failed");
+      if (width !== 1200 || height !== 400) {
+        toast.error("Please upload an image with size 1200x400 pixels.");
+        URL.revokeObjectURL(objectUrl); // clean up
+        return;
       }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
+
+      URL.revokeObjectURL(objectUrl); // clean up
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await POST(
+          "http://localhost:3000/product/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        const data = response?.data;
+        console.log("data?.url", data?.url);
+        if (data?.url) {
+          setBannerData((prev) => ({
+            ...prev,
+            imageUrl: data.url,
+          }));
+          toast.success("Image uploaded successfully");
+        } else {
+          console.error("Image upload failed", data);
+          toast.error("Image upload failed");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Something went wrong while uploading.");
+      }
+    };
+
+    image.onerror = () => {
+      toast.error("Invalid image file.");
+      URL.revokeObjectURL(objectUrl);
+    };
+
+    image.src = objectUrl;
   };
 
   const handleSave = async () => {
@@ -173,17 +196,16 @@ export const CustomiseBanner = () => {
       </label>
 
       {bannerData.imageUrl && (
-  <div className="mt-2">
-    <span className="text-gray-700 block mb-1">Image Preview:</span>
-    <img
-      src={bannerData.imageUrl}
-      alt="Banner Preview"
-      className="max-w-full h-auto border rounded-md"
-      height={200}
-    />
-  </div>
-)}
-
+        <div className="mt-2">
+          <span className="text-gray-700 block mb-1">Image Preview:</span>
+          <img
+            src={bannerData.imageUrl}
+            alt="Banner Preview"
+            className="max-w-full h-auto border rounded-md"
+            height={200}
+          />
+        </div>
+      )}
 
       <label className="block">
         <span className="text-gray-700">Banner Button Text</span>
