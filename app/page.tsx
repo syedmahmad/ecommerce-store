@@ -93,9 +93,9 @@ export default function Home() {
                 <img
                   alt="Store Builder Dashboard"
                   className="rounded-lg object-cover shadow-lg"
-                  src="/placeholder.svg?height=550&width=550"
+                  src="/rightImage.png"
                   width={550}
-                  height={550}
+                  height={650}
                 />
               </div>
             </div>
