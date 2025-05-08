@@ -8,8 +8,6 @@ const protectedPaths = ["/dashboard", "/dashboard/products", "/dashboard/setting
 // List of paths that are for authentication
 const authPaths = ["/login", "/register", "/forgot-password", "/reset-password"]
 
-// Utility sleep function
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
@@ -27,9 +25,6 @@ export async function middleware(request: NextRequest) {
   // })
 
   const token = await request.cookies.get("authToken")?.value
-
-  // 💤 Wait 2 seconds before proceeding
-  await sleep(2000);
 
   // If the path is protected and there's no token, redirect to login
   if (isProtectedPath && !token) {
