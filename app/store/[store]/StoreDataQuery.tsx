@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import { StoreLayout } from "@/components/store-layout";
 import { Badge } from "@/components/ui/badge";
-// import { ArrowRight, Star } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -13,7 +12,6 @@ import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
 import { OurCustomerStoreFront } from "./_components/OurCustomerStoreFront";
 import { useRouter } from "next/navigation";
-// import { SubscribeToNewLetter } from "./_components/NewLetter";
 
 export default function StorePage({ params }: any) {
   // Get the store name from params or use a default
@@ -175,16 +173,6 @@ export default function StorePage({ params }: any) {
                 >
                   {bannerData?.buttonText || "Show Now"}
                 </Button>
-                {/* </Link> */}
-                {/* <Link href={`/store/${storeName}/categories`}>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20"
-                  >
-                    Browse Categories
-                  </Button>
-                </Link> */}
               </div>
             </div>
           </div>

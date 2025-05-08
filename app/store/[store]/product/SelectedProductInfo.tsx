@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,6 @@ export default function SingleProduct() {
   const [isAdding, setIsAdding] = useState(false);
   const { currentTheme, storePreviewTheme } = useTheme();
   const storeInfo = useParams();
-  console.log("parmsId", storeInfo);
 
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme;
@@ -49,11 +48,10 @@ export default function SingleProduct() {
 
   const productsData = getSingleProductData?.data?.data;
 
-
-    const discountedPrice =productsData &&
-    productsData?.discount > 0
-        ? (productsData.price * (1 - productsData.discount / 100)).toFixed(2)
-        : productsData?.price.toFixed(2);
+  const discountedPrice =
+    productsData && productsData?.discount > 0
+      ? (productsData.price * (1 - productsData.discount / 100)).toFixed(2)
+      : productsData?.price.toFixed(2);
 
   const isOutOfStock = productsData && productsData?.stock <= 0;
 
@@ -135,24 +133,6 @@ export default function SingleProduct() {
             >
               Home
             </Link>
-            {/* <Link
-              href={`/store/${storeName}/products`}
-              className="text-sm font-medium hover:text-gray-600"
-            >
-              All Products
-            </Link> */}
-            {/* <Link
-              href={`/store/${storeName}/categories`}
-              className="text-sm font-medium hover:text-gray-600"
-            >
-              Categories
-            </Link> */}
-            {/* <Link
-              href={`/store/${storeName}/about`}
-              className="text-sm font-medium hover:text-gray-600"
-            >
-              About
-            </Link> */}
           </nav>
           <div className="flex items-center space-x-4">
             <CartButton storeName={storeName} />
@@ -239,10 +219,10 @@ export default function SingleProduct() {
                     </span>
                   </>
                 ) : (
-                <span className="text-3xl font-bold">
-                  ${productsData?.price.toFixed(2)}
-                </span>
-                 )}
+                  <span className="text-3xl font-bold">
+                    ${productsData?.price.toFixed(2)}
+                  </span>
+                )}
               </div>
               <p className="text-gray-700 mb-6">{productsData?.description}</p>
 
