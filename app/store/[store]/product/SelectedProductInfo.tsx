@@ -4,26 +4,26 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { useCart } from "@/context/cart-context";
 import { CartButton } from "@/components/cart-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "react-toastify";
+
 import {
   Loader2,
   ShoppingBag,
   ShoppingCart,
-  Star,
   Truck,
   AlertTriangle,
 } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
 import { useQuery } from "@tanstack/react-query";
-import { GET } from "@/app/utils/Axios";
+import { GET, POST } from "@/app/utils/Axios";
 import { useParams } from "next/navigation";
 
 export default function SingleProduct() {
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
@@ -55,62 +55,53 @@ export default function SingleProduct() {
 
   const isOutOfStock = productsData && productsData?.stock <= 0;
 
-  //   // Ensure quantity doesn't exceed available inventory
-  //   useEffect(() => {
-  //     if (quantity > product.inventory && product.inventory > 0) {
-  //       setQuantity(product.inventory);
-  //       toast({
-  //         title: "Quantity adjusted",
-  //         description: `Only ${product.inventory} items available in stock.`,
-  //       });
-  //     }
-  //   }, [quantity, product.inventory, toast]);
+  const handleAddToCart = async () => {
+    if (isOutOfStock) {
+      toast.error("Sorry, this product is currently out of stock.");
+      return;
+    }
 
-  const handleAddToCart = () => {
-    console.log("adding into cart......");
-    // // Check if product is in stock
-    // if (isOutOfStock) {
-    //   toast({
-    //     title: "Out of stock",
-    //     description: "Sorry, this product is currently out of stock.",
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
+    setIsAdding(true);
 
-    // // Check if requested quantity is available
-    // if (quantity > product.inventory) {
-    //   toast({
-    //     title: "Not enough stock",
-    //     description: `Only ${product.inventory} items available. Please adjust your quantity.`,
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
+    try {
+      const lcData = localStorage.getItem("user");
+      const parsedLCData = lcData && JSON.parse(lcData);
+      const currentUser = parsedLCData;
 
-    // setIsAdding(true);
+      const userId = currentUser?.id;
+      if (!userId) throw new Error("User not authenticated");
 
-    // // Simulate a small delay for better UX
-    // setTimeout(() => {
-    //   addItem({
-    //     id: product.id,
-    //     name: product.name,
-    //     price: product.price,
-    //     image: product.images[0],
-    //     quantity: quantity,
-    //     discount: product.discount,
-    //     inventory: product.inventory,
-    //   });
+      const payload = {
+        userId,
+        productId: productsData.id,
+        quantity: 1,
+      };
 
-    //   setIsAdding(false);
+      const response = await POST("/cart/add", payload);
+      console.log("response", response);
 
-    //   toast({
-    //     title: "Added to cart",
-    //     description: `${quantity} ${
-    //       quantity === 1 ? "item" : "items"
-    //     } added to your cart.`,
-    //   });
-    // }, 600);
+      if (!response || response.status !== 201) {
+        throw new Error("Failed to add item to cart");
+      }
+
+      addItem({
+        id: productsData.id,
+        name: productsData.name,
+        price: productsData.price,
+        image: productsData.images,
+        quantity: 1,
+        discount: productsData.discount,
+        inventory: productsData.stock,
+      });
+
+      toast.success("Item Added To The Cart !");
+    } catch (error: any) {
+      toast.error(
+        "An error occurred while adding the item to the cart. Try Again"
+      );
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   return (

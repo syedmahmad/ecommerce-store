@@ -56,7 +56,6 @@ export function AuthProvider({ children }: any) {
       if (response.status === 201) {
         toast.success(`Weclome ${user.name}`);
         const { token } = response.data;
-        console.log("response.data;", response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
 
         // ✅ Store the token in a cookie
@@ -66,7 +65,7 @@ export function AuthProvider({ children }: any) {
           sameSite: "Strict",
           path: "/",
         });
-
+        window.location.reload();
         router.push("/dashboard");
         return true;
       }
@@ -104,15 +103,8 @@ export function AuthProvider({ children }: any) {
 
       // Auto login after registration
       const loginResult = await login(email, password);
-      console.log("loginResult", loginResult);
-
       return loginResult;
     } catch (error: any) {
-      // toast({
-      //   title: "Registration failed",
-      //   description: error.message || "Something went wrong",
-      //   variant: "destructive",
-      // });
       return false;
     }
   };

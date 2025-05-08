@@ -63,6 +63,7 @@ export default function LoginPage() {
     try {
       const success = await login(data.email, data.password);
       if (success) {
+        window.location.reload();
         router.push(callbackUrl);
       }
     } catch (error: any) {

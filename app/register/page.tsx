@@ -121,6 +121,7 @@ export default function RegisterPage() {
         });
 
         toast.success(`Weclome ${user.name}`);
+        window.location.reload();
         router.push("/dashboard");
       }
     } catch (error: any) {
