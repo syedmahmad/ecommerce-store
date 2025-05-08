@@ -21,7 +21,7 @@ export function StoreLayout({ children, storeName = "My Store" }: any) {
     { name: "Home", path: `/store/${storeName}` },
     { name: "Sale", path: `/store/${storeName}/products/sale` },
     { name: "Contact Us", path: `/store/${storeName}contact` },
-
+    // May be we'll add in future...
     // { name: "New Arrivals", path: `/store/${storeName}/categories/new` },
     // { name: "Best Sellers", path: `/store/${storeName}/categories/best` },
     // { name: "Sale", path: `/store/${storeName}/categories/sale` },

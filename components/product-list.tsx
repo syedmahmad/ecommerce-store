@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+// import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import imageCompression from "browser-image-compression";
 import {
   Card,
   CardContent,
@@ -43,6 +44,7 @@ import { Edit, MoreHorizontal, Plus, Trash } from "lucide-react";
 import { DELETE, GET, PATCH, POST } from "@/app/utils/Axios";
 import { toast } from "react-toastify";
 import { DashboardLayout } from "./dashboard-layout";
+import { uploadImageToFirebase } from "@/app/utils/ImageUploader";
 
 // Sample product data
 // const initialProducts = [
@@ -154,39 +156,119 @@ export const ProductList = () => {
     bannerImageUrl: "",
   });
 
+  // const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (!files) return;
+
+  //   const uploadedUrls: string[] = [];
+
+  //   for (const file of Array.from(files)) {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+
+  //     try {
+  //       const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  //       const response = await POST(`${API_URL}/product/upload`, formData, {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data", // Axios will manage this for FormData
+  //         },
+  //       });
+
+  //       const data = response?.data;
+  //       if (data?.url) {
+  //         uploadedUrls.push(data.url);
+  //       } else {
+  //         console.error("Upload failed:", data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error uploading image:", error);
+  //     }
+  //   }
+
+  //   setNewProduct((prev) => ({
+  //     ...prev,
+  //     imageUrls: [...(prev.imageUrls || []), ...uploadedUrls],
+  //   }));
+  // };
+
+  const MAX_SIZE_MB = 5;
+  const REQUIRED_WIDTH = 1536;
+  const REQUIRED_HEIGHT = 1024;
+
+  const [isUploading, setIsUploading] = useState(false);
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
+    setIsUploading(true); // 🔒 Block UI actions here
     const uploadedUrls: string[] = [];
 
     for (const file of Array.from(files)) {
-      const formData = new FormData();
-      formData.append("file", file);
+      // Size check
+      if (file.size / 1024 / 1024 > MAX_SIZE_MB) {
+        toast.error(`${file.name} must be smaller than ${MAX_SIZE_MB}MB`);
+        continue;
+      }
+
+      // Validate dimensions
+      const objectUrl = URL.createObjectURL(file);
+      const image = new Image();
+
+      const isValid = await new Promise<boolean>((resolve) => {
+        image.onload = () => {
+          const { width, height } = image;
+          console.log(`Uploaded image dimensions: ${width}x${height}`);
+          if (width !== REQUIRED_WIDTH || height !== REQUIRED_HEIGHT) {
+            toast.error(
+              `${file.name} must be ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px`
+            );
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+          URL.revokeObjectURL(objectUrl);
+        };
+
+        image.onerror = () => {
+          toast.error(`${file.name} is not a valid image.`);
+          URL.revokeObjectURL(objectUrl);
+          resolve(false);
+        };
+
+        image.src = objectUrl;
+      });
+
+      if (!isValid) continue;
 
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const response = await POST(`${API_URL}/product/upload`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data", // Axios will manage this for FormData
-          },
+        // Compress image
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: REQUIRED_WIDTH,
+          useWebWorker: true,
         });
 
-        const data = response?.data; // Assuming the response is { url: "..." }
-        if (data?.url) {
-          uploadedUrls.push(data.url);
-        } else {
-          console.error("Upload failed:", data);
-        }
+        // Upload to Firebase
+        const path = `products/product-${Date.now()}.${compressedFile.name
+          .split(".")
+          .pop()}`;
+        const downloadURL = await uploadImageToFirebase(compressedFile, path);
+        uploadedUrls.push(downloadURL);
       } catch (error) {
-        console.error("Error uploading image:", error);
+        console.error(`Failed to upload ${file.name}`, error);
+        toast.error(`Failed to upload ${file.name}`);
       }
     }
 
-    setNewProduct((prev) => ({
-      ...prev,
-      imageUrls: [...(prev.imageUrls || []), ...uploadedUrls],
-    }));
+    if (uploadedUrls.length) {
+      setNewProduct((prev) => ({
+        ...prev,
+        imageUrls: [...(prev.imageUrls || []), ...uploadedUrls],
+      }));
+      toast.success("Images uploaded successfully");
+      setIsUploading(false); // ✅ Done uploading — unblock UI
+    }
   };
 
   const handleBannerImageUpload = async (
@@ -197,25 +279,42 @@ export const ProductList = () => {
 
     const formData = new FormData();
     formData.append("file", file);
+    setIsUploading(true);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL;
-      const response = await POST(`${API_URL}/product/upload`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      // Compress image
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: REQUIRED_WIDTH,
+        useWebWorker: true,
       });
 
-      const data = response?.data;
-      if (data?.url) {
+      // Upload to Firebase
+      const path = `products/product-${Date.now()}.${compressedFile.name
+        .split(".")
+        .pop()}`;
+      const downloadURL = await uploadImageToFirebase(compressedFile, path);
+      // uploadedUrls.push(downloadURL);
+      // const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      // const response = await POST(`${API_URL}/product/upload`, formData, {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // });
+
+      // const data = response?.data;
+      if (downloadURL) {
+        toast.success("Sale Banner Image Uploaded Successfully.");
         setNewProduct((prev) => ({
           ...prev,
-          bannerImageUrl: data.url,
+          bannerImageUrl: downloadURL,
         }));
+        setIsUploading(false);
       } else {
-        console.error("Banner image upload failed:", data);
+        console.error("Banner image upload failed:", downloadURL);
       }
     } catch (error) {
+      setIsUploading(false);
       console.error("Error uploading banner image:", error);
     }
   };
@@ -286,11 +385,6 @@ export const ProductList = () => {
       // Optionally show error feedback to the user
     }
   };
-
-  // const handleDeleteProduct = (id: any) => {
-  //   setProducts(products.filter((product) => product.id !== id));
-  // };
-
   const handleDeleteProduct = async (productId: number) => {
     try {
       await DELETE(`/product/${productId}`);
@@ -326,7 +420,7 @@ export const ProductList = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[80px]">Image</TableHead>
+                <TableHead className="w-[80px]">new Image</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Discount</TableHead>
@@ -340,7 +434,7 @@ export const ProductList = () => {
                 products.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell>
-                      <Image
+                      <img
                         src={product?.images[0]?.imageUrl || "/placeholder.svg"}
                         alt={product.name}
                         width={50}
@@ -724,9 +818,21 @@ export const ProductList = () => {
           </div>
 
           <DialogFooter>
-            <Button type="submit" onClick={handleAddProduct}>
-              Save Product
-            </Button>
+            <button
+              type="submit"
+              onClick={handleAddProduct}
+              disabled={isUploading}
+              className={`px-4 py-2 rounded-md text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2`}
+            >
+              {isUploading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Uploading...
+                </>
+              ) : (
+                "Save Product"
+              )}
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

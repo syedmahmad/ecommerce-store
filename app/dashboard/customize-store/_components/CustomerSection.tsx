@@ -4,11 +4,14 @@ import { GET, POST, DELETE, PUT, PATCH } from "@/app/utils/Axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
+import { uploadImageToFirebase } from "@/app/utils/ImageUploader";
+import imageCompression from "browser-image-compression";
 
 export const CustomerSection = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   // const [needToFetchData, setNeedToFetchData] = useState(false)
+  const [customerData, setCustomerData] = useState([]);
 
   const queryClient = useQueryClient();
   const reFetch = () => {
@@ -36,6 +39,12 @@ export const CustomerSection = () => {
 
   const ourCustomerData = data?.data;
 
+  useEffect(() => {
+    if (ourCustomerData && ourCustomerData?.length) {
+      setCustomerData(ourCustomerData);
+    }
+  }, [ourCustomerData]);
+
   const [formData, setFormData] = useState({
     testimonial: "",
     name: "",
@@ -56,10 +65,19 @@ export const CustomerSection = () => {
     }));
   };
 
+  const MAX_SIZE_MB = 5;
+  const REQUIRED_WIDTH = 120;
+  const REQUIRED_HEIGHT = 120;
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-
+    // Check size
+    // @ts-ignore
+    if (files.size / 1024 / 1024 > MAX_SIZE_MB) {
+      toast.error("Image must be smaller than 5MB");
+      return;
+    }
     const uploadedUrls: string[] = [];
 
     for (const file of Array.from(files)) {
@@ -67,20 +85,31 @@ export const CustomerSection = () => {
       uploadForm.append("file", file);
 
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL;
-        const response = await axios.post(
-          `${API_URL}/product/upload`,
-          uploadForm,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        // Compress image
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 1, // try to reduce to 1MB
+          maxWidthOrHeight: REQUIRED_WIDTH,
+          useWebWorker: true,
+        });
 
-        const data = response?.data;
-        if (data?.url) {
-          uploadedUrls.push(data.url);
+        // Upload to Firebase
+        const path = `customers/customer-${Date.now()}.${compressedFile.name
+          .split(".")
+          .pop()}`;
+        const downloadURL = await uploadImageToFirebase(compressedFile, path);
+
+        // const API_URL = process.env.NEXT_PUBLIC_API_URL;
+        // const response = await axios.post(
+        //   `${API_URL}/product/upload`,
+        //   uploadForm,
+        //   {
+        //     headers: {
+        //       "Content-Type": "multipart/form-data",
+        //     },
+        //   }
+        // );
+        if (downloadURL) {
+          uploadedUrls.push(downloadURL);
         } else {
           console.error("Upload failed:", data);
         }
@@ -131,6 +160,7 @@ export const CustomerSection = () => {
         rating: 5,
       });
       setEditId(null);
+      reFetch();
     } catch (error) {
       console.error("Error saving testimonial:", error);
     }
@@ -242,49 +272,60 @@ export const CustomerSection = () => {
         </button>
       </div>
 
-      {ourCustomerData?.length > 0 && (
+      {customerData?.length > 0 && (
         <div className="mt-10 space-y-6 max-w-2xl mx-auto">
           <h3 className="text-xl font-semibold text-center">
             Current Customer Testimonials
           </h3>
-          {ourCustomerData.map((customer: any) => (
-            <div
-              key={customer.id}
-              className="p-4 border rounded-md shadow-sm space-y-2 bg-white relative"
-            >
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={customer.imageUrl}
-                    alt={customer.name}
-                    className="h-16 w-16 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="text-lg font-bold">{customer.name}</p>
-                    <p className="text-sm text-gray-500">{customer.status}</p>
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <PencilIcon
-                    className="w-5 h-5 text-blue-600 cursor-pointer"
-                    onClick={() => handleEdit(customer)}
-                  />
-                  <TrashIcon
-                    className="w-5 h-5 text-red-600 cursor-pointer"
-                    onClick={() => handleDelete(customer.id)}
-                  />
-                </div>
-              </div>
-              <p className="text-gray-700 italic">"{customer.testimonial}"</p>
-              <div className="flex space-x-1 text-yellow-500">
-                {Array.from({ length: customer.rating }).map((_, i) => (
-                  <span key={i}>★</span>
-                ))}
-              </div>
-            </div>
+          {customerData?.map((customer: any) => (
+            <SingleCustomer
+              key={customer?.name}
+              customer={customer}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+            />
           ))}
         </div>
       )}
     </>
+  );
+};
+
+export const SingleCustomer = ({ customer, handleEdit, handleDelete }: any) => {
+  return (
+    <div
+      key={customer.id}
+      className="p-4 border rounded-md shadow-sm space-y-2 bg-white relative"
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <img
+            src={customer.imageUrl}
+            alt={customer.name}
+            className="h-16 w-16 rounded-full object-cover"
+          />
+          <div>
+            <p className="text-lg font-bold">{customer.name}</p>
+            <p className="text-sm text-gray-500">{customer.status}</p>
+          </div>
+        </div>
+        <div className="flex space-x-2">
+          <PencilIcon
+            className="w-5 h-5 text-blue-600 cursor-pointer"
+            onClick={() => handleEdit(customer)}
+          />
+          <TrashIcon
+            className="w-5 h-5 text-red-600 cursor-pointer"
+            onClick={() => handleDelete(customer.id)}
+          />
+        </div>
+      </div>
+      <p className="text-gray-700 italic">"{customer.testimonial}"</p>
+      <div className="flex space-x-1 text-yellow-500">
+        {Array.from({ length: customer.rating }).map((_, i) => (
+          <span key={i}>★</span>
+        ))}
+      </div>
+    </div>
   );
 };

@@ -54,7 +54,7 @@ export function AuthProvider({ children }: any) {
       const user = response.data;
 
       if (response.status === 201) {
-        toast.success(`Weclome Back ${user.name}`);
+        toast.success(`Weclome ${user.name}`);
         const { token } = response.data;
         console.log("response.data;", response.data);
         localStorage.setItem("user", JSON.stringify(response.data));

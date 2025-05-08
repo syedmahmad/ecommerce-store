@@ -30,6 +30,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const registerSchema = z
   .object({
@@ -119,6 +120,7 @@ export default function RegisterPage() {
           path: "/",
         });
 
+        toast.success(`Weclome ${user.name}`);
         router.push("/dashboard");
       }
     } catch (error: any) {
