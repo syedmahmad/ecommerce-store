@@ -21,15 +21,13 @@ export const MerchantsData = () => {
   const merchantsInfo = useQuery({
     queryKey: ["get-merchant-data"],
     queryFn: async () => {
-      const endpoint = `merchants`;
+      const endpoint = `/merchants`;
       return await GET(endpoint);
     },
     enabled: !!userId,
   });
 
   const merchantData = merchantsInfo?.data?.data;
-
-  console.log("merchantsInfo", merchantData);
 
   // Extract relevant data from merchantData
   const totalSalesCount = merchantData?.data?.totalSalesCount ?? 0;
