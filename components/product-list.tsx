@@ -46,60 +46,6 @@ import { toast } from "react-toastify";
 import { DashboardLayout } from "./dashboard-layout";
 import { uploadImageToFirebase } from "@/app/utils/ImageUploader";
 
-// Sample product data
-// const initialProducts = [
-//   {
-//     id: 1,
-//     name: "Leather Backpack",
-//     price: 79.99,
-//     inventory: 24,
-//     status: "Active",
-//     image: "/placeholder.svg?height=50&width=50",
-//     description: "Stylish leather backpack with multiple compartments",
-//     discount: 0,
-//   },
-//   {
-//     id: 2,
-//     name: "Wireless Headphones",
-//     price: 129.99,
-//     inventory: 15,
-//     status: "Active",
-//     image: "/placeholder.svg?height=50&width=50",
-//     description: "Premium noise-cancelling wireless headphones",
-//     discount: 10,
-//   },
-//   {
-//     id: 3,
-//     name: "Smart Watch",
-//     price: 199.99,
-//     inventory: 8,
-//     status: "Low Stock",
-//     image: "/placeholder.svg?height=50&width=50",
-//     description: "Feature-rich smartwatch with health tracking",
-//     discount: 0,
-//   },
-//   {
-//     id: 4,
-//     name: "Cotton T-Shirt",
-//     price: 24.99,
-//     inventory: 50,
-//     status: "Active",
-//     image: "/placeholder.svg?height=50&width=50",
-//     description: "Comfortable 100% cotton t-shirt",
-//     discount: 0,
-//   },
-//   {
-//     id: 5,
-//     name: "Ceramic Coffee Mug",
-//     price: 14.99,
-//     inventory: 32,
-//     status: "Active",
-//     image: "/placeholder.svg?height=50&width=50",
-//     description: "Elegant ceramic coffee mug",
-//     discount: 0,
-//   },
-// ];
-
 export const ProductList = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -401,7 +347,6 @@ export const ProductList = () => {
   };
 
   return (
-    // <DashboardLayout>
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-row items-center">
@@ -959,6 +904,5 @@ export const ProductList = () => {
         </DialogContent>
       </Dialog>
     </div>
-    // </DashboardLayout>
   );
 };

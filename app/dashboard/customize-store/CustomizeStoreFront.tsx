@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import { CustomiseBanner } from "./_components/CustomiseBanner";
 import { WhyShopWithUs } from "./_components/WhyShopWithUs";
 import { CustomerSection } from "./_components/CustomerSection";
+import { UpdateStoreInfo } from "./_components/UpdateStoreInfo";
 
 const TABS = [
   { id: "storeBanner", label: "Customize Store Banner" },
   { id: "whyShop", label: "Customize Why Shop With Us" },
   { id: "customerSection", label: "Customize Customer Section" },
+  { id: "storeInfo", label: "Update Store Info" },
 ];
 
 export const CustomizeStoreFront = () => {
@@ -22,6 +24,8 @@ export const CustomizeStoreFront = () => {
         return <WhyShopWithUs />;
       case "customerSection":
         return <CustomerSection />;
+      case "storeInfo":
+        return <UpdateStoreInfo />;
       default:
         return null;
     }
@@ -29,7 +33,7 @@ export const CustomizeStoreFront = () => {
 
   return (
     <DashboardLayout>
-      <div className="max-w-3xl mx-auto py-6 px-4">
+      <div className="w-full py-6 px-6">
         <h1 className="text-2xl font-bold mb-6">Customize Store</h1>
         <div className="flex space-x-2 mb-6">
           {TABS.map((tab) => (

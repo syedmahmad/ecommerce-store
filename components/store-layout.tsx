@@ -9,7 +9,11 @@ import { Input } from "@/components/ui/input";
 import { CartButton } from "@/components/cart-button";
 import { useTheme } from "@/context/theme-context";
 
-export function StoreLayout({ children, storeName = "My Store" }: any) {
+export function StoreLayout({
+  children,
+  storeName = "My Store",
+  storeInfoFromBE,
+}: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { currentTheme, storePreviewTheme } = useTheme();
@@ -69,11 +73,27 @@ export function StoreLayout({ children, storeName = "My Store" }: any) {
               href={`/store/${storeName}`}
               className="flex items-center space-x-2"
             >
-              <ShoppingBag
-                className="h-6 w-6"
-                style={{ color: theme.primary }}
-              />
-              <span className="font-bold text-lg">{storeName}</span>
+              {storeInfoFromBE?.logoUrl === null ? (
+                <ShoppingBag
+                  className="h-6 w-6"
+                  style={{ color: theme.primary }}
+                />
+              ) : (
+                <img
+                  src={storeInfoFromBE?.logoUrl}
+                  alt="Store Logo"
+                  className="h-12 w-12 object-contain rounded-md border border-gray-200 shadow-sm"
+                  style={{ backgroundColor: theme?.primary }}
+                />
+              )}
+              <div className="flex flex-col">
+                <span className="text-xl font-semibold text-gray-900">
+                  {storeName}
+                </span>
+                <span className="text-sm text-gray-500 mt-1">
+                  {storeInfoFromBE?.description}
+                </span>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
