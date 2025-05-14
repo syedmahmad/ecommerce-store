@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductList } from "@/components/product-list";
 import { Plus, Upload } from "lucide-react";
+import { DashboardLayout } from "@/components/dashboard-layout";
 
 export const ProductsPage = () => {
   const [, setActiveTab] = useState("all");
 
   return (
+    <DashboardLayout>
     <div className="container mx-auto py-6 px-4 md:px-6">
       {/* <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
@@ -38,14 +40,14 @@ export const ProductsPage = () => {
         className="space-y-4"
         onValueChange={setActiveTab}
       >
-        <div className="flex justify-between items-center">
-          <TabsList>
-            <TabsTrigger value="all">All Products</TabsTrigger>
+        {/* <div className="flex justify-between items-center"> */}
+          {/* <TabsList> */}
+            {/* <TabsTrigger value="all">All Products</TabsTrigger> */}
             {/* <TabsTrigger value="active">Active</TabsTrigger> */}
             {/* <TabsTrigger value="draft">Drafts</TabsTrigger> */}
             {/* <TabsTrigger value="archived">Archived</TabsTrigger> */}
-          </TabsList>
-        </div>
+          {/* </TabsList> */}
+        {/* </div> */}
 
         <TabsContent value="all" className="space-y-4">
           <ProductList />
@@ -113,5 +115,6 @@ export const ProductsPage = () => {
         </TabsContent> */}
       </Tabs>
     </div>
+    </DashboardLayout>
   );
 };

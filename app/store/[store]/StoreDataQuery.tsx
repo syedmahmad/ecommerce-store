@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import { StoreLayout } from "@/components/store-layout";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/context/theme-context";
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -125,6 +125,54 @@ export default function StorePage({ params }: any) {
 
   const bannerData = getBannerInfoData?.data?.data;
 
+  // store info from BE..
+
+  const getStoreInfo = useQuery({
+    queryKey: ["store-info"],
+    queryFn: async () => {
+      const endpoint = `store/${userId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const storeInfoFromBE = getStoreInfo?.data?.data;
+
+  const getStoreThemeInfo = useQuery({
+    queryKey: ["store-theme-data"],
+    queryFn: async () => {
+      const endpoint = `store-theme/${userId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const themeData = getStoreThemeInfo?.data?.data;
+
+  useEffect(() => {
+    if (themeData) {
+      const formattedTheme = {
+        id: themeData.themeId,
+        name: themeData.name,
+        primary: themeData.primary,
+        secondary: themeData.secondary,
+        background: themeData.background,
+        text: themeData.text,
+        accent: themeData.accent,
+      };
+
+      const existingTheme = localStorage.getItem("theme");
+      const existingParsed = existingTheme ? JSON.parse(existingTheme) : null;
+
+      const isSameTheme =
+        JSON.stringify(existingParsed) === JSON.stringify(formattedTheme);
+
+      if (!isSameTheme) {
+        localStorage.setItem("theme", JSON.stringify(formattedTheme));
+      }
+    }
+  }, [themeData]);
+
   const handleButtonClick = () => {
     if (featuredProducts && featuredProducts.length > 0) {
       router.push(`/store/${storeName}/products`);
@@ -132,7 +180,10 @@ export default function StorePage({ params }: any) {
   };
 
   return (
-    <StoreLayout storeName={storeName}>
+    <StoreLayout
+      storeName={storeInfoFromBE?.name}
+      storeInfoFromBE={storeInfoFromBE}
+    >
       {/* Hero Section */}
       <section className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
@@ -150,12 +201,12 @@ export default function StorePage({ params }: any) {
         <div className="absolute inset-0 z-20 flex items-center">
           <div className="container mx-auto px-4">
             <div className="max-w-xl">
-              <Badge
+              {/* <Badge
                 className="mb-4"
                 style={{ backgroundColor: currentTheme.accent }}
               >
                 New Collection
-              </Badge>
+              </Badge> */}
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 {bannerData?.title || "Welcome to Our Store"}
               </h1>
@@ -241,7 +292,7 @@ export default function StorePage({ params }: any) {
               <p className="text-muted-foreground">
                 {featuredProducts && featuredProducts?.length
                   ? "Our handpicked selection of premium products"
-                  : "You can add products from dashboard."}
+                  : "You can add products from Admin Dashboard."}
               </p>
             </div>
             {/* <Link

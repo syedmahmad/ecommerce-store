@@ -4,11 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
+import { useTheme } from "@/context/theme-context";
+import { Button } from "@/components/ui/button";
 import {
   deleteImageFromFirebase,
   uploadImageToFirebase,
 } from "@/app/utils/ImageUploader";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { Loader2 } from "lucide-react";
 
 /**
  * CustomiseBanner component allows users to update store banner title, description,
@@ -81,7 +84,7 @@ export const CustomiseBanner = () => {
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -99,11 +102,11 @@ export const CustomiseBanner = () => {
       const { width, height } = image;
       console.log(`Uploaded image dimensions: ${width}x${height}`);
 
-      if (width >= REQUIRED_WIDTH || height >= REQUIRED_HEIGHT) {
-        toast.error(`Image must be ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px`);
-        URL.revokeObjectURL(objectUrl);
-        return;
-      }
+      // if (width >= REQUIRED_WIDTH || height >= REQUIRED_HEIGHT) {
+      //   toast.error(`Image must be ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px`);
+      //   URL.revokeObjectURL(objectUrl);
+      //   return;
+      // }
 
       URL.revokeObjectURL(objectUrl);
 
@@ -144,10 +147,12 @@ export const CustomiseBanner = () => {
     image.src = objectUrl;
   };
 
+  const [isSavingData, setIsSavingData] = useState(false);
+
   const handleSave = async () => {
     const lcData = localStorage.getItem("user");
     const parseLCData = lcData && JSON.parse(lcData);
-
+    setIsSavingData(true);
     try {
       const payload = {
         storeBannerTitle: bannerData.storeBannerTitle,
@@ -170,20 +175,21 @@ export const CustomiseBanner = () => {
           uuid: "",
         });
         toast.success("Banner updated successfully");
+        setIsSavingData(false);
       }
     } catch (error) {
       console.error("Error creating banner:", error);
+      setIsSavingData(false);
     }
   };
 
   const handleDeleteImage = async (bannerData: any) => {
     try {
-      // await deleteImageFromFirebase(bannerData.imageUrl);
+      await deleteImageFromFirebase(bannerData.imageUrl);
       const response = await DELETE(
         `customise-store-banner/image?uuid=${bannerData?.uuid}`
       );
       if (response?.status === 200) {
-        // Optionally reset local state
         setBannerData((prev) => ({ ...prev, imageUrl: null }));
         toast.success("Image successfully deleted.");
       } else {
@@ -195,123 +201,180 @@ export const CustomiseBanner = () => {
   };
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-xl shadow-lg max-w-2xl mx-auto">
-      <h2 className="text-2xl font-semibold text-gray-800">
-        Store Banner Settings
-      </h2>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6">
+      {/* Left Panel: Form Section */}
+      <div className="lg:col-span-5 space-y-6 bg-white p-6 rounded-xl shadow-lg w-full">
+        <h2 className="text-2xl font-semibold text-gray-800">Store Banner</h2>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Store Banner Title
-        </label>
-        <input
-          type="text"
-          name="storeBannerTitle"
-          value={bannerData.storeBannerTitle}
-          onChange={handleChange}
-          placeholder="Enter banner title"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Store Banner Description
-        </label>
-        <textarea
-          name="storeBannerDescription"
-          value={bannerData.storeBannerDescription}
-          onChange={handleChange}
-          rows={4}
-          placeholder="Enter banner description"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
-      </div>
-
-      {bannerData?.imageUrl ? (
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Current Image
-          </label>
-          <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg border">
-            <span className="truncate max-w-sm text-sm text-gray-600">
-              {bannerData?.imageUrl || "uploaded_image.jpg"}
-            </span>
-            <button
-              onClick={() => handleDeleteImage(bannerData)}
-              className="text-sm text-red-600 hover:underline"
-            >
-              Delete to change
-            </button>
-          </div>
-          <p className="text-xs text-gray-500">
-            You must delete the current image before uploading a new one.
-          </p>
-        </div>
-      ) : (
         <div>
-          <label
-            className="block text-sm font-medium text-gray-700 mb-1"
-            htmlFor="upload"
-          >
-            Upload Image
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Store Banner Title
           </label>
           <input
-            id="upload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            type="text"
+            name="storeBannerTitle"
+            value={bannerData.storeBannerTitle}
+            onChange={handleChange}
+            placeholder="Enter banner title"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
         </div>
-      )}
 
-      {bannerData.imageUrl && (
-        <div className="mt-4 relative group w-full max-w-xs">
-          <span className="block text-sm font-medium text-gray-700 mb-2">
-            Image Preview
-          </span>
-          <div className="relative border rounded-lg overflow-hidden shadow-sm">
-            <img
-              src={bannerData.imageUrl}
-              alt="Banner Preview"
-              className="w-full h-auto object-cover rounded-lg"
-            />
-            <button
-              onClick={() => handleDeleteImage(bannerData)}
-              title="Delete Image"
-              className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-red-100 transition"
-            >
-              <TrashIcon className="w-5 h-5 text-red-600" />
-            </button>
-          </div>
-          <p className="text-sm text-gray-500 mt-2">
-            To upload a new image, please delete the current one first.
-          </p>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Store Banner Description
+          </label>
+          <textarea
+            name="storeBannerDescription"
+            value={bannerData.storeBannerDescription}
+            onChange={handleChange}
+            rows={4}
+            placeholder="Enter banner description"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
         </div>
-      )}
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Banner Button Text
-        </label>
-        <input
-          type="text"
-          name="storeBannerButtonText"
-          value={bannerData.storeBannerButtonText}
-          onChange={handleChange}
-          placeholder="Enter button text"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        {bannerData?.imageUrl ? (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Current Image
+            </label>
+            <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg border">
+              <span className="truncate max-w-sm text-sm text-gray-600">
+                {bannerData?.imageUrl || "uploaded_image.jpg"}
+              </span>
+              <button
+                onClick={() => handleDeleteImage(bannerData)}
+                className="text-sm text-red-600 hover:underline"
+              >
+                Delete to change
+              </button>
+            </div>
+            <p className="text-xs text-gray-500">
+              You must delete the current image before uploading a new one.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <label
+              className="block text-sm font-medium text-gray-700 mb-1"
+              htmlFor="upload"
+            >
+              Upload Image
+            </label>
+            <input
+              id="upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            />
+          </div>
+        )}
+
+        {bannerData.imageUrl && (
+          <div className="mt-4 relative group w-full max-w-xs">
+            <span className="block text-sm font-medium text-gray-700 mb-2">
+              Image Preview
+            </span>
+            <div className="relative border rounded-lg overflow-hidden shadow-sm">
+              <img
+                src={bannerData.imageUrl}
+                alt="Banner Preview"
+                className="w-full h-auto object-cover rounded-lg"
+              />
+              <button
+                onClick={() => handleDeleteImage(bannerData)}
+                title="Delete Image"
+                className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-red-100 transition"
+              >
+                <TrashIcon className="w-5 h-5 text-red-600" />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 mt-2">
+              To upload a new image, please delete the current one first.
+            </p>
+          </div>
+        )}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Banner Button Text
+          </label>
+          <input
+            type="text"
+            name="storeBannerButtonText"
+            value={bannerData.storeBannerButtonText}
+            onChange={handleChange}
+            placeholder="Enter button text"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+        </div>
+
+        <button
+          onClick={handleSave}
+          disabled={isUploading || isSavingData}
+          className={`w-full bg-blue-600 text-white py-3 rounded-lg font-medium transition ${
+            isUploading || isSavingData
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-blue-700"
+          }`}
+        >
+          {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
+          {isUploading ? "Uploading......." : "Save Changes"}
+        </button>
+      </div>
+      <div className="lg:col-span-7">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          Live Preview
+        </h2>
+        <StoreBannerPreview bannerData={bannerData} />
+      </div>
+    </div>
+  );
+};
+
+export const StoreBannerPreview = ({ bannerData }: any) => {
+  const { currentTheme } = useTheme();
+
+  return (
+    <section className="relative rounded-xl overflow-hidden shadow-lg">
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
+      <div className="relative h-64 w-full">
+        {" "}
+        {/* Reduced height */}
+        <img
+          src={bannerData?.imageUrl || "/placeholder.svg?height=500&width=1200"}
+          alt="Store banner"
+          className="object-cover w-full h-full" /* Ensures full coverage */
         />
       </div>
-
-      <button
-        onClick={handleSave}
-        disabled={isUploading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition"
-      >
-        {isUploading ? "Uploading......." : "Save Changes"}
-      </button>
-    </div>
+      <div className="absolute inset-0 z-20 flex items-center p-6">
+        {" "}
+        {/* Added padding */}
+        <div className="max-w-md">
+          {" "}
+          {/* Reduced max width */}
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">
+            {" "}
+            {/* Reduced text size */}
+            {bannerData?.storeBannerTitle}
+          </h1>
+          <p className="text-base text-white/90 mb-4">
+            {" "}
+            {/* Reduced text size */}
+            {bannerData?.storeBannerDescription}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Button
+              style={{ backgroundColor: currentTheme.primary }}
+              className="text-sm px-4 py-2" /* Smaller button */
+            >
+              {bannerData?.storeBannerButtonText}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };

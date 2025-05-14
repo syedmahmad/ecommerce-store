@@ -27,16 +27,15 @@ export const OurCustomerStoreFront = () => {
             <div className="container mx-auto px-4">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold mb-4">
-                  What Our Customers Say
+                  {testimonials?.heading || "What Our Customers Say"}
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto">
-                  Don't just take our word for it. Here's what our customers
-                  have to say about their shopping experience.
+                  {testimonials?.subHeading}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial: any) => (
+                {testimonials?.map((testimonial: any) => (
                   <div
                     key={testimonial.id}
                     className="bg-opacity-5 p-6 rounded-lg"
