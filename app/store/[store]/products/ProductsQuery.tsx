@@ -13,14 +13,19 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ProductCard } from "@/components/product-card";
-import { StoreLayout } from "@/components/store-layout";
+import StoreLayout from "@/components/store-layout";
 import { Badge } from "@/components/ui/badge";
 import { Filter, Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
+import { useParams } from "next/navigation";
 
 export const ProductsDataPage = () => {
   const storeName = "store";
+
+  const params = useParams();
+  const storeId = params.store;
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("featured");
@@ -29,25 +34,25 @@ export const ProductsDataPage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [activeFilters, setActiveFilters] = useState(0);
 
-  const [userId, setUserId] = useState<string | null>(null);
+  // const [userId, setUserId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (typeof localStorage !== "undefined") {
-      const lcData = localStorage.getItem("user");
-      const user = lcData && JSON.parse(lcData);
-      if (user?.id) {
-        setUserId(user.id);
-      }
-    }
-  }, [userId]);
+  // useEffect(() => {
+  //   if (typeof localStorage !== "undefined") {
+  //     const lcData = localStorage.getItem("user");
+  //     const user = lcData && JSON.parse(lcData);
+  //     if (user?.id) {
+  //       setUserId(user.id);
+  //     }
+  //   }
+  // }, [userId]);
 
   const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${userId}`;
+      const endpoint = `product?id=${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId, // don't send th
+    enabled: !!storeId, // don't send th
   });
 
   const allProducts0 = getAllProducts?.data?.data;
@@ -300,7 +305,7 @@ export const ProductsDataPage = () => {
   };
 
   return (
-    <StoreLayout storeName={storeName}>
+    <StoreLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>

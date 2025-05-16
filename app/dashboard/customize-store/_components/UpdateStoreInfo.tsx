@@ -331,8 +331,12 @@ export const UpdateStoreInfo = () => {
                           rows={3}
                           value={storeInfo.description}
                           onChange={handleInputChange}
+                          maxLength={45}
                           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
                         />
+                        <p className="text-sm text-gray-500">
+                          {storeInfo.description.length}/45 characters
+                        </p>
                       </div>
                       <p className="mt-2 text-sm text-gray-500">
                         Brief description for your store. This will appear in

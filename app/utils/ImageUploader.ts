@@ -23,10 +23,10 @@ export const deleteImageFromFirebase = async (imageUrl: string) => {
 
     const imageRef = ref(storage, path);
     await deleteObject(imageRef);
-    console.log("Image deleted from Firebase Storage.");
+    return true;
   } catch (error) {
     console.error("Error deleting from Firebase:", error);
-    throw error;
+    return false;
   }
 };
 

@@ -1,56 +1,54 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useToast } from "@/components/ui/use-toast"
-import { useCart } from "@/context/cart-context"
-import { useTheme } from "@/context/theme-context"
-import { Loader2 } from "lucide-react"
-import { POST } from "@/app/utils/Axios"
-import { toast } from "react-toastify"
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/components/ui/use-toast";
+import { useCart } from "@/context/cart-context";
+import { useTheme } from "@/context/theme-context";
+import { Loader2 } from "lucide-react";
+import { POST } from "@/app/utils/Axios";
+import { toast } from "react-toastify";
 
-export function ProductCard({ product, storeName }: any) {
-  // const { toast } = useToast()
-  const { addItem } = useCart()
-  const [isAdding, setIsAdding] = useState(false)
+export function ProductCard({ product, storeInfoFromBE }: any) {
+  const { storeName, id } = storeInfoFromBE;
+  const { addItem } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
   const { currentTheme, storePreviewTheme } = useTheme();
 
-
   // Use preview theme if available, otherwise use current theme
-  const theme = storePreviewTheme || currentTheme
-
+  const theme = storePreviewTheme || currentTheme;
 
   const handleAddToCart = async (product: any) => {
     if (product.stock <= 0) {
-      toast.error("Sorry, this product is currently out of stock.")
-      return
+      toast.error("Sorry, this product is currently out of stock.");
+      return;
     }
-  
-    setIsAdding(true)
-  
+
+    setIsAdding(true);
+
     try {
-      const lcData = localStorage.getItem('user')
-      const parsedLCData = lcData && JSON.parse(lcData)
-      const currentUser = parsedLCData
-  
-      const userId = currentUser?.id
-      if (!userId) throw new Error("User not authenticated")
-  
+      const lcData = localStorage.getItem("user");
+      const parsedLCData = lcData && JSON.parse(lcData);
+      const currentUser = parsedLCData;
+
+      const userId = currentUser?.id;
+      if (!userId) throw new Error("User not authenticated");
+
       const payload = {
         userId,
         productId: product.id,
         quantity: 1,
-      }
-  
-      const response = await POST('/cart/add', payload);
-      console.log('response',response);
-  
+      };
+
+      const response = await POST("/cart/add", payload);
+      console.log("response", response);
+
       if (!response || response.status !== 201) {
-        throw new Error('Failed to add item to cart')
+        throw new Error("Failed to add item to cart");
       }
 
       addItem({
@@ -63,25 +61,33 @@ export function ProductCard({ product, storeName }: any) {
         inventory: product.stock,
       });
 
-      toast.success('Item Added To The Cart !')
+      toast.success("Item Added To The Cart !");
     } catch (error: any) {
-      toast.error('An error occurred while adding the item to the cart. Try Again');
+      toast.error(
+        "An error occurred while adding the item to the cart. Try Again"
+      );
     } finally {
-      setIsAdding(false)
+      setIsAdding(false);
     }
-  }
-  
-  
+  };
 
   const discountedPrice =
-    product.discount > 0 ? (product.price * (1 - product.discount / 100)).toFixed(2) : product.price.toFixed(2)
+    product.discount > 0
+      ? (product.price * (1 - product.discount / 100)).toFixed(2)
+      : product.price.toFixed(2);
 
-  const isOutOfStock = product.stock <= 0
-  const lowStock = product.inventory !== undefined && product.inventory <= 5 && product.inventory > 0
+  const isOutOfStock = product.stock <= 0;
+  const lowStock =
+    product.inventory !== undefined &&
+    product.inventory <= 5 &&
+    product.inventory > 0;
 
   return (
     <Card className="overflow-hidden h-full flex flex-col">
-      <Link href={`/store/${storeName}/product/${product.id}`} className="relative block">
+      <Link
+        href={`/store/${id}/product/${product.id}`}
+        className="relative block"
+      >
         <div className="relative">
           <Image
             src={product?.images[0]?.imageUrl || "/placeholder.svg"}
@@ -110,22 +116,32 @@ export function ProductCard({ product, storeName }: any) {
         </div>
       </Link>
       <CardContent className="p-4 flex-grow">
-        <Link href={`/store/${storeName}/product/${product.id}`}>
-          <h3 className="font-medium text-lg hover:underline">{product.name}</h3>
+        <Link href={`/store/${id}/product/${product.id}`}>
+          <h3 className="font-medium text-lg hover:underline">
+            {product.name}
+          </h3>
         </Link>
         <div className="flex items-center mt-2">
           {product.discount > 0 ? (
             <>
               <span className="font-bold">${discountedPrice}</span>
-              <span className="text-gray-500 line-through ml-2 text-sm">${product.price.toFixed(2)}</span>
+              <span className="text-gray-500 line-through ml-2 text-sm">
+                ${product.price.toFixed(2)}
+              </span>
             </>
           ) : (
             <span className="font-bold">${product.price.toFixed(2)}</span>
           )}
         </div>
         {!isOutOfStock && (
-          <p className={`text-xs mt-1 ${lowStock ? "text-amber-600 font-medium" : "text-green-600"}`}>
-            {lowStock ? `Only ${product.inventory} left!` : `In stock: ${product.stock}`}
+          <p
+            className={`text-xs mt-1 ${
+              lowStock ? "text-amber-600 font-medium" : "text-green-600"
+            }`}
+          >
+            {lowStock
+              ? `Only ${product.inventory} left!`
+              : `In stock: ${product.stock}`}
           </p>
         )}
       </CardContent>
@@ -152,5 +168,5 @@ export function ProductCard({ product, storeName }: any) {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

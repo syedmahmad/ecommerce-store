@@ -1,6 +1,6 @@
 "use client";
 import { DashboardLayout } from "@/components/dashboard-layout";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomiseBanner } from "./_components/CustomiseBanner";
 import { WhyShopWithUs } from "./_components/WhyShopWithUs";
 import { CustomerSection } from "./_components/CustomerSection";
@@ -31,6 +31,20 @@ export const CustomizeStoreFront = () => {
     }
   };
 
+  const handleTabClick = (tabId: string) => {
+    setActiveTab(tabId);
+    localStorage.setItem("activeTab", JSON.stringify(tabId));
+  };
+
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      const previousTab = localStorage.getItem("activeTab");
+      if (previousTab) {
+        setActiveTab(JSON.parse(previousTab));
+      }
+    }
+  }, []);
+
   return (
     <DashboardLayout>
       <div className="w-full py-6 px-6">
@@ -39,7 +53,7 @@ export const CustomizeStoreFront = () => {
           {TABS.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabClick(tab.id)}
               className={`px-4 py-2 rounded-md text-sm font-medium ${
                 activeTab === tab.id
                   ? "bg-blue-600 text-white"

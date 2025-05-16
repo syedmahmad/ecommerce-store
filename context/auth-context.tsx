@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-// import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
@@ -28,7 +27,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
-  // const { toast } = useToast();
   const [user, setUser] = useState<{
     name?: string | null;
     email?: string | null;
@@ -88,7 +86,11 @@ export function AuthProvider({ children }: any) {
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<any> => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL;
     try {
       const response = await axios.post(`${API_URL}/auth/register`, {
@@ -97,14 +99,32 @@ export function AuthProvider({ children }: any) {
         password,
       });
 
+      if (
+        response?.status === 201 ||
+        response?.data?.nextStep === "verify-otp"
+      ) {
+        return {
+          success: true,
+          nextStep: "verify-otp",
+        };
+      }
+
       if (response.status !== 201) {
         throw new Error("Registration failed");
       }
 
       // Auto login after registration
-      const loginResult = await login(email, password);
-      return loginResult;
+      // const loginResult = await login(email, password);
+      // return loginResult;
     } catch (error: any) {
+      if (error?.status === 409) {
+        toast.warn(
+          "User with these credentials already exists. Try login with these credentials",
+          { autoClose: 5000 }
+        );
+        router.push("/login");
+        return false;
+      }
       return false;
     }
   };

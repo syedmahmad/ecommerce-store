@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react"; 
+import { Eye, EyeOff } from "lucide-react";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,12 +26,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/context/auth-context";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { POST } from "../utils/Axios";
 
 const registerSchema = z
   .object({
@@ -56,9 +65,14 @@ const registerSchema = z
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { register, loginWithGoogle } = useAuth();
+  const { register, loginWithGoogle, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // state variable for otp
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -73,13 +87,23 @@ export default function RegisterPage() {
     },
   });
 
+  const showVerifyOtpModal = () => {
+    setShowOtpModal(true);
+  };
+
   const onSubmit = async (data: any) => {
-    console.log("data", data);
     setIsLoading(true);
     setError("");
 
     try {
-      const success = await register(data.name, data.email, data.password);
+      const success: any = await register(data.name, data.email, data.password);
+
+      console.log("success", success);
+      if (success?.nextStep === "verify-otp") {
+        showVerifyOtpModal();
+        return;
+      }
+
       if (success) {
         router.push("/dashboard");
       }
@@ -135,6 +159,73 @@ export default function RegisterPage() {
       setIsLoading(false);
     }
   };
+
+  // #region for otp verfication
+  const handleOtpVerification = async () => {
+    setIsLoading(true);
+    setOtpError("");
+
+    try {
+      const email = form.getValues("email");
+      const password = form.getValues("password");
+
+      const response = await POST(
+        "auth/verify-email",
+        JSON.stringify({ email, otp })
+      );
+
+      // Save token if needed (e.g., in localStorage/cookie)
+      // localStorage.setItem("token", response.token);
+
+      toast.success("Email verified successfully");
+
+      const loginResult = await login(email, password);
+      if (loginResult) {
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
+      const message = error?.response?.data?.message || error?.message;
+
+      if (message.includes("Invalid OTP")) {
+        setOtpError("The code you entered is incorrect.");
+      } else if (message.includes("expired")) {
+        setOtpError("The OTP code has expired. Please request a new one.");
+      } else {
+        setOtpError("Verification failed. Please try again.");
+      }
+
+      toast.error("OPT Expired, Try Generating a new one");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      setIsLoading(true);
+
+      const email = form.getValues("email");
+
+      // Make sure email is present before calling the API
+      if (!email) {
+        toast.error("Email is missing. Please enter your email.");
+        return;
+      }
+
+      const res = await POST(`auth/resend-otp`, JSON.stringify({ email }));
+
+      if (res?.status === 201) {
+        toast.success("A new OTP has been sent to your email.");
+      }
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      toast.error("Failed to resend OTP. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // #endregion
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -300,6 +391,64 @@ export default function RegisterPage() {
           </p>
         </CardFooter>
       </Card>
+
+      <Dialog open={showOtpModal} onOpenChange={setShowOtpModal}>
+        <DialogContent
+          className="sm:max-w-[425px]"
+          onInteractOutside={(e) => e.preventDefault()} // 🔒 Prevent closing on outside click
+          onEscapeKeyDown={(e) => e.preventDefault()} // 🔒 Prevent closing on Esc key
+        >
+          <DialogHeader className="flex justify-between items-center">
+            <DialogTitle>Verify Your Email</DialogTitle>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <p className="text-sm text-gray-600">
+              We've sent a 6-digit code to {form.getValues("email")}.<br />
+              <span className="text-xs text-gray-500">
+                If you don't see it soon, please check your spam or junk folder.
+              </span>
+            </p>
+
+            <div className="space-y-2">
+              <Label htmlFor="otp">Verification Code</Label>
+              <Input
+                id="otp"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Enter 6-digit code"
+                maxLength={6}
+              />
+              {otpError && <p className="text-sm text-red-500">{otpError}</p>}
+            </div>
+
+            <div className="flex justify-between items-center">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleResendOtp}
+                disabled={isLoading}
+              >
+                Resend Code
+              </Button>
+              <Button
+                type="button"
+                onClick={handleOtpVerification}
+                disabled={isLoading || otp.length !== 6}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify"
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

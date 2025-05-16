@@ -14,11 +14,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeSelector } from "@/components/theme-selector";
 import { DashboardLayout } from "@/components/dashboard-layout";
-import { ExternalLink } from "lucide-react";
 
 export default function ThemePage0() {
   const [activeTab, setActiveTab] = useState("themes");
-  const storeName = "store"; // In a real app, this would come from the user's store settings
 
   return (
     <DashboardLayout>

@@ -1,21 +1,26 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, Home, ShoppingBag } from "lucide-react"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle, Home, ShoppingBag } from "lucide-react";
 
-export default function OrderConfirmationPage({ params }) {
-  const storeName = params?.store || "demo-store"
-  const orderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`
+export default function OrderConfirmationPage({ params }: any) {
+  const storeName = params?.store || "demo-store";
+  const orderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-10 bg-white border-b">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href={`/store/${storeName}`} className="flex items-center space-x-2">
+          <Link
+            href={`/store/${storeName}`}
+            className="flex items-center space-x-2"
+          >
             <ShoppingBag className="h-6 w-6" />
-            <span className="font-bold text-xl capitalize">{storeName.replace(/-/g, " ")}</span>
+            <span className="font-bold text-xl capitalize">
+              {storeName?.replace(/-/g, " ")}
+            </span>
           </Link>
         </div>
       </header>
@@ -28,7 +33,8 @@ export default function OrderConfirmationPage({ params }) {
               </div>
               <h1 className="text-2xl font-bold mb-2">Order Confirmed!</h1>
               <p className="text-gray-600 mb-6">
-                Thank you for your purchase. Your order has been received and is being processed.
+                Thank you for your purchase. Your order has been received and is
+                being processed.
               </p>
 
               <div className="bg-gray-50 w-full p-6 rounded-lg mb-6">
@@ -40,7 +46,9 @@ export default function OrderConfirmationPage({ params }) {
                   </div>
                   <div>
                     <p className="text-gray-500">Date</p>
-                    <p className="font-medium">{new Date().toLocaleDateString()}</p>
+                    <p className="font-medium">
+                      {new Date().toLocaleDateString()}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Email</p>
@@ -48,14 +56,17 @@ export default function OrderConfirmationPage({ params }) {
                   </div>
                   <div>
                     <p className="text-gray-500">Payment Method</p>
-                    <p className="font-medium">Credit Card / Cash on Delivery</p>
+                    <p className="font-medium">
+                      Credit Card / Cash on Delivery
+                    </p>
                   </div>
                 </div>
               </div>
 
               <p className="text-sm text-gray-600 mb-8">
-                We've sent a confirmation email with all the details of your order. If you have any questions, please
-                contact our customer support.
+                We've sent a confirmation email with all the details of your
+                order. If you have any questions, please contact our customer
+                support.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -77,12 +88,13 @@ export default function OrderConfirmationPage({ params }) {
         <div className="container mx-auto px-4">
           <div className="border-t border-gray-200 pt-8 text-center text-gray-500 text-sm">
             <p>
-              © {new Date().getFullYear()} {storeName.replace(/-/g, " ")}. All rights reserved.
+              © {new Date().getFullYear()} {storeName?.replace(/-/g, " ")}. All
+              rights reserved.
             </p>
             <p className="mt-1">Powered by StoreBuilder</p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
