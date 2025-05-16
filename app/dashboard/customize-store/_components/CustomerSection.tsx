@@ -44,11 +44,8 @@ export const CustomerSection = () => {
 
   const ourCustomerData = data?.data;
 
-  console.log("ourCustomerData", ourCustomerData);
-
   useEffect(() => {
     if (ourCustomerData && ourCustomerData?.length) {
-      console.log("ourCustomerData", ourCustomerData);
       setCustomerData(ourCustomerData);
     }
   }, [ourCustomerData]);
@@ -62,6 +59,7 @@ export const CustomerSection = () => {
     heading: "What Our Customers Say",
     subHeading:
       "Don't just take our word for it. Here's what our customers have to say about their shopping experience.",
+    uuid: ourCustomerData?.testimonials_uuid || "",
   });
 
   const handleChange = (
@@ -74,6 +72,16 @@ export const CustomerSection = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Validate required fields
+  const validateForm = () => {
+    return (
+      formData.name.trim() !== "" &&
+      formData.testimonial.trim() !== "" &&
+      formData.heading.trim() !== "" &&
+      formData.subHeading.trim() !== ""
+    );
   };
 
   const MAX_SIZE_MB = 5;
@@ -132,15 +140,10 @@ export const CustomerSection = () => {
     }
   };
 
-  // TODO: Will complete it morning.....
   const handleRemoveImage = async (formData: any) => {
     try {
-      await deleteImageFromFirebase(formData);
-      const response = await DELETE(
-        `customise-store-banner/image?uuid=${formData?.uuid}`
-      );
-      if (response?.status === 200) {
-        // setBannerData((prev) => ({ ...prev, imageUrl: null }));
+      const result = await deleteImageFromFirebase(formData.imageUrl);
+      if (result) {
         toast.success("Image successfully deleted.");
         setFormData((prev) => ({
           ...prev,
@@ -186,8 +189,10 @@ export const CustomerSection = () => {
         status: "Verified",
         imageUrl: null,
         rating: 5,
-        heading: "",
-        subHeading: "",
+        heading: "What Our Customers Say",
+        subHeading:
+          "Don't just take our word for it. Here's what our customers have to say about their shopping experience.",
+        uuid: "",
       });
       setEditId(null);
       reFetch();
@@ -205,17 +210,21 @@ export const CustomerSection = () => {
       rating: customer.rating,
       heading: customer.heading,
       subHeading: customer.subHeading,
+      uuid: customer?.testimonials_uuid,
     });
     setEditId(customer.id);
   };
 
   const handleDelete = async (id: string) => {
     try {
-      await DELETE(`/our-customer-section/${id}`);
-      toast.success("Customer deleted successfully");
-      queryClient.invalidateQueries({
-        queryKey: ["our-customer-section", userId],
-      });
+      const response = await DELETE(`/our-customer-section/${id}`);
+      if (response?.status === 200) {
+        toast.success("Customer deleted successfully");
+        setCustomerData(response?.data?.remaining);
+        reFetch();
+      } else {
+        toast.error("Failed to delete customer. Try again.");
+      }
     } catch (err) {
       console.error("Delete failed", err);
     }
@@ -237,7 +246,7 @@ export const CustomerSection = () => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Section Heading
+                Section Heading <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -246,12 +255,18 @@ export const CustomerSection = () => {
                 onChange={handleChange}
                 placeholder="What our customers say.."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
               />
+              {formData.heading.trim() === "" && (
+                <p className="mt-1 text-sm text-red-600">
+                  This field is required
+                </p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Section Subheading
+                Section Subheading <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -260,12 +275,18 @@ export const CustomerSection = () => {
                 onChange={handleChange}
                 placeholder="Something about the section here.."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
               />
+              {formData.subHeading.trim() === "" && (
+                <p className="mt-1 text-sm text-red-600">
+                  This field is required
+                </p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Testimonial
+                Customer Testimonial <span className="text-red-500">*</span>
               </label>
               <textarea
                 rows={4}
@@ -274,12 +295,18 @@ export const CustomerSection = () => {
                 onChange={handleChange}
                 placeholder="Enter customer feedback..."
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
               />
+              {formData.testimonial.trim() === "" && (
+                <p className="mt-1 text-sm text-red-600">
+                  This field is required
+                </p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Name
+                Customer Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -288,7 +315,13 @@ export const CustomerSection = () => {
                 onChange={handleChange}
                 placeholder="e.g. Sarah Johnson"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
               />
+              {formData.name.trim() === "" && (
+                <p className="mt-1 text-sm text-red-600">
+                  This field is required
+                </p>
+              )}
             </div>
 
             <div>
@@ -311,16 +344,18 @@ export const CustomerSection = () => {
                 Customer Image
               </label>
               <div className="flex items-center gap-4">
-                <label className="flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-gray-400 transition-colors">
-                  <span className="text-sm text-gray-600">Upload Image</span>
-                  <input
-                    type="file"
-                    name="image"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    accept="image/*"
-                  />
-                </label>
+                {formData.imageUrl === null && (
+                  <label className="flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-gray-400 transition-colors">
+                    <span className="text-sm text-gray-600">Upload Image</span>
+                    <input
+                      type="file"
+                      name="image"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                  </label>
+                )}
                 {formData.imageUrl && (
                   <div className="relative">
                     <img
@@ -360,8 +395,12 @@ export const CustomerSection = () => {
 
             <button
               onClick={handleAddOrUpdateCustomer}
-              disabled={isUploading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition flex items-center justify-center gap-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
+              disabled={isUploading || !validateForm()}
+              className={`w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition flex items-center justify-center gap-2 ${
+                isUploading || !validateForm()
+                  ? "bg-blue-400 cursor-not-allowed"
+                  : "hover:bg-blue-700"
+              }`}
             >
               {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
               {editId ? "Update" : "Add"} Customer
@@ -489,7 +528,7 @@ export const CustomerLivePreview = ({ customerData, formData }: any) => {
                 <Star
                   key={i}
                   className="h-4 w-4 mr-1"
-                  fill={i < (formData.rating || 5) ? "#3B82F6" : "none"}
+                  fill={i < (formData.rating || 1) ? "#3B82F6" : "none"}
                   stroke="#3B82F6"
                 />
               ))}
@@ -500,7 +539,7 @@ export const CustomerLivePreview = ({ customerData, formData }: any) => {
             <div className="flex items-center">
               <div className="h-10 w-10 rounded-full overflow-hidden mr-3 border-2 border-white shadow-sm">
                 <img
-                  src={formData.imageUrl ?? "https://via.placeholder.com/120"}
+                  src={formData.imageUrl ?? "/avatar.png"}
                   alt={formData.name || "Customer"}
                   className="h-full w-full object-cover"
                 />

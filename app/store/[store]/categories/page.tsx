@@ -1,11 +1,11 @@
-import Image from "next/image"
-import Link from "next/link"
-import { StoreLayout } from "@/components/store-layout"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import StoreLayout from "@/components/store-layout";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function CategoriesPage({ params }: any) {
-  const storeName = params.store || "demo-store"
+  const storeName = params.store || "demo-store";
 
   // Sample categories with products
   const categories = [
@@ -119,10 +119,10 @@ export default function CategoriesPage({ params }: any) {
         },
       ],
     },
-  ]
+  ];
 
   return (
-    <StoreLayout storeName={storeName}>
+    <StoreLayout>
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">Shop by Category</h1>
 
@@ -144,11 +144,23 @@ export default function CategoriesPage({ params }: any) {
                   </div>
                   <div className="absolute inset-0 z-20 flex items-center">
                     <div className="w-full max-w-xl mx-4 md:mx-12">
-                      <h2 className="text-3xl font-bold text-white mb-2">{category.name}</h2>
-                      <p className="text-white/90 mb-4">{category.description}</p>
-                      <p className="text-white/80 mb-6">{category.productCount} products</p>
-                      <Link href={`/store/${storeName}/categories/${category.id}`}>
-                        <Button style={{ backgroundColor: "var(--primary-color)" }}>Shop {category.name}</Button>
+                      <h2 className="text-3xl font-bold text-white mb-2">
+                        {category.name}
+                      </h2>
+                      <p className="text-white/90 mb-4">
+                        {category.description}
+                      </p>
+                      <p className="text-white/80 mb-6">
+                        {category.productCount} products
+                      </p>
+                      <Link
+                        href={`/store/${storeName}/categories/${category.id}`}
+                      >
+                        <Button
+                          style={{ backgroundColor: "var(--primary-color)" }}
+                        >
+                          Shop {category.name}
+                        </Button>
                       </Link>
                     </div>
                   </div>
@@ -156,7 +168,10 @@ export default function CategoriesPage({ params }: any) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {category.products.map((product) => (
-                    <Link key={product.id} href={`/store/${storeName}/product/${product.id}`}>
+                    <Link
+                      key={product.id}
+                      href={`/store/${storeName}/product/${product.id}`}
+                    >
                       <div className="group rounded-lg overflow-hidden border hover:shadow-md transition-shadow">
                         <div className="aspect-square relative">
                           <Image
@@ -167,7 +182,9 @@ export default function CategoriesPage({ params }: any) {
                           />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-medium group-hover:text-primary transition-colors">{product.name}</h3>
+                          <h3 className="font-medium group-hover:text-primary transition-colors">
+                            {product.name}
+                          </h3>
                           <p className="mt-1">${product.price.toFixed(2)}</p>
                         </div>
                       </div>
@@ -175,11 +192,16 @@ export default function CategoriesPage({ params }: any) {
                   ))}
                   <Link href={`/store/${storeName}/categories/${category.id}`}>
                     <div className="rounded-lg border border-dashed h-full flex flex-col items-center justify-center p-6 hover:border-primary transition-colors">
-                      <h3 className="font-medium text-center mb-2">View All {category.name}</h3>
+                      <h3 className="font-medium text-center mb-2">
+                        View All {category.name}
+                      </h3>
                       <p className="text-sm text-muted-foreground text-center mb-4">
                         Browse all {category.productCount} products
                       </p>
-                      <ArrowRight className="h-6 w-6" style={{ color: "var(--primary-color)" }} />
+                      <ArrowRight
+                        className="h-6 w-6"
+                        style={{ color: "var(--primary-color)" }}
+                      />
                     </div>
                   </Link>
                 </div>
@@ -193,7 +215,10 @@ export default function CategoriesPage({ params }: any) {
           {categories
             .filter((cat) => !cat.featured)
             .map((category) => (
-              <Link key={category.id} href={`/store/${storeName}/categories/${category.id}`}>
+              <Link
+                key={category.id}
+                href={`/store/${storeName}/categories/${category.id}`}
+              >
                 <div className="group relative rounded-lg overflow-hidden">
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors z-10" />
                   <div className="relative h-[200px] w-full">
@@ -205,9 +230,15 @@ export default function CategoriesPage({ params }: any) {
                     />
                   </div>
                   <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-white p-4">
-                    <h3 className="text-xl font-bold text-center mb-1">{category.name}</h3>
-                    <p className="text-sm opacity-90 text-center mb-2">{category.description}</p>
-                    <p className="text-sm opacity-80">{category.productCount} Products</p>
+                    <h3 className="text-xl font-bold text-center mb-1">
+                      {category.name}
+                    </h3>
+                    <p className="text-sm opacity-90 text-center mb-2">
+                      {category.description}
+                    </p>
+                    <p className="text-sm opacity-80">
+                      {category.productCount} Products
+                    </p>
                   </div>
                 </div>
               </Link>
@@ -215,5 +246,5 @@ export default function CategoriesPage({ params }: any) {
         </div>
       </div>
     </StoreLayout>
-  )
+  );
 }

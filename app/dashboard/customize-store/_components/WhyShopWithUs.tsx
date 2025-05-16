@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 interface Feature {
   title: string;
@@ -105,7 +106,7 @@ export const WhyShopWithUs = () => {
 
     try {
       const response = await POST(`/why-shop-with-us`, payload);
-      if (response?.status === 200) {
+      if (response?.status === 201) {
         toast.success("Section saved successfully!");
         reFetch();
       }
@@ -256,21 +257,10 @@ export const WhyShopWithUsSection = ({
                   color: "white",
                 }}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={compact ? "20" : "24"}
-                  height={compact ? "20" : "24"}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={compact ? "h-5 w-5" : "h-6 w-6"}
-                >
-                  <path d="M5 12h14"></path>
-                  <path d="M12 5v14"></path>
-                </svg>
+                <CheckCircle
+                  className={compact ? "w-5 h-5" : "w-6 h-6"}
+                  strokeWidth={2}
+                />
               </div>
               <h3
                 className={`${compact ? "text-lg" : "text-xl"} font-bold ${

@@ -3,41 +3,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
-import { StoreLayout } from "@/components/store-layout";
-// import { Badge } from "@/components/ui/badge";
+import StoreLayout from "@/components/store-layout";
 import { useTheme } from "@/context/theme-context";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
 import { OurCustomerStoreFront } from "./_components/OurCustomerStoreFront";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
-export default function StorePage({ params }: any) {
-  // Get the store name from params or use a default
+export default function StorePage({ storeId }: any) {
   const router = useRouter();
-
-  const [userId, setUserId] = useState<string | null>(null);
-
-  let storeName = "Store";
-  useEffect(() => {
-    if (typeof localStorage !== "undefined") {
-      const lcData = localStorage.getItem("user");
-      const user = lcData && JSON.parse(lcData);
-      if (user?.id) {
-        setUserId(user.id);
-        storeName = user.name;
-      }
-    }
-  }, [userId]);
 
   const getAllProductsData = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${userId}`;
+      const endpoint = `product?id=${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!storeId,
   });
 
   const featuredProducts = getAllProductsData?.data?.data;
@@ -47,80 +32,21 @@ export default function StorePage({ params }: any) {
   const getSaleProductInfo = useQuery({
     queryKey: ["sale-product"],
     queryFn: async () => {
-      const endpoint = `sale-product?id=${userId}`;
+      const endpoint = `sale-product?id=${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!storeId,
   });
 
   const saleData = getSaleProductInfo?.data?.data;
 
-  // Sample categories
-  // const categories = [
-  //   {
-  //     id: 1,
-  //     name: "Electronics",
-  //     image: "/placeholder.svg?height=200&width=200",
-  //     count: 24,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Clothing",
-  //     image: "/placeholder.svg?height=200&width=200",
-  //     count: 18,
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Home & Kitchen",
-  //     image: "/placeholder.svg?height=200&width=200",
-  //     count: 32,
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "Beauty",
-  //     image: "/placeholder.svg?height=200&width=200",
-  //     count: 15,
-  //   },
-  // ];
-
-  // Sample testimonials
-  const testimonials = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      role: "Verified Customer",
-      content:
-        "I absolutely love the products from this store! The quality is exceptional and the customer service is outstanding.",
-      rating: 5,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      role: "Verified Customer",
-      content:
-        "Fast shipping and the products are exactly as described. Will definitely be shopping here again!",
-      rating: 5,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      id: 3,
-      name: "Emily Rodriguez",
-      role: "Verified Customer",
-      content:
-        "Great selection of products at reasonable prices. The checkout process was smooth and hassle-free.",
-      rating: 4,
-      image: "/placeholder.svg?height=60&width=60",
-    },
-  ];
-
   const getBannerInfoData = useQuery({
     queryKey: ["banner-info"],
     queryFn: async () => {
-      const endpoint = `customise-store-banner?id=${userId}`;
+      const endpoint = `customise-store-banner?id=${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!storeId,
   });
 
   const bannerData = getBannerInfoData?.data?.data;
@@ -130,25 +56,26 @@ export default function StorePage({ params }: any) {
   const getStoreInfo = useQuery({
     queryKey: ["store-info"],
     queryFn: async () => {
-      const endpoint = `store/${userId}`;
+      const endpoint = `store/${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!storeId,
   });
 
   const storeInfoFromBE = getStoreInfo?.data?.data;
 
+  const storeName = storeInfoFromBE?.name;
+
   const getStoreThemeInfo = useQuery({
     queryKey: ["store-theme-data"],
     queryFn: async () => {
-      const endpoint = `store-theme/${userId}`;
+      const endpoint = `store-theme/${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!storeId,
   });
 
   const themeData = getStoreThemeInfo?.data?.data;
-
   useEffect(() => {
     if (themeData) {
       const formattedTheme = {
@@ -175,19 +102,59 @@ export default function StorePage({ params }: any) {
 
   const handleButtonClick = () => {
     if (featuredProducts && featuredProducts.length > 0) {
-      router.push(`/store/${storeName}/products`);
+      router.push(`/store/${storeInfoFromBE?.id}/products`);
     }
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { scale: 1.1 },
+    visible: {
+      scale: 1,
+      transition: {
+        duration: 5,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
-    <StoreLayout
-      storeName={storeInfoFromBE?.name}
-      storeInfoFromBE={storeInfoFromBE}
-    >
+    <StoreLayout>
       {/* Hero Section */}
-      <section className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
-        <div className="relative h-[500px] w-full">
+      <section className="relative overflow-hidden">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30 z-10" />
+
+        {/* Animated background image */}
+        <motion.div
+          className="relative h-[500px] w-full"
+          initial="hidden"
+          animate="visible"
+          variants={imageVariants}
+        >
           <Image
             src={
               bannerData?.imageUrl || "/placeholder.svg?height=500&width=1200"
@@ -196,38 +163,69 @@ export default function StorePage({ params }: any) {
             fill
             className="object-cover"
             priority
+            quality={100}
           />
-        </div>
-        <div className="absolute inset-0 z-20 flex items-center">
+        </motion.div>
+
+        {/* Content with staggered animations */}
+        <motion.div
+          className="absolute inset-0 z-20 flex items-center"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
           <div className="container mx-auto px-4">
-            <div className="max-w-xl">
-              {/* <Badge
-                className="mb-4"
-                style={{ backgroundColor: currentTheme.accent }}
+            <motion.div className="max-w-xl" variants={containerVariants}>
+              <motion.h1
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight"
+                variants={itemVariants}
               >
-                New Collection
-              </Badge> */}
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 {bannerData?.title || "Welcome to Our Store"}
-              </h1>
-              <p className="text-lg text-white/90 mb-6">
+              </motion.h1>
+
+              <motion.p
+                className="text-lg md:text-xl text-white/90 mb-6 md:mb-8 max-w-lg"
+                variants={itemVariants}
+              >
                 {bannerData?.description ||
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {/* <Link href={`/store/${storeName}/products`}> */}
+                  "Discover premium products that elevate your everyday life. Quality and style combined for your satisfaction."}
+              </motion.p>
+
+              <motion.div
+                className="flex flex-wrap gap-4"
+                variants={itemVariants}
+              >
                 <Button
                   size="lg"
                   onClick={handleButtonClick}
                   disabled={featuredProducts && featuredProducts?.length === 0}
                   style={{ backgroundColor: currentTheme.primary }}
+                  className="hover:scale-105 transition-transform duration-300 shadow-lg hover:shadow-xl"
+                  // whileHover={{ scale: 1.05 }}
+                  // whileTap={{ scale: 0.98 }}
                 >
-                  {bannerData?.buttonText || "Show Now"}
+                  {bannerData?.buttonText || "Shop Now"}
                 </Button>
-              </div>
-            </div>
+
+                {/* Optional secondary button */}
+                {/* {featuredProducts?.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="text-white border-white hover:bg-white/10 hover:text-white"
+                    // whileHover={{ scale: 1.05 }}
+                    // whileTap={{ scale: 0.98 }}
+                  >
+                    View Collections
+                  </Button>
+                )} */}
+              </motion.div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Decorative elements */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent z-20" />
       </section>
 
       {/* Featured Categories */}
@@ -312,7 +310,7 @@ export default function StorePage({ params }: any) {
                       <ProductCard
                         key={product.id}
                         product={product}
-                        storeName={storeName}
+                        storeInfoFromBE={storeInfoFromBE}
                       />
                     );
                   } else {
@@ -356,7 +354,7 @@ export default function StorePage({ params }: any) {
                   <p className="text-lg text-white/90 mb-6">
                     {saleData?.campaigns[0]?.description || ""}
                   </p>
-                  <Link href={`/store/${storeName}/products/sale`}>
+                  <Link href={`/store/${storeInfoFromBE?.id}/products/sale`}>
                     <Button
                       size="lg"
                       className="backdrop-blur-sm bg-[var(--accent-color)/70] hover:bg-[var(--accent-color)] text-white font-semibold px-6 py-3 rounded-xl shadow-lg border border-white/20 transition duration-200 ease-in-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-white/30"

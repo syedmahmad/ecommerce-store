@@ -29,13 +29,28 @@ export default function SingleProduct() {
   const [isAdding, setIsAdding] = useState(false);
   const { currentTheme, storePreviewTheme } = useTheme();
   const storeInfo = useParams();
+  const params = useParams();
+  const storeId = params.store;
 
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme;
 
   // In a real app, you would fetch product data based on the ID
-  const storeName: any = storeInfo.store || "demo-store";
+
   const productId: any = storeInfo?.id || 1;
+
+  const getStoreInfo = useQuery({
+    queryKey: ["store-info"],
+    queryFn: async () => {
+      const endpoint = `store/${storeId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!storeId,
+  });
+
+  const storeInfoFromBE = getStoreInfo?.data?.data;
+
+  const storeName: any = storeInfoFromBE?.name || "demo-store";
 
   const getSingleProductData = useQuery({
     queryKey: ["get-single-product"],
@@ -114,19 +129,19 @@ export default function SingleProduct() {
           >
             <ShoppingBag className="h-6 w-6" />
             <span className="font-bold text-xl capitalize">
-              {storeName.replace(/-/g, " ")}
+              {storeName?.replace(/-/g, " ")}
             </span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6">
             <Link
-              href={`/store/${storeName}`}
+              href={`/store/${storeInfoFromBE?.id}`}
               className="text-sm font-medium hover:text-gray-600"
             >
               Home
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
-            <CartButton storeName={storeName} />
+            <CartButton storeInfoFromBE={storeInfoFromBE} />
           </div>
         </div>
       </header>
@@ -137,7 +152,7 @@ export default function SingleProduct() {
               <div className="relative aspect-square overflow-hidden rounded-lg mb-4">
                 <Image
                   src={productsData?.images[0]?.imageUrl || "/placeholder.svg"}
-                  alt={productsData?.name}
+                  alt={productsData?.name || "product image"}
                   fill
                   className="object-cover"
                 />
@@ -203,15 +218,15 @@ export default function SingleProduct() {
                 {productsData && productsData?.discount > 0 ? (
                   <>
                     <span className="text-3xl font-bold">
-                      ${discountedPrice}
+                      ₨{discountedPrice}
                     </span>
                     <span className="text-gray-500 line-through ml-3 text-xl">
-                      ${productsData.price.toFixed(2)}
+                      ₨{productsData.price.toFixed(2)}
                     </span>
                   </>
                 ) : (
                   <span className="text-3xl font-bold">
-                    ${productsData?.price.toFixed(2)}
+                    ₨{productsData?.price.toFixed(2)}
                   </span>
                 )}
               </div>
@@ -234,7 +249,7 @@ export default function SingleProduct() {
 
               <div className="flex items-center text-sm text-gray-600 mb-6">
                 <Truck className="h-5 w-5 mr-2" />
-                <span>Free shipping on orders over $50</span>
+                <span>Free shipping on orders over ₨500</span>
               </div>
               {/* <div className="mb-6">
                 <h3 className="font-medium mb-2">Features:</h3>
@@ -353,7 +368,7 @@ export default function SingleProduct() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h3 className="font-bold text-lg mb-4 capitalize">
-                {storeName.replace(/-/g, " ")}
+                {storeName?.replace(/-/g, " ")}
               </h3>
               <p className="text-gray-600">
                 Quality products for every need. Shop with confidence on our
@@ -409,7 +424,7 @@ export default function SingleProduct() {
           </div>
           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-500 text-sm">
             <p>
-              © {new Date().getFullYear()} {storeName.replace(/-/g, " ")}. All
+              © {new Date().getFullYear()} {storeName?.replace(/-/g, " ")}. All
               rights reserved.
             </p>
             <p className="mt-1">Powered by StoreBuilder</p>

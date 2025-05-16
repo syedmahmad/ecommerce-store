@@ -13,7 +13,7 @@ export const MerchantsData = () => {
       const lcData = localStorage.getItem("user");
       const user = lcData && JSON.parse(lcData);
       if (user?.id) {
-        setUserId(user.users_uuid);
+        setUserId(user.id);
       }
     }
   }, [userId]);
@@ -27,7 +27,10 @@ export const MerchantsData = () => {
     enabled: !!userId,
   });
 
+  console.log("userId", userId);
+
   const merchantData = merchantsInfo?.data?.data;
+  console.log("merchantData", merchantData);
 
   // Extract relevant data from merchantData
   const totalSalesCount = merchantData?.data?.totalSalesCount ?? 0;

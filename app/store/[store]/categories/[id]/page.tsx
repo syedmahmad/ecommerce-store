@@ -12,28 +12,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProductCard } from "@/components/product-card";
-import { StoreLayout } from "@/components/store-layout";
+import StoreLayout from "@/components/store-layout";
 import { ArrowLeft } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
+import { useParams } from "next/navigation";
 
 export default function CategoryPage({ params }: any) {
+  const getParams = useParams();
+  const storeId = getParams.store;
+
   const storeName = params.store || "demo-store";
   const categoryId = Number(params.id) || 1;
   const [sortOption, setSortOption] = useState("featured");
   const [products, setProducts] = useState([]);
-
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof localStorage !== "undefined") {
-      const lcData = localStorage.getItem("user");
-      const user = lcData ? JSON.parse(lcData) : null;
-      if (user?.id) {
-        setUserId(user.id);
-      }
-    }
-  }, []);
 
   const queryClient = useQueryClient();
   // const reFetch = () => {
@@ -44,14 +36,13 @@ export default function CategoryPage({ params }: any) {
   const getSenderQuery = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${userId}`;
+      const endpoint = `product?id=${storeId}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!storeId,
   });
 
   const productsData = getSenderQuery?.data?.data;
-  console.log("productsData", productsData);
 
   useEffect(() => {
     if (productsData.length) {
@@ -271,7 +262,7 @@ export default function CategoryPage({ params }: any) {
   }, [categoryId, sortOption]);
 
   return (
-    <StoreLayout storeName={storeName}>
+    <StoreLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <Link href={`/store/${storeName}/categories`}>
@@ -328,14 +319,15 @@ export default function CategoryPage({ params }: any) {
         {products.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product: any) => {
-              console.log('....Product in category page', product);
+              console.log("....Product in category page", product);
               return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                storeName={storeName}
-              />
-            )})}
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  storeName={storeName}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="text-center py-12">

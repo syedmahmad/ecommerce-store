@@ -6,7 +6,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { Loader2 } from "lucide-react";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { GET } from "../utils/Axios";
 
 export default function DashboardPage() {
@@ -27,7 +27,7 @@ export default function DashboardPage() {
   const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${userId}`;
+      const endpoint = `product/admin?id=${userId}`;
       return await GET(endpoint);
     },
     enabled: !!userId,

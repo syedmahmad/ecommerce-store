@@ -320,8 +320,8 @@ export const CustomiseBanner = () => {
               : "hover:bg-blue-700"
           }`}
         >
-          {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
           {isUploading ? "Uploading......." : "Save Changes"}
+          {isUploading && <Loader2 className="w-8 h-8 animate-spin" />}
         </button>
       </div>
       <div className="lg:col-span-7">

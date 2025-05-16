@@ -20,8 +20,36 @@ import {
   X,
   ExternalLink,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { GET } from "@/app/utils/Axios";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      const lcData = localStorage.getItem("user");
+      const user = lcData && JSON.parse(lcData);
+      if (user?.id) {
+        setUserId(user.id);
+      }
+    }
+  }, [userId]);
+
+  // Getting store info to get the store id and pass it to the DashboardLayout so we can get the information
+  // about the store and show it in store
+  const getStoreInfo = useQuery({
+    queryKey: ["store-info"],
+    queryFn: async () => {
+      const endpoint = `store/${userId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const storeInfoFromBE = getStoreInfo?.data?.data;
+  const storeId = storeInfoFromBE && storeInfoFromBE?.id;
+
   const pathname = usePathname();
   const { currentTheme, previewTheme } = useAdminTheme();
   const { setStorePreviewTheme } = useTheme();
@@ -29,7 +57,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState("");
 
   // Define a constant store name to use throughout the application
-  const storeName = "store";
+  const storeName = storeInfoFromBE && storeInfoFromBE?.name;
 
   // Use preview theme if available, otherwise use current theme
   const theme = previewTheme || currentTheme;
@@ -80,7 +108,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       const user = lcData && JSON.parse(lcData);
       if (user?.email) {
         setUserEmail(user.email);
-        // storeName = user.name;
       }
     }
   }, [userEmail]);
@@ -160,7 +187,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             className="h-6 w-6"
             style={{ color: theme.primaryColor }}
           />
-          <span>StoreBuilder</span>
+          <span>ZyloBuilder's</span>
         </Link>
 
         <nav className="hidden flex-1 md:flex">
@@ -197,7 +224,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </Button>
 
           {/* Fix the View Store link */}
-          <Link href={`/store/${storeName}`}>
+          <Link href={`/store/${storeId}`} target="_blank">
             <Button
               variant="outline"
               size="sm"

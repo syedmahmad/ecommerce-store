@@ -1,11 +1,11 @@
-import { StoreLayout } from "@/components/store-layout";
+import StoreLayout from "@/components/store-layout";
 import React from "react";
 
 export const ContactPageData = () => {
   const storeName = "Demo Store";
 
   return (
-    <StoreLayout storeName={storeName}>
+    <StoreLayout>
       <section className="flex flex-col items-center justify-center min-h-[80vh] bg-gray-50 px-4 py-12">
         <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 md:p-12">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-center">
