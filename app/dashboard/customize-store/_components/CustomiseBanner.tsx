@@ -11,7 +11,6 @@ import {
   uploadImageToFirebase,
 } from "@/app/utils/ImageUploader";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { Loader2 } from "lucide-react";
 
 /**
  * CustomiseBanner component allows users to update store banner title, description,
@@ -97,33 +96,37 @@ export const CustomiseBanner = () => {
     // Validate dimensions
     const image = new Image();
     const objectUrl = URL.createObjectURL(file);
+    console.time("imageLoad");
 
     image.onload = async () => {
       const { width, height } = image;
       console.log(`Uploaded image dimensions: ${width}x${height}`);
 
-      // if (width >= REQUIRED_WIDTH || height >= REQUIRED_HEIGHT) {
-      //   toast.error(`Image must be ${REQUIRED_WIDTH}x${REQUIRED_HEIGHT}px`);
-      //   URL.revokeObjectURL(objectUrl);
-      //   return;
-      // }
-
       URL.revokeObjectURL(objectUrl);
 
       try {
         setIsUploading(true);
-        // Compress image
+        // Compress image;
+        console.log("image compression start...", file);
         const compressedFile = await imageCompression(file, {
           maxSizeMB: 1, // try to reduce to 1MB
-          maxWidthOrHeight: REQUIRED_WIDTH,
+          maxWidthOrHeight: 1024,
           useWebWorker: true,
         });
+        console.log("image compression end ...", compressedFile);
 
+        console.log(
+          "####################compressedFile##############",
+          compressedFile
+        );
         // Upload to Firebase
+
         const path = `banners/banner-${Date.now()}.${compressedFile.name
           .split(".")
           .pop()}`;
+        console.log("path...................////.....", path);
         const downloadURL = await uploadImageToFirebase(compressedFile, path);
+        console.timeEnd("firebaseUpload");
 
         setBannerData((prev: any) => ({
           ...prev,
@@ -321,7 +324,6 @@ export const CustomiseBanner = () => {
           }`}
         >
           {isUploading ? "Uploading......." : "Save Changes"}
-          {isUploading && <Loader2 className="w-8 h-8 animate-spin" />}
         </button>
       </div>
       <div className="lg:col-span-7">

@@ -403,7 +403,7 @@ export default function RegisterPage() {
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-center text-base text-gray-600">
               We've sent a 6-digit code to {form.getValues("email")}.<br />
               <span className="text-xs text-gray-500">
                 If you don't see it soon, please check your spam or junk folder.

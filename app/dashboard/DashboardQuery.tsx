@@ -94,7 +94,7 @@ export default function DashboardPage() {
             <div className="text-sm font-medium text-muted-foreground">
               Total Revenue
             </div>
-            <div className="text-2xl font-bold">$0.00</div>
+            <div className="text-2xl font-bold">RS0.00</div>
           </div>
           <div className="rounded-lg border bg-card p-6">
             <div className="text-sm font-medium text-muted-foreground">

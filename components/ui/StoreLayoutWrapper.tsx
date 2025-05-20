@@ -31,6 +31,8 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
 
   const storeIdFromBE = storeInfoFromBE && storeInfoFromBE?.id;
 
+  const ownerInfo = storeInfoFromBE?.owner;
+
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme;
 
@@ -74,6 +76,8 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
+  console.log("storeInfoFromBE?.logoUrl", storeInfoFromBE);
+
   return (
     <div
       className="min-h-screen flex flex-col"
@@ -97,7 +101,8 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               href={`/store/${storeIdFromBE}`}
               className="flex items-center space-x-2 hover:scale-[1.02] transition-transform duration-200"
             >
-              {storeInfoFromBE?.logoUrl === null ? (
+              {storeInfoFromBE?.logoUrl === null ||
+              storeInfoFromBE?.logoUrl === undefined ? (
                 <ShoppingBag
                   className="h-6 w-6 transition-colors duration-300 hover:scale-110"
                   style={{ color: theme.primary }}
@@ -116,16 +121,16 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               <div className="flex flex-col">
                 <span
                   className={`text-xl font-semibold transition-colors duration-200 ${
-                    pathname === `/store/${storeName}`
+                    pathname === `/store/${storeInfoFromBE?.id}`
                       ? "text-primary"
                       : "text-gray-900"
                   }`}
                   style={{
                     color:
-                      pathname === `/store/${storeName}`
+                      pathname === `/store/${storeIdFromBE}`
                         ? theme.primary
                         : undefined,
-                    opacity: pathname === `/store/${storeName}` ? 1 : 0.9,
+                    opacity: pathname === `/store/${storeIdFromBE}` ? 1 : 0.9,
                   }}
                 >
                   {storeName}
@@ -364,7 +369,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               <div className="text-sm text-muted-foreground space-y-3">
                 <p className="flex items-center">
                   <span className="mr-2">📧</span> contact@
-                  {storeName?.toLowerCase()}.com
+                  {ownerInfo?.email}
                 </p>
                 <p className="flex items-center">
                   <span className="mr-2">📞</span> +1 (555) 123-4567

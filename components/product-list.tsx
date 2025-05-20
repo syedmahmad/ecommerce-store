@@ -356,7 +356,12 @@ export const ProductList = () => {
                     <TableCell className="font-medium">
                       {product.name}
                     </TableCell>
-                    <TableCell>${product.price.toFixed(2)}</TableCell>
+                    <TableCell>
+                      {new Intl.NumberFormat("en-PK", {
+                        style: "currency",
+                        currency: "PKR",
+                      }).format(product.price)}
+                    </TableCell>
                     <TableCell>
                       {product.discount > 0 ? `${product.discount}%` : "-"}
                     </TableCell>

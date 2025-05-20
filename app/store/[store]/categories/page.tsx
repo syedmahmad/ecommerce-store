@@ -185,7 +185,12 @@ export default function CategoriesPage({ params }: any) {
                           <h3 className="font-medium group-hover:text-primary transition-colors">
                             {product.name}
                           </h3>
-                          <p className="mt-1">${product.price.toFixed(2)}</p>
+                          <p className="mt-1">
+                            {new Intl.NumberFormat("en-PK", {
+                              style: "currency",
+                              currency: "PKR",
+                            }).format(product.price)}
+                          </p>
                         </div>
                       </div>
                     </Link>

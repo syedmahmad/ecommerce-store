@@ -7,10 +7,23 @@ import { storage } from "../firebaseConfig";
  * @param path - Path in Firebase Storage (e.g., "banners/banner-123.jpg")
  * @returns Download URL of the uploaded file
  */
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 export const uploadImageToFirebase = async (file: File, path: string): Promise<string> => {
+  console.log("⏳ Starting upload to Firebase:", path);
   const storageRef = ref(storage, path);
-  const snapshot = await uploadBytes(storageRef, file);
-  return await getDownloadURL(snapshot.ref);
+  console.log('storageRef',storageRef)
+
+  try {
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log("✅ Upload successful:", snapshot.metadata);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    console.log("📦 File available at:", downloadURL);
+    return downloadURL;
+  } catch (error) {
+    console.error("🔥 Upload failed in uploadImageToFirebase:", error);
+    throw error; // so caller's catch block will also fire
+  }
 };
 
 

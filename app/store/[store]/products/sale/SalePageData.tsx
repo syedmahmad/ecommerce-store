@@ -74,8 +74,6 @@ export const SalesPageData = () => {
         discount: product.discount,
         inventory: product.stock,
       });
-
-      toast.success("Item Added To The Cart !");
     } catch (error: any) {
       toast.error(
         "An error occurred while adding the item to the cart. Try Again"
@@ -123,8 +121,12 @@ export const SalesPageData = () => {
                         </p>
                         <div className="flex justify-between items-center">
                           <span className="text-green-600 font-bold">
-                            ${product.price}
+                            {new Intl.NumberFormat("en-PK", {
+                              style: "currency",
+                              currency: "PKR",
+                            }).format(product.price)}
                           </span>
+
                           {product.isOnSale && (
                             <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-sm font-medium">
                               {product.discount}% OFF

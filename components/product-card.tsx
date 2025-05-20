@@ -124,13 +124,31 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
         <div className="flex items-center mt-2">
           {product.discount > 0 ? (
             <>
-              <span className="font-bold">${discountedPrice}</span>
+              <span className="font-bold">
+                {new Intl.NumberFormat("en-PK", {
+                  style: "currency",
+                  currency: "PKR",
+                }).format(discountedPrice)}
+
+                {/* {discountedPrice} */}
+              </span>
               <span className="text-gray-500 line-through ml-2 text-sm">
-                ${product.price.toFixed(2)}
+                {/* ${product.price.toFixed(2)} */}
+
+                {new Intl.NumberFormat("en-PK", {
+                  style: "currency",
+                  currency: "PKR",
+                }).format(product.price)}
               </span>
             </>
           ) : (
-            <span className="font-bold">${product.price.toFixed(2)}</span>
+            <span className="font-bold">
+
+              {new Intl.NumberFormat("en-PK", {
+                style: "currency",
+                currency: "PKR",
+              }).format(product.price)}
+            </span>
           )}
         </div>
         {!isOutOfStock && (
