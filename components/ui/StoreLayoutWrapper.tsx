@@ -280,29 +280,41 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
           <div className="grid grid-cols-12 gap-8">
             {/* About Us Section */}
             <div className="col-span-12 md:col-span-4 lg:col-span-3">
-              <div className="flex items-center mb-5">
+              <div className="flex items-center mb-4">
                 <div
-                  className="w-8 h-8 rounded-full mr-3"
+                  className="w-10 h-10 rounded-full mr-4 flex items-center justify-center text-white font-bold text-base shadow-sm"
                   style={{ backgroundColor: theme.primary }}
-                ></div>
-                <span className="font-bold text-xl">{storeName}</span>
+                  aria-label={`Logo for ${storeName ?? "store"}`}
+                >
+                  {storeName?.charAt(0).toUpperCase() || "S"}
+                </div>
+                <span className="font-semibold text-lg sm:text-xl truncate max-w-[200px]">
+                  {storeName ?? "Store Name"}
+                </span>
               </div>
+
               <p className="text-sm text-muted-foreground leading-relaxed">
                 We provide high-quality products at affordable prices.
               </p>
-              {/* TODO: Enable these in future.. */}
-              {/* <div className="flex space-x-4 mt-5">
-                {["Facebook", "Twitter", "Instagram"].map((social, index) => (
-                  <Link
-                    key={index}
-                    href="#"
-                    className="text-muted-foreground hover:text-primary transition-all duration-300 text-sm"
-                  >
-                    <span className="sr-only">{social}</span>
-                    <span className="text-lg">{social.charAt(0)}</span>
-                  </Link>
-                ))}
-              </div> */}
+
+              {/* TODO: Enable social links in future */}
+              {/* <div className="flex space-x-3 mt-5">
+    {[
+      { name: "Facebook", icon: "📘" },
+      { name: "Twitter", icon: "🐦" },
+      { name: "Instagram", icon: "📸" },
+    ].map(({ name, icon }, index) => (
+      <Link
+        key={index}
+        href="#"
+        className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors duration-200 text-sm"
+        aria-label={`Visit our ${name}`}
+      >
+        <span aria-hidden>{icon}</span>
+        <span>{name}</span>
+      </Link>
+    ))}
+  </div> */}
             </div>
 
             {/* Customer Service Section */}
@@ -368,11 +380,12 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               </h3>
               <div className="text-sm text-muted-foreground space-y-3">
                 <p className="flex items-center">
-                  <span className="mr-2">📧</span> contact@
+                  <span className="mr-2">📧</span>
                   {ownerInfo?.email}
                 </p>
                 <p className="flex items-center">
-                  <span className="mr-2">📞</span> +1 (555) 123-4567
+                  <span className="mr-2">📞</span>{" "}
+                  {storeInfoFromBE?.contactNumber}
                 </p>
               </div>
             </div>

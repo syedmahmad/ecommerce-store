@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { useAuthStatus } from "@/hooks/use-auth-status";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/dashboard-layout";
@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "../utils/Axios";
+import { UpdateStoreInfoAfterLogin } from "./customize-store/_components/UpdateStoreInfoAfterLogin";
 
 export default function DashboardPage() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -41,6 +42,19 @@ export default function DashboardPage() {
     },
     enabled: !!userId,
   });
+
+  const getStoreInfo = useQuery({
+    queryKey: ["store-info"],
+    queryFn: async () => {
+      const endpoint = `store/${userId}`;
+      return await GET(endpoint);
+    },
+    enabled: !!userId,
+  });
+
+  const storeInfoFromBE = getStoreInfo?.data?.data;
+
+  const isContactNo = storeInfoFromBE?.contactNumber ?? false;
 
   const testimonials = data?.data;
   const productsData = getAllProducts?.data?.data;
@@ -108,6 +122,9 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      {/* the UI will only appear when user does not added his contact number and  */}
+
+      {!isContactNo && <UpdateStoreInfoAfterLogin />}
     </DashboardLayout>
   );
 }

@@ -187,7 +187,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             className="h-6 w-6"
             style={{ color: theme.primaryColor }}
           />
-          <span>ZyloBuilder's</span>
+          <span>ZyloSpace</span>
         </Link>
 
         <nav className="hidden flex-1 md:flex">

@@ -8,8 +8,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-export const UpdateStoreInfo = () => {
+export const UpdateStoreInfoAfterLogin = () => {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,10 +48,10 @@ export const UpdateStoreInfo = () => {
     description:
       storeInfoFromBE?.description ||
       "We sell the best products at the best prices!",
+    contactNumber: storeInfoFromBE?.contactNumber || "",
     logo: storeInfoFromBE?.logoUrl || null,
     logoPreview: storeInfoFromBE?.logoUrl || null,
     uuid: "",
-    contactNumber: "",
   });
 
   useEffect(() => {
@@ -61,10 +62,10 @@ export const UpdateStoreInfo = () => {
         description:
           storeInfoFromBE?.description ||
           "We sell the best products at the best prices!",
+        contactNumber: storeInfoFromBE?.contactNumber || "",
         logo: storeInfoFromBE?.logoUrl || null,
         logoPreview: storeInfoFromBE?.logoUrl || null,
         uuid: storeInfoFromBE?.stores_uuid,
-        contactNumber: storeInfoFromBE?.contactNumber,
       });
     }
   }, [storeInfoFromBE]);
@@ -72,11 +73,25 @@ export const UpdateStoreInfo = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [contactNumberError, setContactNumberError] = useState("");
   const fileInputRef = useRef<any>(null);
 
   // Handle input changes
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
+
+    // Validate contact number if it's being changed
+    if (name === "contactNumber") {
+      // Basic validation - you might want to enhance this
+      if (!value.trim()) {
+        setContactNumberError("Contact number is required");
+      } else if (!/^[0-9+() -]*$/.test(value)) {
+        setContactNumberError("Please enter a valid phone number");
+      } else {
+        setContactNumberError("");
+      }
+    }
+
     setStoreInfo((prev) => ({
       ...prev,
       [name]: value,
@@ -167,6 +182,14 @@ export const UpdateStoreInfo = () => {
   // Handle form submission
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    // Validate contact number before submission
+    if (!storeInfo.contactNumber.trim()) {
+      setContactNumberError("Contact number is required");
+      toast.error("Please provide a contact number");
+      return;
+    }
+
     setIsLoading(true);
     setErrorMessage("");
     setSuccessMessage("");
@@ -176,8 +199,8 @@ export const UpdateStoreInfo = () => {
         name: storeInfo.name,
         description: storeInfo.description,
         domain: storeInfo.domain,
-        logoUrl: storeInfo.logo,
         contactNumber: storeInfo.contactNumber,
+        logoUrl: storeInfo.logo,
       };
 
       const response = await PATCH(`/store/${storeInfo.uuid}`, payload);
@@ -197,50 +220,52 @@ export const UpdateStoreInfo = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900">
-            Store Current Inforamtion
+            Update Your Store Information
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            Update your store information and branding
-          </p>
+          <div className="mt-3 flex justify-center">
+            <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-2 rounded-lg text-sm max-w-xl">
+              Please review and update your store information below before
+              continuing. Updating these details will help make your store look
+              more professional and personalized.
+            </div>
+          </div>
         </div>
 
         <div className="mt-10 sm:mt-0">
-          <div className="md:grid md:grid-cols-3 md:gap-6">
+          <div className="md:grid md:grid-cols-3 md:gap-8">
             {/* Left side - Form */}
             <div className="md:col-span-2">
-              <div className="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-lg">
+              <div className="px-6 py-6 bg-white sm:p-6 shadow-lg rounded-xl">
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
                     {/* Store Name */}
                     <div>
                       <label
                         htmlFor="name"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-gray-700 mb-1"
                       >
                         Store Name
                       </label>
-                      <div className="mt-1">
-                        <input
-                          type="text"
-                          name="name"
-                          id="name"
-                          value={storeInfo.name}
-                          onChange={handleInputChange}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        value={storeInfo.name}
+                        onChange={handleInputChange}
+                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
+                      />
                     </div>
 
                     {/* Domain */}
                     <div>
                       <label
                         htmlFor="domain"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-gray-700 mb-1"
                       >
                         Store Domain
                       </label>
-                      <div className="mt-1 flex rounded-md shadow-sm">
-                        <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                      <div className="flex rounded-lg shadow-sm">
+                        <span className="inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                           https://
                         </span>
                         <input
@@ -249,7 +274,7 @@ export const UpdateStoreInfo = () => {
                           id="domain"
                           value={storeInfo.domain}
                           onChange={handleInputChange}
-                          className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                          className="block w-full min-w-0 flex-1 rounded-r-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
                         />
                       </div>
                     </div>
@@ -269,13 +294,15 @@ export const UpdateStoreInfo = () => {
                         value={storeInfo.contactNumber}
                         onChange={handleInputChange}
                         placeholder="e.g., +1 (123) 456-7890"
-                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border`}
+                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border ${
+                          contactNumberError ? "border-red-500" : ""
+                        }`}
                       />
-                      {/* {contactNumberError && (
+                      {contactNumberError && (
                         <p className="mt-1 text-sm text-red-600">
                           {contactNumberError}
                         </p>
-                      )} */}
+                      )}
                       <p className="mt-1 text-sm text-gray-500">
                         This will be displayed to customers so they can contact
                         you
@@ -284,11 +311,11 @@ export const UpdateStoreInfo = () => {
 
                     {/* Logo Upload */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
                         Store Logo
                       </label>
                       <div className="mt-1 flex items-center space-x-4">
-                        <div className="flex-shrink-0 h-16 w-16 overflow-hidden rounded-full bg-gray-100">
+                        <div className="flex-shrink-0 h-20 w-20 overflow-hidden rounded-full bg-gray-100 border-2 border-gray-200">
                           <img
                             className="h-full w-full object-cover"
                             src={
@@ -299,40 +326,37 @@ export const UpdateStoreInfo = () => {
                             alt="Store logo"
                           />
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                           {storeInfo.logo === null && (
                             <button
                               type="button"
                               onClick={triggerFileInput}
                               disabled={isLoading}
-                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                              className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                              Change
+                              {isLoading ? "Uploading..." : "Upload Logo"}
+                              {isLoading && (
+                                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                              )}
                             </button>
                           )}
                           {storeInfo.logo !== null && (
-                            <p className="text-sm text-gray-600">
-                              To upload a new logo, please remove the existing
-                              one first.
-                            </p>
+                            <button
+                              type="button"
+                              onClick={() => removeLogo(storeInfo)}
+                              disabled={isLoading || removing}
+                              className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                isLoading || removing
+                                  ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
+                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                              }`}
+                            >
+                              {removing ? "Removing..." : "Remove Logo"}
+                              {removing && (
+                                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                              )}
+                            </button>
                           )}
-                          <button
-                            type="button"
-                            onClick={() => removeLogo(storeInfo)}
-                            disabled={isLoading || storeInfo.logo === null}
-                            className={`inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-    ${
-      isLoading || storeInfo.logo === null
-        ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
-        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-    }
-  `}
-                          >
-                            {removing ? "Removing..." : "Remove"}
-                            {removing && (
-                              <Loader2 className="ml-2 h-3 w-3 animate-spin text-primary" />
-                            )}
-                          </button>
                         </div>
                         <input
                           type="file"
@@ -351,28 +375,27 @@ export const UpdateStoreInfo = () => {
                     <div>
                       <label
                         htmlFor="description"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-gray-700 mb-1"
                       >
                         Store TagLine
                       </label>
-                      <div className="mt-1">
-                        <textarea
-                          id="description"
-                          name="description"
-                          rows={3}
-                          value={storeInfo.description}
-                          onChange={handleInputChange}
-                          maxLength={45}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                        />
+                      <textarea
+                        id="description"
+                        name="description"
+                        rows={3}
+                        value={storeInfo.description}
+                        onChange={handleInputChange}
+                        maxLength={45}
+                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
+                      />
+                      <div className="flex justify-between mt-1">
+                        <p className="text-sm text-gray-500">
+                          Brief description for your store
+                        </p>
                         <p className="text-sm text-gray-500">
                           {storeInfo.description.length}/45 characters
                         </p>
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">
-                        Brief description for your store. This will appear in
-                        various places.
-                      </p>
                     </div>
 
                     {/* Messages */}
@@ -400,14 +423,21 @@ export const UpdateStoreInfo = () => {
                     )}
 
                     {/* Submit Button */}
-                    <div className="flex justify-end">
-                      <button
+                    <div className="flex justify-end pt-4">
+                      <Button
                         type="submit"
-                        disabled={isLoading}
-                        className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        // disabled={isLoading || contactNumberError}
+                        className="inline-flex justify-center rounded-lg border border-transparent bg-indigo-600 py-3 px-6 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
                       >
-                        {isLoading ? "Saving..." : "Save Changes"}
-                      </button>
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          "Save Changes"
+                        )}
+                      </Button>
                     </div>
                   </div>
                 </form>
@@ -416,15 +446,15 @@ export const UpdateStoreInfo = () => {
 
             {/* Right side - Preview */}
             <div className="mt-5 md:mt-0 md:col-span-1">
-              <div className="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-lg sticky top-8">
-                <h2 className="text-lg font-medium text-gray-900 mb-4">
-                  Live Preview
+              <div className="px-6 py-6 bg-white sm:p-6 shadow-lg rounded-xl sticky top-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b border-gray-200">
+                  Store Preview
                 </h2>
 
-                <div className="border border-gray-200 rounded-lg p-6">
-                  <div className="flex flex-col items-center text-center">
+                <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
+                  <div className="flex flex-col items-center text-center space-y-4">
                     {/* Logo Preview */}
-                    <div className="h-24 w-24 rounded-full bg-gray-100 overflow-hidden mb-4">
+                    <div className="h-28 w-28 rounded-full bg-white border-2 border-gray-200 overflow-hidden mb-4 shadow-sm">
                       <img
                         className="h-full w-full object-cover"
                         src={
@@ -437,20 +467,50 @@ export const UpdateStoreInfo = () => {
                     </div>
 
                     {/* Store Name Preview */}
-                    <h3 className="text-xl font-bold text-gray-900">
+                    <h3 className="text-2xl font-bold text-gray-900">
                       {storeInfo.name}
                     </h3>
 
                     {/* Domain Preview */}
-                    <p className="text-sm text-indigo-600 mt-1">
+                    <p className="text-sm text-indigo-600 font-medium">
                       https://{storeInfo.domain}
                     </p>
 
+                    {/* Contact Number Preview */}
+                    {storeInfo.contactNumber ? (
+                      <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-700">
+                          Contact:
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {storeInfo.contactNumber}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-2 p-2 bg-yellow-50 rounded-lg">
+                        <p className="text-xs text-yellow-700">
+                          No contact number provided (required)
+                        </p>
+                      </div>
+                    )}
+
                     {/* Description Preview */}
-                    <p className="text-gray-600 mt-4 text-sm">
-                      {storeInfo.description}
+                    <p className="text-gray-600 mt-4 text-sm leading-relaxed">
+                      {storeInfo.description ||
+                        "No description provided yet..."}
                     </p>
                   </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-gray-200">
+                  <h3 className="text-sm font-medium text-gray-700 mb-2">
+                    Preview Notes
+                  </h3>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• This is how customers will see your store</li>
+                    <li>• Contact number is required for customer support</li>
+                    <li>• Logo helps build brand recognition</li>
+                  </ul>
                 </div>
               </div>
             </div>
