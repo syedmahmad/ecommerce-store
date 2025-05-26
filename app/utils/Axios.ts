@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import Cookies from "js-cookie";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,12 +11,6 @@ const axiosInstance = () => axios.create({
 });
 
 const handleError = (error: any) => {
-    console.log('.....',error)
-    if( error?.response?.data?.error === "Not Found" || error?.response?.data?.statusCode === 400) {
-        toast.error('Unable to find the requested resource.');
-        Cookies.remove("authToken");
-        window.location.href = "/login";
-    }
     toast('Soemthing went wrong! Please try again.');
     throw new error;
 };

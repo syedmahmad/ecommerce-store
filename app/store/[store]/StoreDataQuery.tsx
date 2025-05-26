@@ -56,7 +56,7 @@ export default function StorePage({ storeId }: any) {
   const getStoreInfo = useQuery({
     queryKey: ["store-info"],
     queryFn: async () => {
-      const endpoint = `store/${storeId}`;
+      const endpoint = `store/user/${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId,
@@ -201,8 +201,8 @@ export default function StorePage({ storeId }: any) {
                   disabled={featuredProducts && featuredProducts?.length === 0}
                   style={{ backgroundColor: currentTheme.primary }}
                   className="hover:scale-105 transition-transform duration-300 shadow-lg hover:shadow-xl"
-                  // whileHover={{ scale: 1.05 }}
-                  // whileTap={{ scale: 0.98 }}
+                // whileHover={{ scale: 1.05 }}
+                // whileTap={{ scale: 0.98 }}
                 >
                   {bannerData?.buttonText || "Shop Now"}
                 </Button>
@@ -305,25 +305,25 @@ export default function StorePage({ storeId }: any) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {featuredProducts && featuredProducts?.length
               ? featuredProducts.map((product: any) => {
-                  if (product.status === 1) {
-                    return (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        storeInfoFromBE={storeInfoFromBE}
-                      />
-                    );
-                  } else {
-                    return (
-                      <div>
-                        <p className="text-red-500">
-                          Product are there but not active. Go to the dashboard
-                          and mark product as active.
-                        </p>
-                      </div>
-                    );
-                  }
-                })
+                if (product.status === 1) {
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      storeInfoFromBE={storeInfoFromBE}
+                    />
+                  );
+                } else {
+                  return (
+                    <div>
+                      <p className="text-red-500">
+                        Product are there but not active. Go to the dashboard
+                        and mark product as active.
+                      </p>
+                    </div>
+                  );
+                }
+              })
               : null}
           </div>
         </div>

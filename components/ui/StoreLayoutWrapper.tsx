@@ -15,13 +15,15 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
   const getStoreInfo = useQuery({
     queryKey: ["store-info"],
     queryFn: async () => {
-      const endpoint = `store/${storeId}`;
+      const endpoint = `store/user/${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId,
   });
 
   const storeInfoFromBE = getStoreInfo?.data?.data;
+
+  console.log('storeInfoFromBE', storeInfoFromBE)
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();

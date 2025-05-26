@@ -50,6 +50,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const storeInfoFromBE = getStoreInfo?.data?.data;
   const storeId = storeInfoFromBE && storeInfoFromBE?.id;
 
+  console.log('storeId', storeId)
+
   const pathname = usePathname();
   const { currentTheme, previewTheme } = useAdminTheme();
   const { setStorePreviewTheme } = useTheme();
@@ -194,11 +196,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           {filteredNavItems.map((item) => (
             <Link
               key={item.id}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === item.id
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${activeTab === item.id
+                ? "text-primary"
+                : "text-muted-foreground hover:text-foreground"
+                }`}
               href={item.href}
               style={{
                 color: activeTab === item.id ? theme.primaryColor : undefined,
@@ -270,11 +271,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             {navItems.map((item) => (
               <Link
                 key={item.id}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium ${
-                  activeTab === item.id
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium ${activeTab === item.id
+                  ? "text-primary"
+                  : "text-muted-foreground"
+                  }`}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{
