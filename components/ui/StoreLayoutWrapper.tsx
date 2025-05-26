@@ -41,9 +41,9 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
     { name: "Sale", path: `/store/${storeId}/products/sale` },
     { name: "Contact Us", path: `/store/${storeId}/contact` },
     // May be we'll add in future...
-    // { name: "New Arrivals", path: `/store/${storeName}/categories/new` },
-    // { name: "Best Sellers", path: `/store/${storeName}/categories/best` },
-    // { name: "Sale", path: `/store/${storeName}/categories/sale` },
+    // { name: "New Arrivals", path: `/store/${storeId}/categories/new` },
+    // { name: "Best Sellers", path: `/store/${storeId}/categories/best` },
+    // { name: "Sale", path: `/store/${storeId}/categories/sale` },
   ];
 
   const [showHeader, setShowHeader] = useState(true);
@@ -85,11 +85,10 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
     >
       {/* Header */}
       <header
-        className={`relative z-10 border-b transition-all duration-500 ease-in-out ${
-          showHeader
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-full"
-        }`}
+        className={`relative z-10 border-b transition-all duration-500 ease-in-out ${showHeader
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 -translate-y-full"
+          }`}
         style={{
           boxShadow: `0 2px 10px ${hexToRgba(theme.primary, 0.12)}`,
         }}
@@ -102,7 +101,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               className="flex items-center space-x-2 hover:scale-[1.02] transition-transform duration-200"
             >
               {storeInfoFromBE?.logoUrl === null ||
-              storeInfoFromBE?.logoUrl === undefined ? (
+                storeInfoFromBE?.logoUrl === undefined ? (
                 <ShoppingBag
                   className="h-6 w-6 transition-colors duration-300 hover:scale-110"
                   style={{ color: theme.primary }}
@@ -120,11 +119,10 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               )}
               <div className="flex flex-col">
                 <span
-                  className={`text-xl font-semibold transition-colors duration-200 ${
-                    pathname === `/store/${storeInfoFromBE?.id}`
-                      ? "text-primary"
-                      : "text-gray-900"
-                  }`}
+                  className={`text-xl font-semibold transition-colors duration-200 ${pathname === `/store/${storeInfoFromBE?.id}`
+                    ? "text-primary"
+                    : "text-gray-900"
+                    }`}
                   style={{
                     color:
                       pathname === `/store/${storeIdFromBE}`
@@ -147,11 +145,10 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
                 <Link
                   key={category.name}
                   href={category.path}
-                  className={`relative text-sm font-medium transition-all duration-200 hover:text-primary ${
-                    pathname === category.path
-                      ? "text-primary"
-                      : "text-gray-700"
-                  }`}
+                  className={`relative text-sm font-medium transition-all duration-200 hover:text-primary ${pathname === category.path
+                    ? "text-primary"
+                    : "text-gray-700"
+                    }`}
                   style={{
                     color:
                       pathname === category.path ? theme.primary : undefined,
@@ -174,7 +171,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
 
             {/* Search and Cart with animations */}
             <div className="flex items-center space-x-4">
-              <div className="hidden md:flex relative group">
+              {/* <div className="hidden md:flex relative group">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground transition-colors duration-200 group-hover:text-primary" />
                 <Input
                   type="search"
@@ -188,7 +185,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
                     } as React.CSSProperties),
                   }}
                 />
-              </div>
+              </div> */}
 
               <CartButton storeInfoFromBE={storeInfoFromBE} />
 
@@ -214,11 +211,10 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
 
           {/* Mobile Menu with slide-down animation */}
           <div
-            className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-              isMenuOpen
-                ? "max-h-96 py-4 opacity-100"
-                : "max-h-0 py-0 opacity-0"
-            }`}
+            className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${isMenuOpen
+              ? "max-h-96 py-4 opacity-100"
+              : "max-h-0 py-0 opacity-0"
+              }`}
             style={{ borderColor: hexToRgba(theme.primary, 0.2) }}
           >
             <div className="flex mb-4">
@@ -240,11 +236,10 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
                 <Link
                   key={category.name}
                   href={category.path}
-                  className={`text-sm font-medium px-2 py-1 rounded-md transition-all duration-200 hover:bg-primary/10 hover:pl-3 ${
-                    pathname === category.path
-                      ? "text-primary"
-                      : "text-gray-700"
-                  }`}
+                  className={`text-sm font-medium px-2 py-1 rounded-md transition-all duration-200 hover:bg-primary/10 hover:pl-3 ${pathname === category.path
+                    ? "text-primary"
+                    : "text-gray-700"
+                    }`}
                   style={{
                     color:
                       pathname === category.path ? theme.primary : undefined,
@@ -299,22 +294,22 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
 
               {/* TODO: Enable social links in future */}
               {/* <div className="flex space-x-3 mt-5">
-    {[
-      { name: "Facebook", icon: "📘" },
-      { name: "Twitter", icon: "🐦" },
-      { name: "Instagram", icon: "📸" },
-    ].map(({ name, icon }, index) => (
-      <Link
-        key={index}
-        href="#"
-        className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors duration-200 text-sm"
-        aria-label={`Visit our ${name}`}
-      >
-        <span aria-hidden>{icon}</span>
-        <span>{name}</span>
-      </Link>
-    ))}
-  </div> */}
+              {[
+                { name: "Facebook", icon: "📘" },
+                { name: "Twitter", icon: "🐦" },
+                { name: "Instagram", icon: "📸" },
+              ].map(({ name, icon }, index) => (
+                <Link
+                  key={index}
+                  href="#"
+                  className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors duration-200 text-sm"
+                  aria-label={`Visit our ${name}`}
+                >
+                  <span aria-hidden>{icon}</span>
+                  <span>{name}</span>
+                </Link>
+              ))}
+            </div> */}
             </div>
 
             {/* Customer Service Section */}

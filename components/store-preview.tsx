@@ -89,7 +89,7 @@ export function StorePreview({ theme }: StorePreviewProps) {
           className="rounded-md p-2 mt-2 text-center text-[7px]"
           style={{ backgroundColor: theme.secondary }}
         >
-          © 2023 My Store. All rights reserved.
+          © 2025 My Store. All rights reserved.
         </div>
       </div>
     </div>

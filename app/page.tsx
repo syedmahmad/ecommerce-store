@@ -602,7 +602,7 @@ export default function Home() {
             transition={{ delay: 0.2 }}
           >
             <p className="text-gray-400 text-sm">
-              © 2023 ZyloSpace. All rights reserved.
+              © 2025 ZyloSpace. All rights reserved.
             </p>
             <motion.div
               className="mt-4 md:mt-0 flex items-center space-x-2"
