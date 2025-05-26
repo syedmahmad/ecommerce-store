@@ -73,6 +73,13 @@ export default function DashboardPage() {
     );
   }
 
+
+  if (!isContactNo) {
+    return (
+      <UpdateStoreInfoAfterLogin />
+    )
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -124,7 +131,7 @@ export default function DashboardPage() {
       </div>
       {/* the UI will only appear when user does not added his contact number and  */}
 
-      {!isContactNo && <UpdateStoreInfoAfterLogin />}
+
     </DashboardLayout>
   );
 }

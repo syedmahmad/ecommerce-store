@@ -207,6 +207,7 @@ export const UpdateStoreInfoAfterLogin = () => {
       if (response?.status === 200) {
         toast.success("Store information updated successfully!");
         reFetchStoreInfo();
+        window.location.reload()
       }
     } catch (error) {
       setErrorMessage("Failed to update store information. Please try again.");
@@ -223,10 +224,33 @@ export const UpdateStoreInfoAfterLogin = () => {
             Update Your Store Information
           </h1>
           <div className="mt-3 flex justify-center">
-            <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-2 rounded-lg text-sm max-w-xl">
-              Please review and update your store information below before
-              continuing. Updating these details will help make your store look
-              more professional and personalized.
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-xl shadow-md flex items-start max-w-2xl mx-auto">
+              <svg
+                className="h-8 w-8 text-yellow-400 mr-4 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4m0 4h.01"
+                />
+              </svg>
+              <div>
+                <h2 className="text-lg font-semibold text-yellow-800 mb-1">
+                  Action Required: Complete Your Store Profile
+                </h2>
+                <p className="text-yellow-800 text-base">
+                  Please review and update your store information below to ensure your business appears professional and trustworthy to customers.
+                  Completing these details will help personalize your store and improve your brand presence.
+                  <br />
+                  <span className="font-medium">Once finished, you will be redirected to your Dashboard where you can further customize your store.</span>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -294,9 +318,8 @@ export const UpdateStoreInfoAfterLogin = () => {
                         value={storeInfo.contactNumber}
                         onChange={handleInputChange}
                         placeholder="e.g., +1 (123) 456-7890"
-                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border ${
-                          contactNumberError ? "border-red-500" : ""
-                        }`}
+                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border ${contactNumberError ? "border-red-500" : ""
+                          }`}
                       />
                       {contactNumberError && (
                         <p className="mt-1 text-sm text-red-600">
@@ -345,11 +368,10 @@ export const UpdateStoreInfoAfterLogin = () => {
                               type="button"
                               onClick={() => removeLogo(storeInfo)}
                               disabled={isLoading || removing}
-                              className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                                isLoading || removing
-                                  ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
-                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                              }`}
+                              className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${isLoading || removing
+                                ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
+                                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                }`}
                             >
                               {removing ? "Removing..." : "Remove Logo"}
                               {removing && (
