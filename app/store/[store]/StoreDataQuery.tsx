@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import StoreLayout from "@/components/store-layout";
 import { useTheme } from "@/context/theme-context";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
@@ -15,6 +15,9 @@ import { motion } from "framer-motion";
 
 export default function StorePage({ storeId }: any) {
   const router = useRouter();
+
+  const featuredRef = useRef<HTMLDivElement>(null);
+
 
   const getAllProductsData = useQuery({
     queryKey: ["get-product"],
@@ -100,11 +103,11 @@ export default function StorePage({ storeId }: any) {
     }
   }, [themeData]);
 
-  const handleButtonClick = () => {
-    if (featuredProducts && featuredProducts.length > 0) {
-      router.push(`/store/${storeInfoFromBE?.id}/products`);
-    }
-  };
+  // const handleButtonClick = () => {
+  //   if (featuredProducts && featuredProducts.length > 0) {
+  //     router.push(`/store/${storeInfoFromBE?.id}/products`);
+  //   }
+  // };
 
   // Animation variants
   const containerVariants = {
@@ -140,6 +143,14 @@ export default function StorePage({ storeId }: any) {
       },
     },
   };
+
+
+  const handleButtonClick = () => {
+    if (featuredRef.current) {
+      featuredRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
 
   return (
     <StoreLayout>
@@ -228,58 +239,9 @@ export default function StorePage({ storeId }: any) {
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent z-20" />
       </section>
 
-      {/* Featured Categories */}
-      {/* <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Shop by Category</h2>
-              <p className="text-muted-foreground">
-                Browse our most popular categories
-              </p>
-            </div>
-            <Link
-              href={`/store/${storeName}/categories`}
-              className="mt-4 md:mt-0 flex items-center text-sm font-medium hover:underline"
-              style={{ color: currentTheme.primary }}
-            >
-              View All Categories <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/store/${storeName}/categories/${category.id}`}
-              >
-                <div className="group relative overflow-hidden rounded-lg">
-                  <div className="aspect-square relative">
-                    <Image
-                      src={category.image || "/placeholder.svg"}
-                      alt={category.name}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
-                  </div>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-                    <h3 className="text-xl font-bold text-center mb-1">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm opacity-90">
-                      {category.count} Products
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
       {/* Featured Products */}
       <section
+        ref={featuredRef}
         className="py-16 bg-opacity-5"
         style={{ backgroundColor: currentTheme.secondary }}
       >
