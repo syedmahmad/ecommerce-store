@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import MarketingHeader from "@/components/ui/MarkettingHeader";
 
 // Enhanced animation variants
 const fadeInUp = {
@@ -177,57 +178,7 @@ export default function Home() {
         />
       </motion.div>
 
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
-        <Link className="flex items-center justify-center" href="/">
-          <motion.div whileHover={{ rotate: 15 }} whileTap={{ scale: 0.9 }}>
-            <ShoppingBag
-              className="h-6 w-6 mr-2"
-              style={{ color: colors.primary }}
-            />
-          </motion.div>
-          <span className="font-bold text-gray-900 text-lg">ZyloSpace</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          {["Features", "Pricing", "About"].map((item) => (
-            <motion.div
-              key={item}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                href={`/${item.toLowerCase()}`}
-              >
-                {item}
-              </Link>
-            </motion.div>
-          ))}
-        </nav>
-        <div className="ml-4 flex gap-2">
-          <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.95 }}>
-            <Link href="/login">
-              <Button variant="outline" size="sm" className="border-gray-300">
-                Login
-              </Button>
-            </Link>
-          </motion.div>
-          <motion.div
-            whileHover={{ y: -2, scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Link href="/register">
-              <Button
-                size="sm"
-                style={{ backgroundColor: colors.primary }}
-                className="hover:bg-indigo-700"
-              >
-                Sign Up
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </header>
-
+      <MarketingHeader />
       <main className="flex-1">
         {/* Hero Section with enhanced animations */}
         <section className="w-full py-12 md:py-24 lg:py-32 relative overflow-hidden">

@@ -1,11 +1,11 @@
+'use client'
 import React from "react";
-import Header from "../_common/Header";
+import MarketingHeader from "@/components/ui/MarkettingHeader";
 
 const AboutPage = () => {
   return (
     <>
-      <Header />
-
+    <MarketingHeader />
       <div className="bg-white text-gray-800 min-h-screen">
         <section className="bg-blue-50 py-20">
           <div className="max-w-4xl mx-auto px-4 text-center">
