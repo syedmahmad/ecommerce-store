@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,13 +35,16 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { POST } from "../utils/Axios";
+// import { useEffect, useState } from "react";
+
+
+// #region for validation 
 
 const registerSchema = z
   .object({
@@ -63,7 +67,13 @@ const registerSchema = z
     path: ["confirmPassword"],
   });
 
+
+  // #endregion
+
+
 export default function RegisterPage() {
+
+  // #region general for state variable
   const router = useRouter();
   const { register, loginWithGoogle, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +86,9 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // #endregion
+
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -91,40 +104,18 @@ export default function RegisterPage() {
     setShowOtpModal(true);
   };
 
+const [shouldProceed, setShouldProceed] = useState(false);
+const [formData, setFormData] = useState<any>(null); 
+const [showConfirmEmailModal, setShowConfirmEmailModal] = useState(false);
+
+
   const onSubmit = async (data: any) => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const success: any = await register(data.name, data.email, data.password);
-
-      console.log("success", success);
-      if (success?.nextStep === "verify-otp") {
-        showVerifyOtpModal();
-        return;
-      }
-
-      if (success) {
-        router.push("/dashboard");
-      }
-    } catch (error: any) {
-      setError(error.message || "Registration failed");
-    } finally {
-      setIsLoading(false);
-    }
+      setFormData(data);
+      setError("");
+      setShowConfirmEmailModal(true);
   };
 
-  // const handleGoogleLogin = async () => {
-  //   setIsLoading(true)
-  //   setError("")
 
-  //   try {
-  //     await loginWithGoogle()
-  //   } catch (error: any) {
-  //     setError(error.message || "Google login failed")
-  //     setIsLoading(false)
-  //   }
-  // }
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setIsLoading(true);
@@ -215,7 +206,7 @@ export default function RegisterPage() {
       const res = await POST(`auth/resend-otp`, JSON.stringify({ email }));
 
       if (res?.status === 201) {
-        toast.success("A new OTP has been sent to your email.");
+        toast.success(`A new OTP has been sent to your email.${email}`);
       }
     } catch (error) {
       console.error("Resend OTP error:", error);
@@ -226,6 +217,37 @@ export default function RegisterPage() {
   };
 
   // #endregion
+
+
+  useEffect(() => {
+  const registerUser = async () => {
+    if (!shouldProceed || !formData) return;
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const success: any = await register(formData.name, formData.email, formData.password);
+      
+      if (success?.nextStep === "verify-otp") {
+        showVerifyOtpModal();
+        return;
+      }
+
+      if (success) {
+        router.push("/dashboard");
+      }
+    } catch (error: any) {
+      setError(error.message || "Registration failed");
+    } finally {
+      setIsLoading(false);
+      setShouldProceed(false); // Reset flag
+    }
+  };
+
+  registerUser();
+}, [shouldProceed]);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -392,11 +414,60 @@ export default function RegisterPage() {
         </CardFooter>
       </Card>
 
-      <Dialog open={showOtpModal} onOpenChange={setShowOtpModal}>
+
+
+<Dialog open={showConfirmEmailModal} onOpenChange={setShowConfirmEmailModal}>
+  <DialogContent
+    className="sm:max-w-[425px]"
+    onInteractOutside={(e) => e.preventDefault()}
+    onEscapeKeyDown={(e) => e.preventDefault()}
+  >
+    <DialogHeader>
+      <DialogTitle className="text-center">Confirm Your Email</DialogTitle>
+    </DialogHeader>
+
+    <div className="grid gap-4 py-4">
+      <div className="text-center space-y-3">
+        <Mail className="mx-auto h-12 w-12 text-primary" />
+        <p className="text-lg font-medium">
+          Is this the correct email address?
+        </p>
+        <div className="bg-gray-50 rounded-lg p-3 border">
+          <p className="font-semibold text-primary">{form.getValues("email")}</p>
+        </div>
+        <p className="text-sm text-gray-500">
+          We'll send a 6-digit verification code to this address
+        </p>
+      </div>
+
+      <div className="flex justify-center space-x-4 mt-4">
+        <Button
+          type="button"
+          variant="outline"
+          className="px-6 py-3"
+          onClick={() => setShowConfirmEmailModal(false)}
+        >
+          No, Change Email
+        </Button>
+        <Button
+          type="button"
+          className="px-6 py-3 bg-primary hover:bg-primary/90"
+          onClick={() => {setShouldProceed(true), setShowConfirmEmailModal(false)}}
+          disabled={isLoading}
+        >
+          Send OTP
+        </Button>
+      </div>
+    </div>
+  </DialogContent>
+</Dialog>
+
+      {showOtpModal && (<Dialog open={showOtpModal} onOpenChange={setShowOtpModal}>
         <DialogContent
           className="sm:max-w-[425px]"
-          onInteractOutside={(e) => e.preventDefault()} // 🔒 Prevent closing on outside click
-          onEscapeKeyDown={(e) => e.preventDefault()} // 🔒 Prevent closing on Esc key
+          hideClose
+          onInteractOutside={(e) => e.preventDefault()}
+          onEscapeKeyDown={(e) => e.preventDefault()}
         >
           <DialogHeader className="flex justify-between items-center">
             <DialogTitle>Verify Your Email</DialogTitle>
@@ -412,13 +483,42 @@ export default function RegisterPage() {
 
             <div className="space-y-2">
               <Label htmlFor="otp">Verification Code</Label>
-              <Input
-                id="otp"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter 6-digit code"
-                maxLength={6}
-              />
+              <div className="flex justify-center space-x-2">
+                {[0, 1, 2, 3, 4, 5].map((index) => (
+                  <Input
+                    key={index}
+                    id={`otp-${index}`}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={1}
+                    value={otp[index] || ""}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^[0-9]$/.test(value)) {
+                        const newOtp = otp.split("");
+                        newOtp[index] = value;
+                        setOtp(newOtp.join(""));
+
+                        // Auto focus to next input
+                        if (index < 5 && value) {
+                          document.getElementById(`otp-${index + 1}`)?.focus();
+                        }
+                      } else if (value === "") {
+                        const newOtp = otp.split("");
+                        newOtp[index] = "";
+                        setOtp(newOtp.join(""));
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace" && !otp[index] && index > 0) {
+                        document.getElementById(`otp-${index - 1}`)?.focus();
+                      }
+                    }}
+                    className="w-10 h-12 text-center text-xl"
+                  />
+                ))}
+              </div>
               {otpError && <p className="text-sm text-red-500">{otpError}</p>}
             </div>
 
@@ -448,7 +548,7 @@ export default function RegisterPage() {
             </div>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog>)}
     </div>
   );
 }
