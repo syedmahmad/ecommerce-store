@@ -50,8 +50,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const storeInfoFromBE = getStoreInfo?.data?.data;
   const storeId = storeInfoFromBE && storeInfoFromBE?.id;
 
-  console.log('storeId', storeId)
-
   const pathname = usePathname();
   const { currentTheme, previewTheme } = useAdminTheme();
   const { setStorePreviewTheme } = useTheme();
@@ -68,8 +66,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (pathname.includes("/dashboard/products")) {
       setActiveTab("products");
-    } else if (pathname.includes("/dashboard/orders")) {
-      setActiveTab("orders");
+    } else if (pathname.includes("/customize-store")) {
+      setActiveTab("customize-store");
     } else if (pathname.includes("/dashboard/customers")) {
       setActiveTab("customers");
     } else if (pathname.includes("/dashboard/analytics")) {
@@ -175,7 +173,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       }}
     >
       <header
-        className="sticky top-0 z-10 flex h-16 items-center gap-4 px-6 border-b"
+        className="sticky top-0 z-10 flex h-16 items-center gap-4 px-4 sm:px-6 border-b"
         style={{
           backgroundColor: theme.headerColor,
           borderColor: theme.borderColor,
@@ -189,32 +187,34 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             className="h-6 w-6"
             style={{ color: theme.primaryColor }}
           />
-          <span>ZyloSpace</span>
+          <span className="hidden sm:inline">ZyloSpace</span>
         </Link>
 
         <nav className="hidden flex-1 md:flex">
           {filteredNavItems.map((item) => (
             <Link
               key={item.id}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${activeTab === item.id
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground"
-                }`}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === item.id
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
               href={item.href}
               style={{
                 color: activeTab === item.id ? theme.primaryColor : undefined,
               }}
             >
               <item.icon className="h-4 w-4" />
-              {item.label}
+              <span className="hidden sm:inline">{item.label}</span>
             </Link>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-2 sm:gap-4">
           <Button
             variant="outline"
             size="icon"
+            className="hidden sm:flex"
             style={{
               borderColor: theme.borderColor,
               color: theme.textColor,
@@ -224,7 +224,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <span className="sr-only">Notifications</span>
           </Button>
 
-          {/* Fix the View Store link */}
           <Link href={`/store/${storeId}`} target="_blank">
             <Button
               variant="outline"
@@ -236,7 +235,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               }}
             >
               <ExternalLink className="h-3 w-3" />
-              View Store
+              <span className="hidden sm:inline">View Store</span>
+              <span className="sm:hidden">Store</span>
             </Button>
           </Link>
 
@@ -271,10 +271,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             {navItems.map((item) => (
               <Link
                 key={item.id}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium ${activeTab === item.id
-                  ? "text-primary"
-                  : "text-muted-foreground"
-                  }`}
+                className={`flex items-center gap-3 px-4 py-3 text-sm font-medium ${
+                  activeTab === item.id
+                    ? "text-primary"
+                    : "text-muted-foreground"
+                }`}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 style={{
@@ -289,7 +290,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <main className="flex-1 p-6">{children}</main>
+      <main className="flex-1 p-4 sm:p-6">{children}</main>
     </div>
   );
 }

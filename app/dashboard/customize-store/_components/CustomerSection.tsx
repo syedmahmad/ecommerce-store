@@ -11,6 +11,7 @@ import {
 import imageCompression from "browser-image-compression";
 import { Star } from "lucide-react";
 import { Loader2 } from "lucide-react";
+import { AnyAaaaRecord } from "node:dns";
 
 export const CustomerSection = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -196,8 +197,16 @@ export const CustomerSection = () => {
       });
       setEditId(null);
       reFetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving testimonial:", error);
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     }
   };
 
@@ -225,8 +234,16 @@ export const CustomerSection = () => {
       } else {
         toast.error("Failed to delete customer. Try again.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Delete failed", err);
+      if (err?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${err?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     }
   };
 

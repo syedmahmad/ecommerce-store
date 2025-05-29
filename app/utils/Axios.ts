@@ -38,7 +38,17 @@ const GET = async (endPoint: string) => {
 
 const POST = async (endPoint: string, data: any, config?: any) => {
   try {
-    const response = await axiosInstance().post(endPoint, data, config);
+     const user = localStorage.getItem('user');
+     const parseUser = user && JSON.parse(user)
+     const token = parseUser.token;
+    const mergedConfig = {
+      ...(config || {}),
+      headers: {
+        ...(config?.headers || {}),
+        Authorization: `Bearer ${token}`, // inject JWT token here
+      },
+    };
+    const response = await axiosInstance().post(endPoint, data, mergedConfig);
     return response;
   } catch (error) {
     handleError(error);
@@ -47,7 +57,15 @@ const POST = async (endPoint: string, data: any, config?: any) => {
 
 const DELETE = async (endPoint: string) => {
   try {
-    const response = await axiosInstance().delete(endPoint);
+     const user = localStorage.getItem('user');
+     const parseUser = user && JSON.parse(user)
+     const token = parseUser.token;
+
+    const response = await axiosInstance().delete(endPoint, {
+      headers: {
+        Authorization: `Bearer ${token}`, // inject JWT token here
+      },
+    });
     return response;
   } catch (error: any) {
     const { code, message } = error?.response?.data || {};
@@ -68,7 +86,15 @@ const DELETE = async (endPoint: string) => {
 
 const PUT = async (endPoint: string, data: any) => {
   try {
-    const response = await axiosInstance().put(endPoint, data);
+    const user = localStorage.getItem('user');
+     const parseUser = user && JSON.parse(user)
+     const token = parseUser.token;
+    const response = await axiosInstance().put(endPoint, data, {
+      headers: {
+        Authorization: `Bearer ${token}`, // inject JWT token here
+      },
+    });
+
     return response;
   } catch (error) {
     handleError(error);
@@ -77,9 +103,23 @@ const PUT = async (endPoint: string, data: any) => {
 
 const PATCH = async (endPoint: string, data: any, config?: any) => {
   try {
-    const response = await axiosInstance().patch(endPoint, data, config);
+
+    const user = localStorage.getItem('user');
+     const parseUser = user && JSON.parse(user)
+     const token = parseUser.token;
+
+    const mergedConfig = {
+      ...(config || {}),
+      headers: {
+        ...(config?.headers || {}),
+        Authorization: `Bearer ${token}`, // inject JWT token here
+      },
+    };
+    const response = await axiosInstance().patch(endPoint, data, mergedConfig);
+    console.log('response',response)
     return response;
   } catch (error: any) {
+    console.log('error',error)
     handleError(error);
   }
 };

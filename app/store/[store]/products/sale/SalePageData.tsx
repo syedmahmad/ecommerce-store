@@ -78,6 +78,15 @@ export const SalesPageData = () => {
       toast.error(
         "An error occurred while adding the item to the cart. Try Again"
       );
+
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsAdding(false);
     }

@@ -33,7 +33,7 @@ export const UpdateStoreInfoAfterLogin = () => {
   });
 
   const storeInfoFromBE = getStoreInfo?.data?.data;
-  console.log('storeInfoFromBE',getStoreInfo)
+  console.log("storeInfoFromBE", getStoreInfo);
 
   const queryClient = useQueryClient();
   const reFetchStoreInfo = () => {
@@ -160,10 +160,11 @@ export const UpdateStoreInfoAfterLogin = () => {
   const removeLogo = async (storeInfo: any) => {
     try {
       setIsRemoving(true);
-      await deleteImageFromFirebase(storeInfo.logo);
+
       const response: any = await DELETE(`store/${storeInfo?.uuid}`);
       if (response?.status === 200) {
         toast.success("Image successfully deleted.");
+        await deleteImageFromFirebase(storeInfo.logo);
         setStoreInfo((prev) => ({
           ...prev,
           logo: null,
@@ -171,11 +172,21 @@ export const UpdateStoreInfoAfterLogin = () => {
         }));
         setIsRemoving(false);
       } else {
+        console.log("response", response);
         toast.error("Failed to delete image. Try again.");
         setIsRemoving(false);
       }
-    } catch (error) {
-      toast.error("Failed to delete image. Try again.");
+    } catch (error: any) {
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      } else {
+        toast.error("Failed to delete image. Try again.");
+      }
       setIsRemoving(false);
     }
   };
@@ -208,10 +219,18 @@ export const UpdateStoreInfoAfterLogin = () => {
       if (response?.status === 200) {
         toast.success("Store information updated successfully!");
         reFetchStoreInfo();
-        window.location.reload()
+        window.location.reload();
       }
-    } catch (error) {
+    } catch (error: any) {
       setErrorMessage("Failed to update store information. Please try again.");
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -246,10 +265,15 @@ export const UpdateStoreInfoAfterLogin = () => {
                   Action Required: Complete Your Store Profile
                 </h2>
                 <p className="text-yellow-800 text-base">
-                  Please review and update your store information below to ensure your business appears professional and trustworthy to customers.
-                  Completing these details will help personalize your store and improve your brand presence.
+                  Please review and update your store information below to
+                  ensure your business appears professional and trustworthy to
+                  customers. Completing these details will help personalize your
+                  store and improve your brand presence.
                   <br />
-                  <span className="font-medium">Once finished, you will be redirected to your Dashboard where you can further customize your store.</span>
+                  <span className="font-medium">
+                    Once finished, you will be redirected to your Dashboard
+                    where you can further customize your store.
+                  </span>
                 </p>
               </div>
             </div>
@@ -319,8 +343,9 @@ export const UpdateStoreInfoAfterLogin = () => {
                         value={storeInfo.contactNumber}
                         onChange={handleInputChange}
                         placeholder="e.g., +1 (123) 456-7890"
-                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border ${contactNumberError ? "border-red-500" : ""
-                          }`}
+                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border ${
+                          contactNumberError ? "border-red-500" : ""
+                        }`}
                       />
                       {contactNumberError && (
                         <p className="mt-1 text-sm text-red-600">
@@ -369,10 +394,11 @@ export const UpdateStoreInfoAfterLogin = () => {
                               type="button"
                               onClick={() => removeLogo(storeInfo)}
                               disabled={isLoading || removing}
-                              className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${isLoading || removing
-                                ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
-                                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                                }`}
+                              className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                                isLoading || removing
+                                  ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
+                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                              }`}
                             >
                               {removing ? "Removing..." : "Remove Logo"}
                               {removing && (

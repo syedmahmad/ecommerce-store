@@ -78,7 +78,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = (newItem: CartItem) => {
     // Check if item is in stock
     if (newItem.inventory !== undefined && newItem.inventory <= 0) {
-      toast.error('Sorry, this product is currently out of stock.');
+      toast.error("Sorry, this product is currently out of stock.");
       return;
     }
 
@@ -99,7 +99,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
           newItem.inventory !== undefined &&
           newQuantity > newItem.inventory
         ) {
-          toast.warn(`Only ${newItem.inventory} items available. Adjusted quantity in cart.`)
+          toast.warn(
+            `Only ${newItem.inventory} items available. Adjusted quantity in cart.`
+          );
           updatedItems[existingItemIndex].quantity = newItem.inventory;
         } else {
           updatedItems[existingItemIndex].quantity = newQuantity;
@@ -120,7 +122,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const userId = currentUser?.id;
     if (!userId) {
-      toast.error('Something went wrong! Please try again.')
+      toast.error("Something went wrong! Please try again.");
       return;
     }
 
@@ -128,9 +130,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
       await DELETE(`/cart/remove/${id}/${userId}`);
 
       setItems((prevItems) => prevItems.filter((item) => item.id !== id));
-      toast.success('Item removed from cart successfully.');
+      toast.success("Item removed from cart successfully.");
     } catch (error: any) {
-      toast.error('Failed to remove item from cart. Please try again.');
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
+      toast.error("Failed to remove item from cart. Please try again.");
       console.error("Error removing item from cart:", error);
     }
   };
@@ -146,8 +156,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       // Check if requested quantity exceeds available inventory
       if (item.inventory !== undefined && quantity > item.inventory) {
-
-        toast.warn(`Only ${item.inventory} items available. Adjusted quantity in cart.`)
+        toast.warn(
+          `Only ${item.inventory} items available. Adjusted quantity in cart.`
+        );
         const updatedItems = [...prevItems];
         updatedItems[itemIndex] = { ...item, quantity: item.inventory };
         return updatedItems;

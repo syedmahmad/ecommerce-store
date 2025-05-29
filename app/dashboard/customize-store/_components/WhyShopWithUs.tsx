@@ -114,8 +114,17 @@ export const WhyShopWithUs = () => {
       toast.error(error?.response?.data?.message || "Failed to save section");
       console.error(
         "Error saving section:",
-        error?.response?.data || error.message
+        error?.response?.data?.message || error.message
       );
+
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsSaving(false);
     }

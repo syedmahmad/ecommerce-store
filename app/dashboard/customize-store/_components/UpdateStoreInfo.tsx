@@ -144,10 +144,11 @@ export const UpdateStoreInfo = () => {
   const removeLogo = async (storeInfo: any) => {
     try {
       setIsRemoving(true);
-      await deleteImageFromFirebase(storeInfo.logo);
+
       const response: any = await DELETE(`store/${storeInfo?.uuid}`);
       if (response?.status === 200) {
         toast.success("Image successfully deleted.");
+        await deleteImageFromFirebase(storeInfo.logo);
         setStoreInfo((prev) => ({
           ...prev,
           logo: null,
@@ -158,8 +159,17 @@ export const UpdateStoreInfo = () => {
         toast.error("Failed to delete image. Try again.");
         setIsRemoving(false);
       }
-    } catch (error) {
-      toast.error("Failed to delete image. Try again.");
+    } catch (error: any) {
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      } else {
+        toast.error("Something went wrong. Try reloading the page.");
+      }
       setIsRemoving(false);
     }
   };
@@ -185,8 +195,18 @@ export const UpdateStoreInfo = () => {
         toast.success("Store information updated successfully!");
         reFetchStoreInfo();
       }
-    } catch (error) {
-      setErrorMessage("Failed to update store information. Please try again.");
+    } catch (error: any) {
+      setErrorMessage(
+        `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`
+      );
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,8 +42,7 @@ import { Label } from "@/components/ui/label";
 import { POST } from "../utils/Axios";
 // import { useEffect, useState } from "react";
 
-
-// #region for validation 
+// #region for validation
 
 const registerSchema = z
   .object({
@@ -67,12 +65,9 @@ const registerSchema = z
     path: ["confirmPassword"],
   });
 
-
-  // #endregion
-
+// #endregion
 
 export default function RegisterPage() {
-
   // #region general for state variable
   const router = useRouter();
   const { register, loginWithGoogle, login } = useAuth();
@@ -89,7 +84,6 @@ export default function RegisterPage() {
 
   // #endregion
 
-
   const form = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -104,18 +98,15 @@ export default function RegisterPage() {
     setShowOtpModal(true);
   };
 
-const [shouldProceed, setShouldProceed] = useState(false);
-const [formData, setFormData] = useState<any>(null); 
-const [showConfirmEmailModal, setShowConfirmEmailModal] = useState(false);
-
+  const [shouldProceed, setShouldProceed] = useState(false);
+  const [formData, setFormData] = useState<any>(null);
+  const [showConfirmEmailModal, setShowConfirmEmailModal] = useState(false);
 
   const onSubmit = async (data: any) => {
-      setFormData(data);
-      setError("");
-      setShowConfirmEmailModal(true);
+    setFormData(data);
+    setError("");
+    setShowConfirmEmailModal(true);
   };
-
-
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setIsLoading(true);
@@ -218,36 +209,38 @@ const [showConfirmEmailModal, setShowConfirmEmailModal] = useState(false);
 
   // #endregion
 
-
   useEffect(() => {
-  const registerUser = async () => {
-    if (!shouldProceed || !formData) return;
+    const registerUser = async () => {
+      if (!shouldProceed || !formData) return;
 
-    setIsLoading(true);
-    setError("");
+      setIsLoading(true);
+      setError("");
 
-    try {
-      const success: any = await register(formData.name, formData.email, formData.password);
-      
-      if (success?.nextStep === "verify-otp") {
-        showVerifyOtpModal();
-        return;
+      try {
+        const success: any = await register(
+          formData.name,
+          formData.email,
+          formData.password
+        );
+
+        if (success?.nextStep === "verify-otp") {
+          showVerifyOtpModal();
+          return;
+        }
+
+        if (success) {
+          router.push("/dashboard");
+        }
+      } catch (error: any) {
+        setError(error.message || "Registration failed");
+      } finally {
+        setIsLoading(false);
+        setShouldProceed(false); // Reset flag
       }
+    };
 
-      if (success) {
-        router.push("/dashboard");
-      }
-    } catch (error: any) {
-      setError(error.message || "Registration failed");
-    } finally {
-      setIsLoading(false);
-      setShouldProceed(false); // Reset flag
-    }
-  };
-
-  registerUser();
-}, [shouldProceed]);
-
+    registerUser();
+  }, [shouldProceed]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -414,141 +407,153 @@ const [showConfirmEmailModal, setShowConfirmEmailModal] = useState(false);
         </CardFooter>
       </Card>
 
-
-
-<Dialog open={showConfirmEmailModal} onOpenChange={setShowConfirmEmailModal}>
-  <DialogContent
-    className="sm:max-w-[425px]"
-    onInteractOutside={(e) => e.preventDefault()}
-    onEscapeKeyDown={(e) => e.preventDefault()}
-  >
-    <DialogHeader>
-      <DialogTitle className="text-center">Confirm Your Email</DialogTitle>
-    </DialogHeader>
-
-    <div className="grid gap-4 py-4">
-      <div className="text-center space-y-3">
-        <Mail className="mx-auto h-12 w-12 text-primary" />
-        <p className="text-lg font-medium">
-          Is this the correct email address?
-        </p>
-        <div className="bg-gray-50 rounded-lg p-3 border">
-          <p className="font-semibold text-primary">{form.getValues("email")}</p>
-        </div>
-        <p className="text-sm text-gray-500">
-          We'll send a 6-digit verification code to this address
-        </p>
-      </div>
-
-      <div className="flex justify-center space-x-4 mt-4">
-        <Button
-          type="button"
-          variant="outline"
-          className="px-6 py-3"
-          onClick={() => setShowConfirmEmailModal(false)}
-        >
-          No, Change Email
-        </Button>
-        <Button
-          type="button"
-          className="px-6 py-3 bg-primary hover:bg-primary/90"
-          onClick={() => {setShouldProceed(true), setShowConfirmEmailModal(false)}}
-          disabled={isLoading}
-        >
-          Send OTP
-        </Button>
-      </div>
-    </div>
-  </DialogContent>
-</Dialog>
-
-      {showOtpModal && (<Dialog open={showOtpModal} onOpenChange={setShowOtpModal}>
+      <Dialog
+        open={showConfirmEmailModal}
+        onOpenChange={setShowConfirmEmailModal}
+      >
         <DialogContent
           className="sm:max-w-[425px]"
-          hideClose
           onInteractOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
-          <DialogHeader className="flex justify-between items-center">
-            <DialogTitle>Verify Your Email</DialogTitle>
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              Confirm Your Email
+            </DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <p className="text-center text-base text-gray-600">
-              We've sent a 6-digit code to {form.getValues("email")}.<br />
-              <span className="text-xs text-gray-500">
-                If you don't see it soon, please check your spam or junk folder.
-              </span>
-            </p>
-
-            <div className="space-y-2">
-              <Label htmlFor="otp">Verification Code</Label>
-              <div className="flex justify-center space-x-2">
-                {[0, 1, 2, 3, 4, 5].map((index) => (
-                  <Input
-                    key={index}
-                    id={`otp-${index}`}
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={1}
-                    value={otp[index] || ""}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^[0-9]$/.test(value)) {
-                        const newOtp = otp.split("");
-                        newOtp[index] = value;
-                        setOtp(newOtp.join(""));
-
-                        // Auto focus to next input
-                        if (index < 5 && value) {
-                          document.getElementById(`otp-${index + 1}`)?.focus();
-                        }
-                      } else if (value === "") {
-                        const newOtp = otp.split("");
-                        newOtp[index] = "";
-                        setOtp(newOtp.join(""));
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Backspace" && !otp[index] && index > 0) {
-                        document.getElementById(`otp-${index - 1}`)?.focus();
-                      }
-                    }}
-                    className="w-10 h-12 text-center text-xl"
-                  />
-                ))}
+            <div className="text-center space-y-3">
+              <Mail className="mx-auto h-12 w-12 text-primary" />
+              <p className="text-lg font-medium">
+                Is this the correct email address?
+              </p>
+              <div className="bg-gray-50 rounded-lg p-3 border">
+                <p className="font-semibold text-primary">
+                  {form.getValues("email")}
+                </p>
               </div>
-              {otpError && <p className="text-sm text-red-500">{otpError}</p>}
+              <p className="text-sm text-gray-500">
+                We'll send a 6-digit verification code to this address
+              </p>
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-center space-x-4 mt-4">
               <Button
                 type="button"
-                variant="ghost"
-                onClick={handleResendOtp}
-                disabled={isLoading}
+                variant="outline"
+                className="px-6 py-3"
+                onClick={() => setShowConfirmEmailModal(false)}
               >
-                Resend Code
+                No, Change Email
               </Button>
               <Button
                 type="button"
-                onClick={handleOtpVerification}
-                disabled={isLoading || otp.length !== 6}
+                className="px-6 py-3 bg-primary hover:bg-primary/90"
+                onClick={() => {
+                  setShouldProceed(true), setShowConfirmEmailModal(false);
+                }}
+                disabled={isLoading}
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Verifying...
-                  </>
-                ) : (
-                  "Verify"
-                )}
+                Send OTP
               </Button>
             </div>
           </div>
         </DialogContent>
-      </Dialog>)}
+      </Dialog>
+
+      {showOtpModal && (
+        <Dialog open={showOtpModal} onOpenChange={setShowOtpModal}>
+          <DialogContent
+            className="sm:max-w-[425px]"
+            hideClose
+            onInteractOutside={(e) => e.preventDefault()}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+          >
+            <DialogHeader className="flex justify-between items-center">
+              <DialogTitle>Verify Your Email</DialogTitle>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+              <p className="text-center text-base text-gray-600">
+                We've sent a 6-digit code to {form.getValues("email")}.<br />
+                <span className="text-xs text-gray-500">
+                  If you don't see it soon, please check your spam or junk
+                  folder.
+                </span>
+              </p>
+
+              <div className="space-y-2">
+                <Label htmlFor="otp">Verification Code</Label>
+                <div className="flex justify-center space-x-2">
+                  {[0, 1, 2, 3, 4, 5].map((index) => (
+                    <Input
+                      key={index}
+                      id={`otp-${index}`}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      value={otp[index] || ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (/^[0-9]$/.test(value)) {
+                          const newOtp = otp.split("");
+                          newOtp[index] = value;
+                          setOtp(newOtp.join(""));
+
+                          // Auto focus to next input
+                          if (index < 5 && value) {
+                            document
+                              .getElementById(`otp-${index + 1}`)
+                              ?.focus();
+                          }
+                        } else if (value === "") {
+                          const newOtp = otp.split("");
+                          newOtp[index] = "";
+                          setOtp(newOtp.join(""));
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Backspace" && !otp[index] && index > 0) {
+                          document.getElementById(`otp-${index - 1}`)?.focus();
+                        }
+                      }}
+                      className="w-10 h-12 text-center text-xl"
+                    />
+                  ))}
+                </div>
+                {otpError && <p className="text-sm text-red-500">{otpError}</p>}
+              </div>
+
+              <div className="flex justify-between items-center">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleResendOtp}
+                  disabled={isLoading}
+                >
+                  Resend Code
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleOtpVerification}
+                  disabled={isLoading || otp.length !== 6}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    "Verify"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

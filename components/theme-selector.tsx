@@ -77,10 +77,18 @@ export function ThemeSelector() {
         setTheme(selectedTheme);
         toast.success(`Theme ${selectedTheme.name} applied successfully! `);
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsApplying(false);
       console.error("Failed to apply theme", error);
       toast.error("Failed to apply theme. Please try again.");
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsApplying(false);
     }

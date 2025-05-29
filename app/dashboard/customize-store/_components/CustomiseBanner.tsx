@@ -180,26 +180,43 @@ export const CustomiseBanner = () => {
         toast.success("Banner updated successfully");
         setIsSavingData(false);
       }
-    } catch (error) {
-      console.error("Error creating banner:", error);
+    } catch (error: any) {
+      console.log("Error creating banner:", error);
+
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
       setIsSavingData(false);
     }
   };
 
   const handleDeleteImage = async (bannerData: any) => {
     try {
-      await deleteImageFromFirebase(bannerData.imageUrl);
       const response = await DELETE(
         `customise-store-banner/image?uuid=${bannerData?.uuid}`
       );
       if (response?.status === 200) {
         setBannerData((prev) => ({ ...prev, imageUrl: null }));
         toast.success("Image successfully deleted.");
+        await deleteImageFromFirebase(bannerData.imageUrl);
       } else {
         toast.error("Failed to delete image. Try again.");
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error("Failed to delete image. Try again.");
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     }
   };
 

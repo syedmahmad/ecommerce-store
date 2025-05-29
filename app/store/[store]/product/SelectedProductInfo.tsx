@@ -93,7 +93,6 @@ export default function SingleProduct() {
       };
 
       const response = await POST("/cart/add", payload);
-      console.log("response", response);
 
       if (!response || response.status !== 201) {
         throw new Error("Failed to add item to cart");
@@ -114,6 +113,15 @@ export default function SingleProduct() {
       toast.error(
         "An error occurred while adding the item to the cart. Try Again"
       );
+
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsAdding(false);
     }

@@ -66,6 +66,14 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
       toast.error(
         "An error occurred while adding the item to the cart. Try Again"
       );
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     } finally {
       setIsAdding(false);
     }
@@ -143,7 +151,6 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
             </>
           ) : (
             <span className="font-bold">
-
               {new Intl.NumberFormat("en-PK", {
                 style: "currency",
                 currency: "PKR",

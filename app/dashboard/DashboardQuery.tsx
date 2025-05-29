@@ -73,11 +73,8 @@ export default function DashboardPage() {
     );
   }
 
-
   if (!isContactNo) {
-    return (
-      <UpdateStoreInfoAfterLogin />
-    )
+    return <UpdateStoreInfoAfterLogin />;
   }
 
   return (
@@ -130,8 +127,6 @@ export default function DashboardPage() {
         </div>
       </div>
       {/* the UI will only appear when user does not added his contact number and  */}
-
-
     </DashboardLayout>
   );
 }

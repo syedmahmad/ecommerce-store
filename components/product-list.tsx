@@ -261,8 +261,16 @@ export const ProductList = () => {
       } else {
         console.error("Product creation failed:", response?.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding product:", error);
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     }
   };
 
@@ -292,9 +300,17 @@ export const ProductList = () => {
       toast.success("Product updated successfully!");
       reFetch();
       setIsEditProductOpen(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating product:", error);
       // Optionally show error feedback to the user
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
     }
   };
   const handleDeleteProduct = async (productId: number) => {
@@ -306,8 +322,16 @@ export const ProductList = () => {
       setProducts(updatedProducts);
       toast.success("Product deleted successfully!");
       reFetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to delete product:", error);
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+          {
+            autoClose: false,
+          }
+        );
+      }
       // Optionally show a user-facing error message
     }
   };
