@@ -224,6 +224,7 @@ export default function RegisterPage() {
         );
 
         if (success?.nextStep === "verify-otp") {
+          toast.success(`We have sent the OTP code to: ${formData.email}`);
           showVerifyOtpModal();
           return;
         }
