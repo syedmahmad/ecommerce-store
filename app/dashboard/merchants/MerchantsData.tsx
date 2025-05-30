@@ -79,7 +79,14 @@ export const MerchantsData = () => {
                   <p className="text-gray-900 font-medium">
                     {merchant.user.name}
                   </p>
-                  <p className="text-gray-500 text-sm">{merchant.user.email}</p>
+                  <p className="text-gray-500 text-sm">
+                    <a
+                      href={`mailto:${merchant.user.email}`}
+                      className="underline text-blue-600"
+                    >
+                      {merchant.user.email}
+                    </a>
+                  </p>
 
                   {/* Member Since */}
                   <p className="text-gray-500 text-sm">
@@ -120,6 +127,16 @@ export const MerchantsData = () => {
                     })}
                   </ul>
                 )}
+                <br />
+                <p className="mt-2">
+                  Phone Number:{" "}
+                  <a
+                    href={`tel:${merchant.store.contactNumber}`}
+                    className="text-blue-600 underline"
+                  >
+                    {merchant.store.contactNumber}
+                  </a>
+                </p>
               </div>
             </div>
           ))}

@@ -76,6 +76,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       setActiveTab("theme");
     } else if (pathname.includes("/dashboard/settings")) {
       setActiveTab("settings");
+    } else if (pathname.includes("/dashboard/merchants")) {
+      setActiveTab("merchants");
     } else {
       setActiveTab("overview");
     }
