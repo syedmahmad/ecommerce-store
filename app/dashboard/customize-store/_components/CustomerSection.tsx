@@ -168,9 +168,10 @@ export const CustomerSection = () => {
       testimonial: formData.testimonial,
       imageUrl: formData.imageUrl,
       rating: formData.rating,
-      userId: parseLCData.id,
+      user_id: parseLCData.id,
       heading: formData.heading,
       subHeading: formData.subHeading,
+      uuid: parseLCData.uuid,
     };
 
     try {
@@ -224,9 +225,17 @@ export const CustomerSection = () => {
     setEditId(customer.id);
   };
 
+  // #region to delete customer from DB.
+
+  // function responsible for deleting customer form db
+
   const handleDelete = async (id: string) => {
     try {
-      const response = await DELETE(`/our-customer-section/${id}`);
+      const lcData = localStorage.getItem("user");
+      const parseLCData = lcData && JSON.parse(lcData);
+      const response = await DELETE(
+        `/our-customer-section/${id}?uuid=${parseLCData?.uuid}`
+      );
       if (response?.status === 200) {
         toast.success("Customer deleted successfully");
         setCustomerData(response?.data?.remaining);
@@ -246,6 +255,8 @@ export const CustomerSection = () => {
       }
     }
   };
+
+  // #endregion
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -374,19 +385,24 @@ export const CustomerSection = () => {
                   </label>
                 )}
                 {formData.imageUrl && (
-                  <div className="relative">
-                    <img
-                      src={formData.imageUrl || "/avatar.png"}
-                      alt="Uploaded"
-                      className="h-16 w-16 object-cover rounded-full border-2 border-gray-200"
-                    />
-                    <button
-                      onClick={() => handleRemoveImage(formData)}
-                      className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
-                      title="Remove image"
-                    >
-                      <XMarkIcon className="h-4 w-4 text-white" />
-                    </button>
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <img
+                        src={formData.imageUrl || "/avatar.png"}
+                        alt="Uploaded"
+                        className="h-16 w-16 object-cover rounded-full border-2 border-gray-200"
+                      />
+                      <button
+                        onClick={() => handleRemoveImage(formData)}
+                        className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
+                        title="Remove image"
+                      >
+                        <XMarkIcon className="h-4 w-4 text-white" />
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      Delete the current image to upload a new one
+                    </p>
                   </div>
                 )}
               </div>
@@ -463,62 +479,55 @@ export const CustomerSection = () => {
   );
 };
 
-export const SingleCustomer = ({ customer, handleEdit, handleDelete }: any) => {
-  return (
-    <div className="p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
-      <div className="flex justify-between items-start">
-        <div className="flex items-start space-x-4">
-          <div className="relative">
-            <img
-              src={customer.imageUrl ?? "/avatar.png"}
-              alt={customer.name}
-              className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm"
-            />
-            {customer.imageUrl && (
-              <button
-                onClick={() => handleEdit({ ...customer, imageUrl: "" })}
-                className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
-                title="Remove image"
-              >
-                <XMarkIcon className="h-4 w-4 text-white" />
-              </button>
-            )}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="font-medium text-gray-900">{customer.name}</p>
-              <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">
-                {customer.status}
-              </span>
-            </div>
-            <div className="flex mt-1 mb-2 text-yellow-400">
-              {Array.from({ length: customer.rating }).map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-current" />
-              ))}
-            </div>
-            <p className="text-gray-600 italic">"{customer.testimonial}"</p>
-          </div>
+export const SingleCustomer = ({ customer, handleEdit, handleDelete }: any) => (
+  <div className="p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+      <div className="flex items-start space-x-3 sm:space-x-4">
+        <div className="relative flex-shrink-0">
+          <img
+            src={customer.imageUrl ?? "/avatar.png"}
+            alt={customer.name}
+            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-sm"
+          />
         </div>
-        <div className="flex space-x-3">
-          <button
-            onClick={() => handleEdit(customer)}
-            className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors"
-            title="Edit"
-          >
-            <PencilIcon className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => handleDelete(customer.id)}
-            className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors"
-            title="Delete"
-          >
-            <TrashIcon className="h-5 w-5" />
-          </button>
+        <div className="flex-1">
+          <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+            <p className="font-medium text-gray-900 break-words">
+              {customer.name}
+            </p>
+            <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full self-start xs:self-auto">
+              {customer.status}
+            </span>
+          </div>
+          <div className="flex mt-1 mb-2 text-yellow-400">
+            {Array.from({ length: customer.rating }).map((_, i) => (
+              <Star key={i} className="h-4 w-4 fill-current" />
+            ))}
+          </div>
+          <p className="text-gray-600 italic text-sm sm:text-base">
+            "{customer.testimonial}"
+          </p>
         </div>
       </div>
+      <div className="flex justify-end sm:justify-normal space-x-2 sm:space-x-3">
+        <button
+          onClick={() => handleEdit(customer)}
+          className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors"
+          title="Edit"
+        >
+          <PencilIcon className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => handleDelete(customer.id)}
+          className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors"
+          title="Delete"
+        >
+          <TrashIcon className="h-5 w-5" />
+        </button>
+      </div>
     </div>
-  );
-};
+  </div>
+);
 
 export const CustomerLivePreview = ({ customerData, formData }: any) => {
   const hasPreviewTestimonial =

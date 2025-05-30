@@ -197,8 +197,11 @@ export const CustomiseBanner = () => {
 
   const handleDeleteImage = async (bannerData: any) => {
     try {
+      const lcData = localStorage.getItem("user");
+      const parseUserData = lcData && JSON.parse(lcData);
+
       const response = await DELETE(
-        `customise-store-banner/image?uuid=${bannerData?.uuid}`
+        `customise-store-banner/image?uuid=${bannerData?.uuid}&userId=${parseUserData.uuid}`
       );
       if (response?.status === 200) {
         setBannerData((prev) => ({ ...prev, imageUrl: null }));

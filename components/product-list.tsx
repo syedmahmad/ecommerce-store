@@ -234,6 +234,7 @@ export const ProductList = () => {
   const handleAddProduct = async () => {
     const lcData = localStorage.getItem("user");
     const user = lcData && JSON.parse(lcData);
+    console.log("user", user);
     try {
       const response = await POST(`/product?id=${user.id}`, newProduct);
 
@@ -283,8 +284,10 @@ export const ProductList = () => {
     if (!currentProduct || !currentProduct.id) return;
 
     try {
+      const user = localStorage.getItem("user");
+      const parseUser = user && JSON.parse(user);
       const response = await PATCH(
-        `/product/${currentProduct.id}`,
+        `/product/${currentProduct.id}?uuid=${parseUser?.uuid}`,
         currentProduct
       );
 
@@ -315,8 +318,9 @@ export const ProductList = () => {
   };
   const handleDeleteProduct = async (productId: number) => {
     try {
-      await DELETE(`/product/${productId}`);
-
+      const user = localStorage.getItem("user");
+      const parseUser = user && JSON.parse(user);
+      await DELETE(`/product/${productId}?uuid=${parseUser?.uuid}`);
       // Remove from local state after successful delete
       const updatedProducts = products.filter((p: any) => p.id !== productId);
       setProducts(updatedProducts);
@@ -348,104 +352,111 @@ export const ProductList = () => {
           </div>
           <Button className="ml-auto" onClick={() => setIsAddProductOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Product
+            <span className="hidden sm:inline">Add Product</span>
+            <span className="sm:hidden">Add</span>
           </Button>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[80px]">new Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Discount</TableHead>
-                <TableHead>Inventory</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products?.length > 0 &&
-                products.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <img
-                        src={product?.images[0]?.imageUrl || "/placeholder.svg"}
-                        alt={product.name}
-                        width={50}
-                        height={50}
-                        className="rounded-md object-cover"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {product.name}
-                    </TableCell>
-                    <TableCell>
-                      {new Intl.NumberFormat("en-PK", {
-                        style: "currency",
-                        currency: "PKR",
-                      }).format(product.price)}
-                    </TableCell>
-                    <TableCell>
-                      {product.discount > 0 ? `${product.discount}%` : "-"}
-                    </TableCell>
-                    <TableCell>{product.stock}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          product.status !== 0 && product.stock > 0
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {product.status !== 0 && product.stock > 0
-                          ? "Active"
-                          : "In Active"}
-                      </span>
-                    </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px] sm:w-[80px]">Image</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead className="whitespace-nowrap">Price</TableHead>
+                  <TableHead className="whitespace-nowrap">Discount</TableHead>
+                  <TableHead className="whitespace-nowrap">Inventory</TableHead>
+                  <TableHead className="whitespace-nowrap">Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products?.length > 0 &&
+                  products.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <img
+                          src={
+                            product?.images[0]?.imageUrl || "/placeholder.svg"
+                          }
+                          alt={product.name}
+                          width={50}
+                          height={50}
+                          className="rounded-md object-cover"
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium whitespace-nowrap">
+                        {product.name}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {new Intl.NumberFormat("en-PK", {
+                          style: "currency",
+                          currency: "PKR",
+                        }).format(product.price)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {product.discount > 0 ? `${product.discount}%` : "-"}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {product.stock}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            product.status !== 0 && product.stock > 0
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {product.status !== 0 && product.stock > 0
+                            ? "Active"
+                            : "In Active"}
+                        </span>
+                      </TableCell>
 
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => handleEditProduct(product)}
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={() => handleDeleteProduct(product.id)}
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => handleDeleteProduct(product.id)}
+                            >
+                              <Trash className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
       {/* Add Product Dialog */}
       <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
-        <DialogContent className="sm:max-w-[95vw] lg:max-w-[925px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[95vw] lg:max-w-[925px] max-h-[90vh] overflow-y-auto w-[95vw]">
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold text-gray-800 mb-1">
+            <DialogTitle className="text-center text-xl sm:text-2xl font-bold text-gray-800 mb-1">
               Add New Product
             </DialogTitle>
-            <DialogDescription className="text-center text-gray-600 mb-4">
+            <DialogDescription className="text-center text-sm sm:text-base text-gray-600 mb-4">
               Fill in the product details below. All fields are required unless
               marked optional.
             </DialogDescription>
@@ -453,15 +464,18 @@ export const ProductList = () => {
 
           <div className="space-y-6 py-2">
             {/* Section 1: Basic Information */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-lg text-gray-700 mb-4">
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+              <h3 className="font-medium text-base sm:text-lg text-gray-700 mb-3 sm:mb-4">
                 Basic Information
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {/* Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700 font-medium">
+                  <Label
+                    htmlFor="name"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
+                  >
                     Product Name <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -471,13 +485,16 @@ export const ProductList = () => {
                       setNewProduct({ ...newProduct, name: e.target.value })
                     }
                     placeholder="Enter product name"
-                    className="w-full"
+                    className="w-full text-sm sm:text-base"
                   />
                 </div>
 
                 {/* Price */}
                 <div className="space-y-2">
-                  <Label htmlFor="price" className="text-gray-700 font-medium">
+                  <Label
+                    htmlFor="price"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
+                  >
                     Price <span className="text-red-500">*</span>
                   </Label>
                   <div className="relative">
@@ -495,7 +512,7 @@ export const ProductList = () => {
                         })
                       }
                       placeholder="0.00"
-                      className="w-full pl-8"
+                      className="w-full pl-8 text-sm sm:text-base"
                       min="0"
                       step="0.01"
                     />
@@ -504,7 +521,10 @@ export const ProductList = () => {
 
                 {/* Stock */}
                 <div className="space-y-2">
-                  <Label htmlFor="stock" className="text-gray-700 font-medium">
+                  <Label
+                    htmlFor="stock"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
+                  >
                     Stock Quantity
                   </Label>
                   <Input
@@ -516,13 +536,16 @@ export const ProductList = () => {
                     placeholder="Enter stock quantity"
                     type="number"
                     min="0"
-                    className="w-full"
+                    className="w-full text-sm sm:text-base"
                   />
                 </div>
 
                 {/* Status */}
                 <div className="space-y-2">
-                  <Label htmlFor="status" className="text-gray-700 font-medium">
+                  <Label
+                    htmlFor="status"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
+                  >
                     Status <span className="text-red-500">*</span>
                   </Label>
                   <select
@@ -544,14 +567,14 @@ export const ProductList = () => {
             </div>
 
             {/* Section 2: Description */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-lg text-gray-700 mb-4">
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+              <h3 className="font-medium text-base sm:text-lg text-gray-700 mb-3 sm:mb-4">
                 Description
               </h3>
               <div className="space-y-2">
                 <Label
                   htmlFor="description"
-                  className="text-gray-700 font-medium"
+                  className="text-gray-700 font-medium text-sm sm:text-base"
                 >
                   Product Description
                 </Label>
@@ -565,23 +588,23 @@ export const ProductList = () => {
                     })
                   }
                   placeholder="Enter detailed product description"
-                  className="min-h-[120px]"
+                  className="min-h-[120px] text-sm sm:text-base"
                 />
               </div>
             </div>
 
             {/* Section 3: Discount & Images */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-lg text-gray-700 mb-4">
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+              <h3 className="font-medium text-base sm:text-lg text-gray-700 mb-3 sm:mb-4">
                 Media & Pricing
               </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {/* Discount */}
                 <div className="space-y-2">
                   <Label
                     htmlFor="discount"
-                    className="text-gray-700 font-medium"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
                   >
                     Discount (optional)
                   </Label>
@@ -600,7 +623,7 @@ export const ProductList = () => {
                           discount: Number(e.target.value),
                         })
                       }
-                      className="w-full pl-8"
+                      className="w-full pl-8 text-sm sm:text-base"
                       min="0"
                       max="100"
                     />
@@ -611,11 +634,11 @@ export const ProductList = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="imageUpload"
-                    className="text-gray-700 font-medium"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
                   >
                     Product Images <span className="text-red-500">*</span>
                   </Label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-md p-4">
+                  <div className="border-2 border-dashed border-gray-300 rounded-md p-3 sm:p-4">
                     <input
                       id="imageUpload"
                       type="file"
@@ -623,14 +646,14 @@ export const ProductList = () => {
                       accept="image/*"
                       multiple
                       onChange={handleImageUpload}
-                      className="w-full text-sm text-gray-500
-                  file:mr-4 file:py-2 file:px-4
+                      className="w-full text-xs sm:text-sm text-gray-500
+                  file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4
                   file:rounded-md file:border-0
-                  file:text-sm file:font-semibold
+                  file:text-xs sm:file:text-sm file:font-semibold
                   file:bg-blue-50 file:text-blue-700
                   hover:file:bg-blue-100"
                     />
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-gray-500 mt-1 sm:mt-2">
                       Upload high-quality product images (max 5MB each)
                     </p>
                   </div>
@@ -639,15 +662,15 @@ export const ProductList = () => {
             </div>
 
             {/* Section 4: Sale Settings */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-lg text-gray-700">
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 gap-2 sm:gap-0">
+                <h3 className="font-medium text-base sm:text-lg text-gray-700">
                   Sale Settings
                 </h3>
                 <div className="flex items-center space-x-2">
                   <Label
                     htmlFor="isOnSale"
-                    className="text-gray-700 font-medium"
+                    className="text-gray-700 font-medium text-sm sm:text-base"
                   >
                     Enable Sale
                   </Label>
@@ -660,7 +683,7 @@ export const ProductList = () => {
                         isOnSale: parseInt(e.target.value, 10),
                       })
                     }
-                    className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                    className="border border-gray-300 rounded-md px-2 sm:px-3 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   >
                     <option value="0">No</option>
                     <option value="1">Yes</option>
@@ -669,13 +692,13 @@ export const ProductList = () => {
               </div>
 
               {newProduct.isOnSale === 1 && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {/* Sale Title */}
                     <div className="space-y-2">
                       <Label
                         htmlFor="saleTitle"
-                        className="text-gray-700 font-medium"
+                        className="text-gray-700 font-medium text-sm sm:text-base"
                       >
                         Sale Title
                       </Label>
@@ -689,7 +712,7 @@ export const ProductList = () => {
                           })
                         }
                         placeholder="e.g., Summer Sale"
-                        className="w-full"
+                        className="w-full text-sm sm:text-base"
                       />
                     </div>
 
@@ -697,7 +720,7 @@ export const ProductList = () => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="bannerImage"
-                        className="text-gray-700 font-medium"
+                        className="text-gray-700 font-medium text-sm sm:text-base"
                       >
                         Banner Image
                       </Label>
@@ -707,10 +730,10 @@ export const ProductList = () => {
                         name="file"
                         accept="image/*"
                         onChange={handleBannerImageUpload}
-                        className="w-full text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4
+                        className="w-full text-xs sm:text-sm text-gray-500
+                    file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4
                     file:rounded-md file:border-0
-                    file:text-sm file:font-semibold
+                    file:text-xs sm:file:text-sm file:font-semibold
                     file:bg-blue-50 file:text-blue-700
                     hover:file:bg-blue-100"
                       />
@@ -721,7 +744,7 @@ export const ProductList = () => {
                   <div className="space-y-2">
                     <Label
                       htmlFor="saleDescription"
-                      className="text-gray-700 font-medium"
+                      className="text-gray-700 font-medium text-sm sm:text-base"
                     >
                       Sale Description
                     </Label>
@@ -735,16 +758,16 @@ export const ProductList = () => {
                         })
                       }
                       placeholder="Describe the sale promotion"
-                      className="min-h-[80px]"
+                      className="min-h-[80px] text-sm sm:text-base"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {/* Start Date */}
                     <div className="space-y-2">
                       <Label
                         htmlFor="startDate"
-                        className="text-gray-700 font-medium"
+                        className="text-gray-700 font-medium text-sm sm:text-base"
                       >
                         Start Date
                       </Label>
@@ -758,7 +781,7 @@ export const ProductList = () => {
                             startDate: e.target.value,
                           })
                         }
-                        className="w-full"
+                        className="w-full text-sm sm:text-base"
                       />
                     </div>
 
@@ -766,7 +789,7 @@ export const ProductList = () => {
                     <div className="space-y-2">
                       <Label
                         htmlFor="endDate"
-                        className="text-gray-700 font-medium"
+                        className="text-gray-700 font-medium text-sm sm:text-base"
                       >
                         End Date
                       </Label>
@@ -780,7 +803,7 @@ export const ProductList = () => {
                             endDate: e.target.value,
                           })
                         }
-                        className="w-full"
+                        className="w-full text-sm sm:text-base"
                       />
                     </div>
                   </div>
@@ -789,11 +812,11 @@ export const ProductList = () => {
             </div>
           </div>
 
-          <DialogFooter className="px-4 py-3 bg-gray-50 rounded-b-lg border-t">
+          <DialogFooter className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-b-lg border-t">
             <button
               type="button"
               onClick={() => setIsAddProductOpen(false)}
-              className="px-4 py-2 rounded-md text-gray-700 font-medium bg-white border border-gray-300 hover:bg-gray-50"
+              className="px-3 sm:px-4 py-1 sm:py-2 rounded-md text-sm sm:text-base text-gray-700 font-medium bg-white border border-gray-300 hover:bg-gray-50"
             >
               Cancel
             </button>
@@ -801,12 +824,12 @@ export const ProductList = () => {
               type="submit"
               onClick={handleAddProduct}
               disabled={isUploading}
-              className={`px-6 py-2 rounded-md text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors duration-200`}
+              className={`px-4 sm:px-6 py-1 sm:py-2 rounded-md text-sm sm:text-base text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 transition-colors duration-200`}
             >
               {isUploading ? (
                 <>
                   <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    className="animate-spin -ml-1 mr-1 sm:mr-2 h-4 w-4 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -837,19 +860,22 @@ export const ProductList = () => {
 
       {/* Edit Product Dialog */}
       <Dialog open={isEditProductOpen} onOpenChange={setIsEditProductOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] w-[95vw]">
           <DialogHeader>
             <DialogTitle className="text-center font-medium">
               Edit Product
             </DialogTitle>
-            <DialogDescription className="text-center mt-2">
+            <DialogDescription className="text-center mt-2 text-sm sm:text-base">
               Make changes to your product here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
           {currentProduct && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-name" className="text-right">
+            <div className="grid gap-3 sm:gap-4 py-2 sm:py-4">
+              <div className="grid grid-cols-4 items-center gap-3 sm:gap-4">
+                <Label
+                  htmlFor="edit-name"
+                  className="text-right text-sm sm:text-base"
+                >
                   Name
                 </Label>
                 <Input
@@ -861,11 +887,14 @@ export const ProductList = () => {
                       name: e.target.value,
                     })
                   }
-                  className="col-span-3"
+                  className="col-span-3 text-sm sm:text-base"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-price" className="text-right">
+              <div className="grid grid-cols-4 items-center gap-3 sm:gap-4">
+                <Label
+                  htmlFor="edit-price"
+                  className="text-right text-sm sm:text-base"
+                >
                   Price
                 </Label>
                 <Input
@@ -878,11 +907,14 @@ export const ProductList = () => {
                       price: Number.parseFloat(e.target.value),
                     })
                   }
-                  className="col-span-3"
+                  className="col-span-3 text-sm sm:text-base"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-inventory" className="text-right">
+              <div className="grid grid-cols-4 items-center gap-3 sm:gap-4">
+                <Label
+                  htmlFor="edit-inventory"
+                  className="text-right text-sm sm:text-base"
+                >
                   Inventory
                 </Label>
                 <Input
@@ -895,11 +927,14 @@ export const ProductList = () => {
                       stock: Number.parseInt(e.target.value),
                     })
                   }
-                  className="col-span-3"
+                  className="col-span-3 text-sm sm:text-base"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-discount" className="text-right">
+              <div className="grid grid-cols-4 items-center gap-3 sm:gap-4">
+                <Label
+                  htmlFor="edit-discount"
+                  className="text-right text-sm sm:text-base"
+                >
                   Discount %
                 </Label>
                 <Input
@@ -912,11 +947,14 @@ export const ProductList = () => {
                       discount: Number.parseFloat(e.target.value),
                     })
                   }
-                  className="col-span-3"
+                  className="col-span-3 text-sm sm:text-base"
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-description" className="text-right">
+              <div className="grid grid-cols-4 items-center gap-3 sm:gap-4">
+                <Label
+                  htmlFor="edit-description"
+                  className="text-right text-sm sm:text-base"
+                >
                   Description
                 </Label>
                 <Textarea
@@ -928,12 +966,15 @@ export const ProductList = () => {
                       description: e.target.value,
                     })
                   }
-                  className="col-span-3"
+                  className="col-span-3 text-sm sm:text-base"
                 />
               </div>
 
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="edit-status" className="text-right">
+              <div className="grid grid-cols-4 items-center gap-3 sm:gap-4">
+                <Label
+                  htmlFor="edit-status"
+                  className="text-right text-sm sm:text-base"
+                >
                   Active
                 </Label>
                 <Switch
@@ -950,7 +991,11 @@ export const ProductList = () => {
             </div>
           )}
           <DialogFooter>
-            <Button type="submit" onClick={saveEditedProduct}>
+            <Button
+              type="submit"
+              onClick={saveEditedProduct}
+              className="text-sm sm:text-base"
+            >
               Save Changes
             </Button>
           </DialogFooter>

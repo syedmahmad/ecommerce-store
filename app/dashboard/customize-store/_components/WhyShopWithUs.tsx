@@ -16,6 +16,7 @@ interface WhyShopWithUsData {
   description: string;
   features: Feature[];
   userId?: string;
+  uuid: string;
 }
 
 export const WhyShopWithUs = () => {
@@ -96,12 +97,15 @@ export const WhyShopWithUs = () => {
   };
 
   const handleSave = async () => {
+    const lcData = localStorage.getItem("user");
+    const parseLCData = lcData && JSON.parse(lcData);
     setIsSaving(true);
     const payload: WhyShopWithUsData = {
       sectionTitle,
       description,
       userId: userId || "",
       features,
+      uuid: parseLCData.uuid,
     };
 
     try {

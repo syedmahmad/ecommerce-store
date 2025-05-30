@@ -307,7 +307,7 @@ export const UpdateStoreInfo = () => {
                       <label className="block text-sm font-medium text-gray-700">
                         Store Logo
                       </label>
-                      <div className="mt-1 flex items-center space-x-4">
+                      <div className="mt-1 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
                         <div className="flex-shrink-0 h-16 w-16 overflow-hidden rounded-full bg-gray-100">
                           <img
                             className="h-full w-full object-cover"
@@ -319,19 +319,19 @@ export const UpdateStoreInfo = () => {
                             alt="Store logo"
                           />
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col xs:flex-row gap-2">
                           {storeInfo.logo === null && (
                             <button
                               type="button"
                               onClick={triggerFileInput}
                               disabled={isLoading}
-                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                               Change
                             </button>
                           )}
                           {storeInfo.logo !== null && (
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-gray-600 text-center xs:text-left">
                               To upload a new logo, please remove the existing
                               one first.
                             </p>
@@ -340,17 +340,15 @@ export const UpdateStoreInfo = () => {
                             type="button"
                             onClick={() => removeLogo(storeInfo)}
                             disabled={isLoading || storeInfo.logo === null}
-                            className={`inline-flex items-center rounded-md border px-3 py-2 text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-    ${
-      isLoading || storeInfo.logo === null
-        ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
-        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-    }
-  `}
+                            className={`inline-flex items-center justify-center rounded-md border px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                              isLoading || storeInfo.logo === null
+                                ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
+                                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                            }`}
                           >
                             {removing ? "Removing..." : "Remove"}
                             {removing && (
-                              <Loader2 className="ml-2 h-3 w-3 animate-spin text-primary" />
+                              <Loader2 className="ml-1 sm:ml-2 h-3 w-3 animate-spin text-primary" />
                             )}
                           </button>
                         </div>
