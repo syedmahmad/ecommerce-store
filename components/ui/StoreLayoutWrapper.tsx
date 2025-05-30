@@ -23,8 +23,6 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
 
   const storeInfoFromBE = getStoreInfo?.data?.data;
 
-  console.log("storeInfoFromBE", storeInfoFromBE);
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { currentTheme, storePreviewTheme } = useTheme();
@@ -208,7 +206,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
             style={{ borderColor: hexToRgba(theme.primary, 0.2) }}
           >
             <div className="flex mb-4">
-              <Input
+              {/* <Input
                 type="search"
                 placeholder="Search products..."
                 className="w-full transition-all duration-300 focus:ring-2"
@@ -219,7 +217,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
                     "--tw-ring-color": hexToRgba(theme.primary, 0.25),
                   } as React.CSSProperties),
                 }}
-              />
+              /> */}
             </div>
             <nav className="flex flex-col space-y-3">
               {categories.map((category) => (
