@@ -100,33 +100,24 @@ export const CustomiseBanner = () => {
 
     image.onload = async () => {
       const { width, height } = image;
-      console.log(`Uploaded image dimensions: ${width}x${height}`);
 
       URL.revokeObjectURL(objectUrl);
 
       try {
         setIsUploading(true);
         // Compress image;
-        console.log("image compression start...", file);
         const compressedFile = await imageCompression(file, {
           maxSizeMB: 1, // try to reduce to 1MB
           maxWidthOrHeight: 1024,
           useWebWorker: true,
         });
-        console.log("image compression end ...", compressedFile);
 
-        console.log(
-          "####################compressedFile##############",
-          compressedFile
-        );
         // Upload to Firebase
 
         const path = `banners/banner-${Date.now()}.${compressedFile.name
           .split(".")
           .pop()}`;
-        console.log("path...................////.....", path);
         const downloadURL = await uploadImageToFirebase(compressedFile, path);
-        console.timeEnd("firebaseUpload");
 
         setBannerData((prev: any) => ({
           ...prev,

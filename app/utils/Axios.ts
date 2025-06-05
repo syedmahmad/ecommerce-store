@@ -38,22 +38,30 @@ const GET = async (endPoint: string) => {
 
 const POST = async (endPoint: string, data: any, config?: any) => {
   try {
-     const user = localStorage.getItem('user');
-     const parseUser = user && JSON.parse(user)
-     const token = parseUser.token;
+    let token: string | null = null;
+
+    try {
+      const user = localStorage.getItem('user');
+      token = user ? JSON.parse(user)?.token || null : null;
+    } catch (err) {
+      console.warn('Error parsing user from localStorage', err);
+    }
+
     const mergedConfig = {
       ...(config || {}),
       headers: {
         ...(config?.headers || {}),
-        Authorization: `Bearer ${token}`, // inject JWT token here
+        ...(token && { Authorization: `Bearer ${token}` }), // ✅ Only add if token exists
       },
     };
+
     const response = await axiosInstance().post(endPoint, data, mergedConfig);
     return response;
   } catch (error) {
     handleError(error);
   }
 };
+
 
 const DELETE = async (endPoint: string) => {
   try {
