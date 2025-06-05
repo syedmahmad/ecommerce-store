@@ -46,6 +46,7 @@ export const EditProductModal = ({
   setIsUploading,
   reFetch,
   productToEdit,
+  saleInfo,
 }: {
   isEditProductOpen: boolean;
   setIsEditProductOpen: (open: boolean) => void;
@@ -53,6 +54,7 @@ export const EditProductModal = ({
   setIsUploading: (uploading: boolean) => void;
   reFetch: () => void;
   productToEdit: Product | any | null;
+  saleInfo: any;
 }) => {
   console.log("productToEdit", productToEdit);
 
@@ -66,11 +68,11 @@ export const EditProductModal = ({
     status: 0,
     imageUrls: [],
     isOnSale: "",
-    saleTitle: "",
-    saleDescription: "",
-    startDate: "",
-    endDate: "",
-    bannerImageUrl: "",
+    saleTitle: saleInfo?.title ?? "",
+    saleDescription: saleInfo?.description ?? "",
+    startDate: saleInfo?.startDate ?? "",
+    endDate: saleInfo?.endDate ?? "",
+    bannerImageUrl: saleInfo?.bannerImageUrl ?? "",
   });
 
   const [imagesToRemove, setImagesToRemove] = useState<string[]>([]);
@@ -92,6 +94,33 @@ export const EditProductModal = ({
       setImagesToRemove([]);
     }
   }, [productToEdit]);
+
+  useEffect(() => {
+    if (saleInfo) {
+      setEditedProduct((prev) => ({
+        ...prev,
+        isOnSale: productToEdit.isOnSale,
+        saleTitle: saleInfo.title || "",
+        saleDescription: saleInfo.description || "",
+        startDate: saleInfo.startDate ? saleInfo.startDate.split("T")[0] : "",
+        endDate: saleInfo.endDate ? saleInfo.endDate.split("T")[0] : "",
+        bannerImageUrl: saleInfo.bannerImageUrl || "",
+      }));
+    } else if (productToEdit && !productToEdit.isOnSale) {
+      // Only reset sale fields if the product wasn't already on sale
+      setEditedProduct((prev) => ({
+        ...prev,
+        isOnSale: 0,
+        saleTitle: "",
+        saleDescription: "",
+        startDate: "",
+        endDate: "",
+        bannerImageUrl: "",
+      }));
+    }
+  }, [saleInfo, productToEdit]);
+
+  console.log("saleInfo", saleInfo);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -195,9 +224,9 @@ export const EditProductModal = ({
     const user = lcData && JSON.parse(lcData);
 
     if (
-      !editedProduct.name ||
-      !editedProduct.price ||
-      editedProduct.imageUrls.length === 0
+      !editedProduct?.name ||
+      !editedProduct?.price ||
+      editedProduct?.imageUrls?.length === 0
     ) {
       toast.error("Please fill all required fields");
       return;
@@ -463,7 +492,7 @@ export const EditProductModal = ({
                   <p className="text-xs text-gray-500 mt-1 sm:mt-2">
                     Upload high-quality product images (max 5MB each)
                   </p>
-                  {editedProduct.imageUrls.length > 0 && (
+                  {editedProduct?.imageUrls?.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
                       {editedProduct.imageUrls.map((url, index) => (
                         <div key={index} className="relative">
