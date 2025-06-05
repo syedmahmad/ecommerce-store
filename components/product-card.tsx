@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
 import { useCart } from "@/context/cart-context";
 import { useTheme } from "@/context/theme-context";
 import { Loader2 } from "lucide-react";
@@ -14,7 +13,7 @@ import { POST } from "@/app/utils/Axios";
 import { toast } from "react-toastify";
 
 export function ProductCard({ product, storeInfoFromBE }: any) {
-  const { storeName, id } = storeInfoFromBE;
+  // const { storeName, id } = storeInfoFromBE;
   const { addItem } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const { currentTheme, storePreviewTheme } = useTheme();
@@ -93,7 +92,7 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
   return (
     <Card className="overflow-hidden h-full flex flex-col">
       <Link
-        href={`/store/${id}/product/${product.id}`}
+        href={`/store/${storeInfoFromBE?.id}/product/${product.id}`}
         className="relative block"
       >
         <div className="relative">
@@ -124,7 +123,7 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
         </div>
       </Link>
       <CardContent className="p-4 flex-grow">
-        <Link href={`/store/${id}/product/${product.id}`}>
+        <Link href={`/store/${storeInfoFromBE?.id}/product/${product.id}`}>
           <h3 className="font-medium text-lg hover:underline">
             {product.name}
           </h3>

@@ -257,27 +257,7 @@ export const CustomiseBanner = () => {
           />
         </div>
 
-        {bannerData?.imageUrl ? (
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Current Image
-            </label>
-            <div className="flex items-center justify-between bg-gray-100 p-3 rounded-lg border">
-              <span className="truncate max-w-sm text-sm text-gray-600">
-                {bannerData?.imageUrl || "uploaded_image.jpg"}
-              </span>
-              <button
-                onClick={() => handleDeleteImage(bannerData)}
-                className="text-sm text-red-600 hover:underline"
-              >
-                Delete to change
-              </button>
-            </div>
-            <p className="text-xs text-gray-500">
-              You must delete the current image before uploading a new one.
-            </p>
-          </div>
-        ) : (
+        {bannerData?.imageUrl ? null : (
           <div>
             <label
               className="block text-sm font-medium text-gray-700 mb-1"

@@ -169,8 +169,9 @@ export default function OrderConfirmationPage({ storeId }: any) {
                   </Button>
                 </Link>
                 <Button variant="secondary">
-                  <Phone className="mr-2 h-4 w-4" />
-                  {storeInfoFromBE?.contactNumber}
+                  <Phone className="mr-2 h-4 w-4" 
+                  />
+                   +92{storeInfoFromBE?.contactNumber}
                 </Button>
               </div>
             </CardContent>

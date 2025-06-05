@@ -49,10 +49,11 @@ export const UpdateStoreInfoAfterLogin = () => {
     description:
       storeInfoFromBE?.description ||
       "We sell the best products at the best prices!",
-    contactNumber: storeInfoFromBE?.contactNumber || "",
+    contactNumber: `${storeInfoFromBE?.contactNumber}` || "",
     logo: storeInfoFromBE?.logoUrl || null,
     logoPreview: storeInfoFromBE?.logoUrl || null,
     uuid: "",
+    location: storeInfoFromBE?.location ?? "",
   });
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export const UpdateStoreInfoAfterLogin = () => {
         logo: storeInfoFromBE?.logoUrl || null,
         logoPreview: storeInfoFromBE?.logoUrl || null,
         uuid: storeInfoFromBE?.stores_uuid,
+        location: storeInfoFromBE.location ?? "",
       });
     }
   }, [storeInfoFromBE]);
@@ -213,6 +215,7 @@ export const UpdateStoreInfoAfterLogin = () => {
         domain: storeInfo.domain,
         contactNumber: storeInfo.contactNumber,
         logoUrl: storeInfo.logo,
+        location: storeInfo.location,
       };
 
       const response = await PATCH(`/store/${storeInfo.uuid}`, payload);
@@ -284,87 +287,127 @@ export const UpdateStoreInfoAfterLogin = () => {
           <div className="md:grid md:grid-cols-3 md:gap-8">
             {/* Left side - Form */}
             <div className="md:col-span-2">
-              <div className="px-6 py-6 bg-white sm:p-6 shadow-lg rounded-xl">
+              <div className="px-6 py-6 bg-white sm:p-6 shadow-lg rounded-xl border border-gray-100">
                 <form onSubmit={handleSubmit}>
-                  <div className="space-y-6">
+                  <div className="space-y-8">
+                    {/* Header Section */}
+                    <div className="border-b border-gray-200 pb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <svg
+                          className="w-5 h-5 mr-2 text-indigo-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        Header Information
+                      </h3>
+                    </div>
+
                     {/* Store Name */}
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="name"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-gray-700"
                       >
                         Store Name
                       </label>
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        value={storeInfo.name}
-                        onChange={handleInputChange}
-                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
-                      />
-                    </div>
-
-                    {/* Domain */}
-                    <div>
-                      <label
-                        htmlFor="domain"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Store Domain
-                      </label>
-                      <div className="flex rounded-lg shadow-sm">
-                        <span className="inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
-                          https://
-                        </span>
+                      <div className="relative">
                         <input
                           type="text"
-                          name="domain"
-                          id="domain"
-                          value={storeInfo.domain}
+                          name="name"
+                          id="name"
+                          value={storeInfo.name}
                           onChange={handleInputChange}
-                          className="block w-full min-w-0 flex-1 rounded-r-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border pl-4"
+                          placeholder="Your store name"
                         />
                       </div>
                     </div>
 
+                    {/* Domain */}
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="domain"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Store Domain
+                      </label>
+                      <div className="flex rounded-md shadow-sm">
+                        <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm py-2.5">
+                          https://
+                        </span>
+                        <input
+                          type="text"
+                          name="subdomain"
+                          id="subdomain"
+                          value={storeInfo.domain.split(".")[0]}
+                          onChange={(e) => {
+                            const domainParts = storeInfo.domain.split(".");
+                            domainParts[0] = e.target.value;
+                            handleInputChange({
+                              target: {
+                                name: "domain",
+                                value: domainParts.join("."),
+                              },
+                            });
+                          }}
+                          className="block w-full min-w-0 flex-1 rounded-none border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border-y"
+                        />
+                        <span className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm py-2.5">
+                          .{storeInfo.domain.split(".").slice(1).join(".")}
+                        </span>
+                      </div>
+                    </div>
+
                     {/* Contact Number */}
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="contactNumber"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-gray-700"
                       >
                         Contact Number <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        type="tel"
-                        name="contactNumber"
-                        id="contactNumber"
-                        value={storeInfo.contactNumber}
-                        onChange={handleInputChange}
-                        placeholder="e.g., +1 (123) 456-7890"
-                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border ${
-                          contactNumberError ? "border-red-500" : ""
-                        }`}
-                      />
+                      <div className="relative flex items-center">
+                        <span className="absolute left-3 text-gray-500 text-sm">
+                          +92
+                        </span>
+                        <input
+                          type="tel"
+                          name="contactNumber"
+                          id="contactNumber"
+                          value={storeInfo.contactNumber}
+                          onChange={handleInputChange}
+                          placeholder="3001234567"
+                          className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-12 p-2.5 border ${
+                            contactNumberError ? "border-red-500" : ""
+                          }`}
+                        />
+                      </div>
                       {contactNumberError && (
                         <p className="mt-1 text-sm text-red-600">
                           {contactNumberError}
                         </p>
                       )}
-                      <p className="mt-1 text-sm text-gray-500">
+                      <p className="mt-1 text-xs text-gray-500">
                         This will be displayed to customers so they can contact
                         you
                       </p>
                     </div>
 
                     {/* Logo Upload */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-700">
                         Store Logo
                       </label>
-                      <div className="mt-1 flex items-center space-x-4">
-                        <div className="flex-shrink-0 h-20 w-20 overflow-hidden rounded-full bg-gray-100 border-2 border-gray-200">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0 h-16 w-16 rounded-full border-2 border-gray-200 overflow-hidden bg-gray-100 flex items-center justify-center">
                           <img
                             className="h-full w-full object-cover"
                             src={
@@ -381,11 +424,11 @@ export const UpdateStoreInfoAfterLogin = () => {
                               type="button"
                               onClick={triggerFileInput}
                               disabled={isLoading}
-                              className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
                               {isLoading ? "Uploading..." : "Upload Logo"}
                               {isLoading && (
-                                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="ml-2 h-3 w-3 animate-spin" />
                               )}
                             </button>
                           )}
@@ -394,7 +437,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                               type="button"
                               onClick={() => removeLogo(storeInfo)}
                               disabled={isLoading || removing}
-                              className={`inline-flex items-center rounded-lg border px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                              className={`inline-flex items-center rounded-md border px-3 py-2 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                                 isLoading || removing
                                   ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
                                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
@@ -402,7 +445,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                             >
                               {removing ? "Removing..." : "Remove Logo"}
                               {removing && (
-                                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="ml-2 h-3 w-3 animate-spin" />
                               )}
                             </button>
                           )}
@@ -415,68 +458,148 @@ export const UpdateStoreInfoAfterLogin = () => {
                           accept="image/*"
                         />
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">
-                        Recommended size: 256x256 pixels. Max file size: 2MB.
+                      <p className="text-xs text-gray-500">
+                        Recommended: 256×256px. Max size: 2MB.
                       </p>
                     </div>
 
-                    {/* Description */}
-                    <div>
-                      <label
-                        htmlFor="description"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Store TagLine
-                      </label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        rows={3}
-                        value={storeInfo.description}
-                        onChange={handleInputChange}
-                        maxLength={45}
-                        className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"
-                      />
-                      <div className="flex justify-between mt-1">
-                        <p className="text-sm text-gray-500">
-                          Brief description for your store
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {storeInfo.description.length}/45 characters
-                        </p>
+                    {/* Footer Section */}
+                    <div className="pt-6 border-t border-gray-200">
+                      <div className="pb-6">
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                          <svg
+                            className="w-5 h-5 mr-2 text-indigo-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          Footer Information
+                        </h3>
+                      </div>
+
+                      {/* Store Physical Location */}
+                      <div className="space-y-1 mb-4">
+                        <label
+                          htmlFor="location"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Location
+                        </label>
+                        <textarea
+                          id="location"
+                          name="location"
+                          rows={2}
+                          value={storeInfo.location}
+                          onChange={handleInputChange}
+                          maxLength={45}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border"
+                          placeholder="Your store's physical address"
+                        />
+                        <div className="flex justify-between mt-1">
+                          <p className="text-xs text-gray-500">
+                            Locate your physical location so users can visit
+                            you.
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {storeInfo.location.length}/45
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <div className="space-y-1">
+                        <label
+                          htmlFor="description"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Store TagLine
+                        </label>
+                        <textarea
+                          id="description"
+                          name="description"
+                          rows={2}
+                          value={storeInfo?.description}
+                          onChange={handleInputChange}
+                          maxLength={45}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border"
+                          placeholder="Brief description for your store"
+                        />
+                        <div className="flex justify-between mt-1">
+                          <p className="text-xs text-gray-500">
+                            Will appear in the footer section.
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {storeInfo.description.length}/45
+                          </p>
+                        </div>
                       </div>
                     </div>
 
                     {/* Messages */}
                     {successMessage && (
-                      <div className="rounded-md bg-green-50 p-4">
-                        <div className="flex">
-                          <div className="ml-3">
-                            <p className="text-sm font-medium text-green-800">
-                              {successMessage}
-                            </p>
-                          </div>
+                      <div className="rounded-md bg-green-50 p-3 border border-green-100">
+                        <div className="flex items-center">
+                          <svg
+                            className="h-5 w-5 text-green-400 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          <p className="text-sm font-medium text-green-800">
+                            {successMessage}
+                          </p>
                         </div>
                       </div>
                     )}
                     {errorMessage && (
-                      <div className="rounded-md bg-red-50 p-4">
-                        <div className="flex">
-                          <div className="ml-3">
-                            <p className="text-sm font-medium text-red-800">
-                              {errorMessage}
-                            </p>
-                          </div>
+                      <div className="rounded-md bg-red-50 p-3 border border-red-100">
+                        <div className="flex items-center">
+                          <svg
+                            className="h-5 w-5 text-red-400 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          <p className="text-sm font-medium text-red-800">
+                            {errorMessage}
+                          </p>
                         </div>
                       </div>
                     )}
 
                     {/* Submit Button */}
                     <div className="flex justify-end pt-4">
-                      <Button
+                      <button
                         type="submit"
-                        // disabled={isLoading || contactNumberError}
-                        className="inline-flex justify-center rounded-lg border border-transparent bg-indigo-600 py-3 px-6 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
+                        disabled={isLoading}
+                        className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
                       >
                         {isLoading ? (
                           <>
@@ -484,9 +607,24 @@ export const UpdateStoreInfoAfterLogin = () => {
                             Saving...
                           </>
                         ) : (
-                          "Save Changes"
+                          <>
+                            <svg
+                              className="w-4 h-4 mr-2"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            Save Changes
+                          </>
                         )}
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 </form>

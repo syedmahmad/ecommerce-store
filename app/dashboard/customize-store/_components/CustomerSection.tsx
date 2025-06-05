@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { GET, POST, DELETE, PUT, PATCH } from "@/app/utils/Axios";
+import { GET, POST, DELETE, PATCH } from "@/app/utils/Axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { toast } from "react-toastify";
@@ -9,9 +8,10 @@ import {
   uploadImageToFirebase,
 } from "@/app/utils/ImageUploader";
 import imageCompression from "browser-image-compression";
-import { Star } from "lucide-react";
+import { MinusIcon, PlusIcon, Star } from "lucide-react";
 import { Loader2 } from "lucide-react";
-import { AnyAaaaRecord } from "node:dns";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 export const CustomerSection = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -90,6 +90,8 @@ export const CustomerSection = () => {
   const REQUIRED_HEIGHT = 120;
 
   const [isUploading, setIsUploading] = useState(false);
+
+  const [showCustomerForm, setShowCustomerForm] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -258,6 +260,33 @@ export const CustomerSection = () => {
 
   // #endregion
 
+  const [isVisible, setIsVisible] = useState(false);
+
+  const handleVisibility = async () => {
+    const lcData = localStorage.getItem("user");
+    const parseLCData = lcData && JSON.parse(lcData);
+
+    const newVisibility = !isVisible;
+    setIsVisible(newVisibility);
+
+    const payload = {
+      showOnUI: newVisibility,
+    };
+    const response = await PATCH(
+      `/our-customer-section/visibility/${parseLCData.id}`,
+      payload
+    );
+    if (response?.status === 200) {
+      toast.success(
+        newVisibility
+          ? "Section is now visible on the store."
+          : "Section is now hidden from the store."
+      );
+    } else {
+      toast.error("Failed to update visibility.");
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">
@@ -267,9 +296,46 @@ export const CustomerSection = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Panel: Form Section */}
         <div className="lg:col-span-6 bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {editId ? "Edit" : "Add"} Customer Testimonial
-          </h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Edit Section
+            </h2>
+
+            {/* <div className="flex items-center space-x-2">
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isVisible}
+                  onChange={handleVisibility}
+                  disabled={!validateForm()}
+                  className="sr-only peer"
+                />
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+
+
+              <div className="relative group">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-500 cursor-pointer"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13 16h-1v-4h-1m1-4h.01M12 18.5A6.5 6.5 0 105.5 12 6.5 6.5 0 0012 18.5z"
+                  />
+                </svg>
+                <div className="absolute z-10 w-64 px-3 py-2 text-sm text-white bg-gray-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
+                  If you hide this section, it will not be visible in your
+                  store. Currently, this section is visible.
+                </div>
+              </div>
+            </div> */}
+          </div>
 
           <div className="space-y-4">
             <div>
@@ -312,134 +378,192 @@ export const CustomerSection = () => {
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Testimonial <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                rows={4}
-                name="testimonial"
-                value={formData.testimonial}
-                onChange={handleChange}
-                placeholder="Enter customer feedback..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-              {formData.testimonial.trim() === "" && (
-                <p className="mt-1 text-sm text-red-600">
-                  This field is required
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="e.g. Sarah Johnson"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-              {formData.name.trim() === "" && (
-                <p className="mt-1 text-sm text-red-600">
-                  This field is required
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Status
-              </label>
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            {/* Add Customer Button - Only shows when not in edit mode */}
+            {!editId && (
+              <button
+                onClick={() => setShowCustomerForm(!showCustomerForm)}
+                className="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-700 transition flex items-center justify-center gap-2"
               >
-                <option value="Verified">Verified</option>
-                <option value="Not Verified">Not Verified</option>
-              </select>
-            </div>
+                {showCustomerForm ? (
+                  <>
+                    <MinusIcon className="w-4 h-4" />
+                    Cancel Adding Customer
+                  </>
+                ) : (
+                  <>
+                    <PlusIcon className="w-4 h-4" />
+                    Add Customer Testimonial
+                  </>
+                )}
+              </button>
+            )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Customer Image
-              </label>
-              <div className="flex items-center gap-4">
-                {formData.imageUrl === null && (
-                  <label className="flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-gray-400 transition-colors">
-                    <span className="text-sm text-gray-600">Upload Image</span>
-                    <input
-                      type="file"
-                      name="image"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      accept="image/*"
+            {/* Customer Form - Shows when in edit mode or when "Add Customer" is clicked */}
+            {(editId || showCustomerForm) && (
+              <div className="border border-gray-200 rounded-lg p-4 space-y-4 animate-fade-in">
+                <h3 className="text-lg font-medium text-gray-800">
+                  {editId ? "Edit Customer Testimonial" : "Add New Testimonial"}
+                </h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Customer Testimonial{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      rows={4}
+                      name="testimonial"
+                      value={formData.testimonial}
+                      onChange={handleChange}
+                      placeholder="Enter customer feedback..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
                     />
-                  </label>
-                )}
-                {formData.imageUrl && (
-                  <div className="flex items-center gap-4">
-                    <div className="relative">
-                      <img
-                        src={formData.imageUrl || "/avatar.png"}
-                        alt="Uploaded"
-                        className="h-16 w-16 object-cover rounded-full border-2 border-gray-200"
-                      />
-                      <button
-                        onClick={() => handleRemoveImage(formData)}
-                        className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
-                        title="Remove image"
-                      >
-                        <XMarkIcon className="h-4 w-4 text-white" />
-                      </button>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      Delete the current image to upload a new one
-                    </p>
+                    {formData.testimonial.trim() === "" && (
+                      <p className="mt-1 text-sm text-red-600">
+                        This field is required
+                      </p>
+                    )}
                   </div>
-                )}
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Customer Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="e.g. Sarah Johnson"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                    {formData.name.trim() === "" && (
+                      <p className="mt-1 text-sm text-red-600">
+                        This field is required
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Customer Status
+                      </label>
+                      <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="Verified">Verified</option>
+                        <option value="Not Verified">Not Verified</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Star Rating
+                      </label>
+                      <select
+                        name="rating"
+                        value={formData.rating}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        {[5, 4, 3, 2, 1].map((star) => (
+                          <option key={star} value={star}>
+                            {star} Star{star > 1 ? "s" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Customer Image
+                    </label>
+                    <div className="flex items-center gap-4">
+                      {formData.imageUrl === null && (
+                        <label className="flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-gray-400 transition-colors">
+                          <span className="text-sm text-gray-600">
+                            Upload Image
+                          </span>
+                          <input
+                            type="file"
+                            name="image"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            accept="image/*"
+                          />
+                        </label>
+                      )}
+                      {formData.imageUrl && (
+                        <div className="flex items-center gap-4">
+                          <div className="relative">
+                            <img
+                              src={formData.imageUrl || "/avatar.png"}
+                              alt="Uploaded"
+                              className="h-16 w-16 object-cover rounded-full border-2 border-gray-200"
+                            />
+                            <button
+                              onClick={() => handleRemoveImage(formData)}
+                              className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
+                              title="Remove image"
+                            >
+                              <XMarkIcon className="h-4 w-4 text-white" />
+                            </button>
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            Delete the current image to upload a new one
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button
+                      onClick={() => {
+                        if (editId) {
+                          // Cancel edit mode
+                          setEditId(null);
+                          // Reset form if needed
+                        } else {
+                          setShowCustomerForm(false);
+                        }
+                      }}
+                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAddOrUpdateCustomer}
+                      disabled={isUploading || !validateForm()}
+                      className={`px-4 py-2 rounded-md transition flex items-center justify-center gap-2 
+                      ${
+                        isUploading || !validateForm()
+                          ? "bg-blue-400 text-white cursor-not-allowed pointer-events-none"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      }
+                    `}
+                    >
+                      {isUploading && (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      )}
+                      {editId ? "Update" : "Add"} Customer
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Star Rating
-              </label>
-              <select
-                name="rating"
-                value={formData.rating}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                {[5, 4, 3, 2, 1].map((star) => (
-                  <option key={star} value={star}>
-                    {star} Star{star > 1 ? "s" : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              onClick={handleAddOrUpdateCustomer}
-              disabled={isUploading || !validateForm()}
-              className={`w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition flex items-center justify-center gap-2 ${
-                isUploading || !validateForm()
-                  ? "bg-blue-400 cursor-not-allowed"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              {isUploading && <Loader2 className="w-4 h-4 animate-spin" />}
-              {editId ? "Update" : "Add"} Customer
-            </button>
+            )}
           </div>
         </div>
+
+        {/* Left section ended here */}
 
         {/* Right Panel: Live Preview */}
         <div className="lg:col-span-6">
@@ -529,113 +653,166 @@ export const SingleCustomer = ({ customer, handleEdit, handleDelete }: any) => (
   </div>
 );
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+const titleAnimation = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
 export const CustomerLivePreview = ({ customerData, formData }: any) => {
   const hasPreviewTestimonial =
     formData.testimonial || formData.name || formData.imageUrl;
 
+  // Combine existing testimonials with preview if it exists
+  const allTestimonials = hasPreviewTestimonial
+    ? [
+        {
+          id: "preview",
+          ...formData,
+          isPreview: true,
+        },
+        ...customerData,
+      ]
+    : customerData;
+
+  // Chunk testimonials into rows of 3 for better layout
+  const chunkedTestimonials = [];
+  for (let i = 0; i < allTestimonials.length; i += 3) {
+    chunkedTestimonials.push(allTestimonials.slice(i, i + 3));
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-          {formData.heading || "What Our Customers Say"}
-        </h2>
-        <p className="text-gray-500 text-sm max-w-lg mx-auto">
-          {formData.subHeading ||
-            "Customer testimonials about their experience"}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Preview testimonial */}
-        {hasPreviewTestimonial && (
-          <div className="bg-white p-4 rounded-lg border-2 border-dashed border-blue-200 shadow-sm">
-            <div className="flex mb-3">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="h-4 w-4 mr-1"
-                  fill={i < (formData.rating || 1) ? "#3B82F6" : "none"}
-                  stroke="#3B82F6"
-                />
-              ))}
-            </div>
-            <p className="text-gray-600 text-sm italic mb-4">
-              {formData.testimonial || "Customer testimonial preview text..."}
-            </p>
-            <div className="flex items-center">
-              <div className="h-10 w-10 rounded-full overflow-hidden mr-3 border-2 border-white shadow-sm">
-                <img
-                  src={formData.imageUrl ?? "/avatar.png"}
-                  alt={formData.name || "Customer"}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">
-                  {formData.name || "Customer Name"}
-                </h4>
-                <p className="text-xs text-gray-500">
-                  {formData.status || "Verified"}
-                </p>
-              </div>
-            </div>
-            <div className="text-xs text-blue-500 mt-2 text-center">
-              (Preview - Not saved yet)
-            </div>
-          </div>
-        )}
-
-        {/* Existing testimonials */}
-        {customerData.map((testimonial: any) => (
-          <div
-            key={testimonial.id}
-            className="bg-white p-4 rounded-lg shadow-sm"
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className="py-16 bg-gray-50 dark:bg-gray-900"
+    >
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={container}
+          className="text-center mb-12"
+        >
+          <motion.h2
+            variants={titleAnimation}
+            className="text-3xl font-bold mb-4"
           >
-            <div className="flex mb-3">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="h-4 w-4 mr-1"
-                  fill={i < testimonial.rating ? "#3B82F6" : "none"}
-                  stroke="#3B82F6"
-                />
-              ))}
-            </div>
-            <p className="text-gray-600 text-sm italic mb-4">
-              {testimonial.testimonial}
-            </p>
-            <div className="flex items-center">
-              <div className="h-10 w-10 rounded-full overflow-hidden mr-3 border-2 border-white shadow-sm">
-                <img
-                  src={
-                    testimonial.imageUrl || "https://via.placeholder.com/120"
-                  }
-                  alt={testimonial.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">
-                  {testimonial.name}
-                </h4>
-                <p className="text-xs text-gray-500">{testimonial.status}</p>
-              </div>
-            </div>
-          </div>
-        ))}
+            {formData.heading || "What Our Customers Say"}
+          </motion.h2>
+          {formData.subHeading && (
+            <motion.p
+              variants={titleAnimation}
+              className="text-muted-foreground max-w-2xl mx-auto"
+            >
+              {formData.subHeading}
+            </motion.p>
+          )}
+        </motion.div>
 
-        {/* Empty state */}
-        {customerData.length === 0 && !hasPreviewTestimonial && (
+        {chunkedTestimonials.length > 0 ? (
+          chunkedTestimonials.map((row, rowIndex) => (
+            <motion.div
+              key={rowIndex}
+              variants={container}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-50px" }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 last:mb-0"
+            >
+              {row.map((testimonial: any) => (
+                <motion.div
+                  key={testimonial.id}
+                  variants={item}
+                  whileHover={{ y: -5 }}
+                  className={`bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all ${
+                    testimonial.isPreview
+                      ? "border-2 border-dashed border-blue-200"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-5 w-5 mr-1"
+                        fill={
+                          i < (testimonial.rating || 1)
+                            ? "var(--accent-color)"
+                            : "none"
+                        }
+                        style={{
+                          color:
+                            i < (testimonial.rating || 1)
+                              ? "var(--accent-color)"
+                              : "#d1d5db",
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <p className="mb-6 text-gray-600 dark:text-gray-300 italic">
+                    "
+                    {testimonial.testimonial ||
+                      "Customer testimonial preview text..."}
+                    "
+                  </p>
+                  <div className="flex items-center">
+                    <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 border-2 border-white dark:border-gray-700 shadow">
+                      <Image
+                        src={testimonial.imageUrl || "/avatar.png"}
+                        alt={testimonial.name || "Customer"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 dark:text-white">
+                        {testimonial.name || "Customer Name"}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        {testimonial.status || "Verified"}
+                      </p>
+                    </div>
+                  </div>
+                  {testimonial.isPreview && (
+                    <div className="text-xs text-blue-500 mt-2 text-center">
+                      (Preview - Not saved yet)
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
+          ))
+        ) : (
           <div className="col-span-3 text-center py-8">
-            <div className="bg-gray-50 rounded-lg p-8 border border-dashed border-gray-200">
-              <p className="text-gray-500">No testimonials to display yet</p>
-              <p className="text-sm text-gray-400 mt-1">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 border border-dashed border-gray-200 dark:border-gray-700">
+              <p className="text-gray-500 dark:text-gray-400">
+                No testimonials to display yet
+              </p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
                 Add a testimonial using the form to see it here
               </p>
             </div>
           </div>
         )}
       </div>
-    </div>
+    </motion.section>
   );
 };

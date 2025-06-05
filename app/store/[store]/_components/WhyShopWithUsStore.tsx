@@ -47,6 +47,8 @@ export const WhyShopWithUsStoreFrontUI = () => {
 
   const sectionData = data?.data?.[0];
 
+  const showSection = sectionData && sectionData?.showOnUI;
+
   if (isLoading) {
     return (
       <motion.div
@@ -63,6 +65,10 @@ export const WhyShopWithUsStoreFrontUI = () => {
   }
 
   if (!sectionData) {
+    return null;
+  }
+
+  if (!showSection) {
     return null;
   }
 
@@ -92,7 +98,7 @@ export const WhyShopWithUsStoreFrontUI = () => {
                 variants={titleAnimation}
                 className="text-3xl font-bold mb-4"
               >
-                {sectionData.sectionTitle}
+                {sectionData.sectionTitle} hello
               </motion.h2>
               <motion.p
                 variants={descriptionAnimation}

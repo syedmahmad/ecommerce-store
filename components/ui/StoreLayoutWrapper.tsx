@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Search, Menu, X } from "lucide-react";
+import { ShoppingBag, X, MapPin, Menu, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { CartButton } from "@/components/cart-button";
 import { useTheme } from "@/context/theme-context";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +29,9 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
   const storeName = storeInfoFromBE && storeInfoFromBE?.name;
 
   const storeIdFromBE = storeInfoFromBE && storeInfoFromBE?.id;
+
+  const location = storeInfoFromBE && storeInfoFromBE.location;
+  console.log("location", location);
 
   const ownerInfo = storeInfoFromBE?.owner;
 
@@ -279,8 +281,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               </div>
 
               <p className="text-muted-foreground leading-relaxed max-w-md">
-                We provide high-quality products at affordable prices with
-                exceptional customer service.
+                {storeInfoFromBE?.description}
               </p>
             </div>
 
@@ -294,10 +295,10 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               </h3>
               <ul className="space-y-3 text-sm">
                 {[
-                  { text: "Contact Us", href: "/contact" },
-                  { text: "FAQs", href: "/faqs" },
-                  { text: "Shipping Policy", href: "/shipping" },
-                  { text: "Returns & Refunds", href: "/returns" },
+                  { text: "Contact Us", href: "#" },
+                  { text: "FAQs", href: "#" },
+                  { text: "Shipping Policy", href: "#" },
+                  { text: "Returns & Refunds", href: "#" },
                 ].map((item, index) => (
                   <li key={index}>
                     <Link
@@ -349,28 +350,36 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
                 Get In Touch
               </h3>
               <div className="space-y-4">
-                {/* <div className="flex items-start">
-                  <div className="mt-1 mr-3 text-muted-foreground">📧</div>
+                <div className="flex items-start">
+                  <div className="mt-1 mr-3 text-muted-foreground">
+                    <MapPin className="w-5 h-5 mr-2 text-primary" />
+                  </div>
+
                   <div>
-                    <p className="font-medium">Email us</p>
                     <a
-                      href={`mailto:${ownerInfo?.email}`}
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        location
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-sm text-muted-foreground hover:text-primary transition-colors break-all"
                     >
-                      {ownerInfo?.email}
+                      {location}
                     </a>
                   </div>
-                </div> */}
+                </div>
 
                 <div className="flex items-start">
-                  <div className="mt-1 mr-3 text-muted-foreground">📞</div>
+                  <div className="mt-1 mr-3 text-muted-foreground">
+                    <Phone className="h-5 w-5 mr-2 text-primary" />
+                  </div>
                   <div>
                     {/* <p className="font-medium">Call us</p> */}
                     <a
-                      href={`tel:${storeInfoFromBE?.contactNumber}`}
+                      href={`tel:+92${storeInfoFromBE?.contactNumber}`}
                       className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
-                      {storeInfoFromBE?.contactNumber}
+                      +92{storeInfoFromBE?.contactNumber}
                     </a>
                   </div>
                 </div>
@@ -406,31 +415,4 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
       </footer>
     </div>
   );
-}
-
-{
-  /* <div>
-              <h3 className="font-bold mb-4">Newsletter</h3>
-              <p className="text-sm text-muted-foreground mb-2">
-                Subscribe to receive updates on new products and special
-                promotions.
-              </p>
-              <div className="flex">
-                <Input
-                  type="email"
-                  placeholder="Your email"
-                  className="rounded-r-none"
-                  style={{
-                    backgroundColor: theme.background,
-                    borderColor: `${theme.primary}33`,
-                  }}
-                />
-                <Button
-                  className="rounded-l-none"
-                  style={{ backgroundColor: theme.primary, color: "#ffffff" }}
-                >
-                  Subscribe
-                </Button>
-              </div>
-            </div> */
 }

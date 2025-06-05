@@ -1,10 +1,11 @@
 "use client";
-import { GET, POST } from "@/app/utils/Axios";
+import { GET, PATCH, POST } from "@/app/utils/Axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 import { CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Feature {
   title: string;
@@ -33,7 +34,7 @@ export const WhyShopWithUs = () => {
   }, []);
 
   const { data: whyShopithUs } = useQuery({
-    queryKey: ["why-shop-with-us", userId],
+    queryKey: ["why-shop-with-us-data", userId],
     queryFn: async () => {
       const endpoint = `why-shop-with-us?id=${userId}`;
       return GET(endpoint);
@@ -42,6 +43,8 @@ export const WhyShopWithUs = () => {
   });
 
   const whyShopWithUsData = whyShopithUs?.data;
+
+  console.log("whyShopWithUsData", whyShopWithUsData);
 
   const [sectionTitle, setSectionTitle] = useState("Why Shop With Us");
   const [description, setDescription] = useState(
@@ -53,9 +56,11 @@ export const WhyShopWithUs = () => {
     { title: "24/7 Support", description: "Your Description here" },
   ]);
 
+  const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
     if (whyShopWithUsData?.[0]) {
       const data = whyShopWithUsData[0];
+      setIsVisible(data?.showOnUI);
       setSectionTitle(data.sectionTitle || "Why Shop With Us");
       setDescription(
         data.description ||
@@ -93,7 +98,7 @@ export const WhyShopWithUs = () => {
 
   const queryClient = useQueryClient();
   const reFetch = () => {
-    queryClient.invalidateQueries({ queryKey: ["why-shop-with-us"] });
+    queryClient.invalidateQueries({ queryKey: ["why-shop-with-us-data"] });
   };
 
   const handleSave = async () => {
@@ -134,11 +139,72 @@ export const WhyShopWithUs = () => {
     }
   };
 
+  const handleVisibility = async () => {
+    const lcData = localStorage.getItem("user");
+    const parseLCData = lcData && JSON.parse(lcData);
+
+    const newVisibility = !isVisible;
+    setIsVisible(newVisibility);
+
+    const payload = {
+      showOnUI: newVisibility,
+    };
+    const response = await PATCH(
+      `/why-shop-with-us/visibility/${parseLCData.id}`,
+      payload
+    );
+    if (response?.status === 200) {
+      toast.success(
+        newVisibility
+          ? "Section is now visible on the store."
+          : "Section is now hidden from the store."
+      );
+    } else {
+      toast.error("Failed to update visibility.");
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4">
       {/* Left Panel: Form Section */}
       <div className="lg:col-span-5 space-y-6 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-        <h2 className="text-xl font-semibold text-gray-800">Edit Section</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-800">Edit Section</h2>
+
+          <div className="flex items-center space-x-2">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isVisible}
+                onChange={handleVisibility}
+                className="sr-only peer"
+              />
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+
+            {/* Info Icon with Tooltip */}
+            <div className="relative group">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-500 cursor-pointer"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M12 18.5A6.5 6.5 0 105.5 12 6.5 6.5 0 0012 18.5z"
+                />
+              </svg>
+              <div className="absolute z-10 w-64 px-3 py-2 text-sm text-white bg-gray-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
+                If you hide this section, it will not be visible in your store.
+                Currently, this section is visible.
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div className="space-y-4">
           <label className="block">
@@ -220,10 +286,35 @@ export const WhyShopWithUs = () => {
 
 interface WhyShopWithUsSectionProps {
   sectionTitle: string;
-  description: string;
-  features: Feature[];
+  description: any;
+  features: any[];
   compact?: boolean;
 }
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+const titleAnimation = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+const descriptionAnimation = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0 },
+};
 
 export const WhyShopWithUsSection = ({
   sectionTitle,
@@ -232,65 +323,93 @@ export const WhyShopWithUsSection = ({
   compact = false,
 }: WhyShopWithUsSectionProps) => {
   return (
-    <section
-      className={`${compact ? "py-8" : "py-12"} bg-opacity-5`}
+    <motion.section
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+      className={`${compact ? "py-8" : "py-16"} bg-opacity-5`}
       style={{ backgroundColor: "var(--secondary-color)" }}
     >
       <div className="container mx-auto px-4">
-        <div className={`text-center ${compact ? "mb-6" : "mb-8"}`}>
-          <h2
-            className={`${compact ? "text-2xl" : "text-3xl"} font-bold ${
-              compact ? "mb-2" : "mb-4"
-            }`}
+        <>
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={container}
+            className={`text-center ${compact ? "mb-6" : "mb-12"}`}
           >
-            {sectionTitle}
-          </h2>
-          <p
-            className={`text-muted-foreground max-w-2xl mx-auto ${
-              compact ? "text-sm" : ""
-            }`}
-          >
-            {description}
-          </p>
-        </div>
-
-        <div
-          className={`grid grid-cols-1 md:grid-cols-3 ${
-            compact ? "gap-4" : "gap-6"
-          }`}
-        >
-          {features?.map((feature, index) => (
-            <div key={index} className="text-center">
-              <div
-                className={`${compact ? "w-12 h-12" : "w-16 h-16"} mx-auto ${
-                  compact ? "mb-2" : "mb-4"
-                } rounded-full flex items-center justify-center`}
-                style={{
-                  backgroundColor: "var(--primary-color)",
-                  color: "white",
-                }}
-              >
-                <CheckCircle
-                  className={compact ? "w-5 h-5" : "w-6 h-6"}
-                  strokeWidth={2}
-                />
-              </div>
-              <h3
-                className={`${compact ? "text-lg" : "text-xl"} font-bold ${
-                  compact ? "mb-1" : "mb-2"
+            <motion.h2
+              variants={titleAnimation}
+              className={`${compact ? "text-2xl" : "text-3xl"} font-bold ${
+                compact ? "mb-2" : "mb-4"
+              }`}
+            >
+              {sectionTitle}
+            </motion.h2>
+            {description && (
+              <motion.p
+                variants={descriptionAnimation}
+                className={`text-muted-foreground max-w-2xl mx-auto ${
+                  compact ? "text-sm" : ""
                 }`}
               >
-                {feature.title}
-              </h3>
-              <p
-                className={`text-muted-foreground ${compact ? "text-sm" : ""}`}
+                {description}
+              </motion.p>
+            )}
+          </motion.div>
+
+          <motion.div
+            variants={container}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-100px" }}
+            className={`grid grid-cols-1 md:grid-cols-3 ${
+              compact ? "gap-4" : "gap-8"
+            }`}
+          >
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                variants={item}
+                whileHover={{
+                  y: compact ? -3 : -5,
+                  transition: { duration: 0.2 },
+                }}
+                className={`bg-white bg-opacity-10 ${
+                  compact ? "p-4" : "p-6"
+                } rounded-lg shadow-sm hover:shadow-md transition-shadow`}
               >
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+                  style={{
+                    backgroundColor: "#2563EB",
+                    color: "white",
+                  }}
+                >
+                  <CheckCircle className="w-6 h-6 text-white" strokeWidth={2} />
+                </motion.div>
+
+                <h3
+                  className={`${compact ? "text-lg" : "text-xl"} font-bold ${
+                    compact ? "mb-1" : "mb-2"
+                  } text-center`}
+                >
+                  {feature.title}
+                </h3>
+                <p
+                  className={`text-muted-foreground ${
+                    compact ? "text-sm" : ""
+                  } text-center`}
+                >
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </>
       </div>
-    </section>
+    </motion.section>
   );
 };

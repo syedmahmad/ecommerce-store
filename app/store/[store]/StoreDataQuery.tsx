@@ -18,7 +18,6 @@ export default function StorePage({ storeId }: any) {
 
   const featuredRef = useRef<HTMLDivElement>(null);
 
-
   const getAllProductsData = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
@@ -144,13 +143,14 @@ export default function StorePage({ storeId }: any) {
     },
   };
 
-
   const handleButtonClick = () => {
     if (featuredRef.current) {
-      featuredRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      featuredRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
-
 
   return (
     <StoreLayout>
@@ -212,8 +212,8 @@ export default function StorePage({ storeId }: any) {
                   disabled={featuredProducts && featuredProducts?.length === 0}
                   style={{ backgroundColor: currentTheme.primary }}
                   className="hover:scale-105 transition-transform duration-300 shadow-lg hover:shadow-xl"
-                // whileHover={{ scale: 1.05 }}
-                // whileTap={{ scale: 0.98 }}
+                  // whileHover={{ scale: 1.05 }}
+                  // whileTap={{ scale: 0.98 }}
                 >
                   {bannerData?.buttonText || "Shop Now"}
                 </Button>
@@ -242,7 +242,7 @@ export default function StorePage({ storeId }: any) {
       {/* Featured Products */}
       <section
         ref={featuredRef}
-        className="py-16 bg-opacity-5"
+        className="py-16 bg-opacity-5 mt-3"
         style={{ backgroundColor: currentTheme.secondary }}
       >
         <div className="container mx-auto px-4">
@@ -250,11 +250,10 @@ export default function StorePage({ storeId }: any) {
             <div>
               <h2 className="text-3xl font-bold mb-2">Featured Products</h2>
               <p className="text-muted-foreground">
-                {featuredProducts && featuredProducts?.length
-                  ? "Our handpicked selection of premium products"
-                  : "You can add products from Admin Dashboard."}
+                Explore top picks from our store
               </p>
             </div>
+
             {/* <Link
               href={`/store/${storeName}/products`}
               className="mt-4 md:mt-0 flex items-center text-sm font-medium hover:underline"
@@ -267,25 +266,16 @@ export default function StorePage({ storeId }: any) {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {featuredProducts && featuredProducts?.length
               ? featuredProducts.map((product: any) => {
-                if (product.status === 1) {
-                  return (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      storeInfoFromBE={storeInfoFromBE}
-                    />
-                  );
-                } else {
-                  return (
-                    <div>
-                      <p className="text-red-500">
-                        Product are there but not active. Go to the dashboard
-                        and mark product as active.
-                      </p>
-                    </div>
-                  );
-                }
-              })
+                  if (product.status === 1) {
+                    return (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        storeInfoFromBE={storeInfoFromBE}
+                      />
+                    );
+                  }
+                })
               : null}
           </div>
         </div>

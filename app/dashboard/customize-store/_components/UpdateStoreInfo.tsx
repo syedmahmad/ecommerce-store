@@ -50,7 +50,8 @@ export const UpdateStoreInfo = () => {
     logo: storeInfoFromBE?.logoUrl || null,
     logoPreview: storeInfoFromBE?.logoUrl || null,
     uuid: "",
-    contactNumber: "",
+    contactNumber: `${storeInfoFromBE?.contactNumber}`,
+    location: storeInfoFromBE?.location ?? "",
   });
 
   useEffect(() => {
@@ -64,7 +65,8 @@ export const UpdateStoreInfo = () => {
         logo: storeInfoFromBE?.logoUrl || null,
         logoPreview: storeInfoFromBE?.logoUrl || null,
         uuid: storeInfoFromBE?.stores_uuid,
-        contactNumber: storeInfoFromBE?.contactNumber,
+        contactNumber: `${storeInfoFromBE?.contactNumber}`,
+        location: storeInfoFromBE?.location ?? "",
       });
     }
   }, [storeInfoFromBE]);
@@ -188,6 +190,7 @@ export const UpdateStoreInfo = () => {
         domain: storeInfo.domain,
         logoUrl: storeInfo.logo,
         contactNumber: storeInfo.contactNumber,
+        location: storeInfo.location,
       };
 
       const response = await PATCH(`/store/${storeInfo.uuid}`, payload);
@@ -231,6 +234,26 @@ export const UpdateStoreInfo = () => {
               <div className="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-lg">
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
+                    {/* Header Section */}
+                    <div className="border-b border-gray-200 pb-6">
+                      <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <svg
+                          className="w-5 h-5 mr-2 text-indigo-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        Header Information
+                      </h3>
+                    </div>
+
                     {/* Store Name */}
                     <div>
                       <label
@@ -252,51 +275,65 @@ export const UpdateStoreInfo = () => {
                     </div>
 
                     {/* Domain */}
+                    {/* Domain */}
                     <div>
                       <label
                         htmlFor="domain"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-gray-700 mb-1"
                       >
                         Store Domain
                       </label>
-                      <div className="mt-1 flex rounded-md shadow-sm">
-                        <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                      <div className="flex rounded-lg shadow-sm">
+                        <span className="inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                           https://
                         </span>
                         <input
                           type="text"
-                          name="domain"
-                          id="domain"
-                          value={storeInfo.domain}
-                          onChange={handleInputChange}
-                          className="block w-full min-w-0 flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                          name="subdomain"
+                          id="subdomain"
+                          value={storeInfo.domain.split(".")[0]} // Gets the "mudassar-naveed" part
+                          onChange={(e) => {
+                            const domainParts = storeInfo.domain.split(".");
+                            domainParts[0] = e.target.value;
+                            handleInputChange({
+                              target: {
+                                name: "domain",
+                                value: domainParts.join("."),
+                              },
+                            });
+                          }}
+                          className="block w-full min-w-0 flex-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border-t border-b border-l"
                         />
+                        <span className="inline-flex items-center border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                          .{storeInfo.domain.split(".").slice(1).join(".")}{" "}
+                          {/* Gets the ".zylospace.com" part */}
+                        </span>
                       </div>
                     </div>
 
                     {/* Contact Number */}
-                    <div>
+                    <div className="space-y-1">
                       <label
                         htmlFor="contactNumber"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-gray-700"
                       >
                         Contact Number <span className="text-red-500">*</span>
                       </label>
-                      <input
-                        type="tel"
-                        name="contactNumber"
-                        id="contactNumber"
-                        value={storeInfo.contactNumber}
-                        onChange={handleInputChange}
-                        placeholder="e.g., +1 (123) 456-7890"
-                        className={`block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border`}
-                      />
-                      {/* {contactNumberError && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {contactNumberError}
-                        </p>
-                      )} */}
-                      <p className="mt-1 text-sm text-gray-500">
+                      <div className="relative flex items-center">
+                        <span className="absolute left-3 text-gray-500 text-sm">
+                          +92
+                        </span>
+                        <input
+                          type="tel"
+                          name="contactNumber"
+                          id="contactNumber"
+                          value={storeInfo.contactNumber}
+                          onChange={handleInputChange}
+                          placeholder="3001234567"
+                          className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-12 p-2.5 border`}
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
                         This will be displayed to customers so they can contact
                         you
                       </p>
@@ -365,32 +402,88 @@ export const UpdateStoreInfo = () => {
                       </p>
                     </div>
 
-                    {/* Description */}
-                    <div>
-                      <label
-                        htmlFor="description"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Store TagLine
-                      </label>
-                      <div className="mt-1">
+                    <div className="pt-6 border-t border-gray-200">
+                      <div className="pb-6">
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                          <svg
+                            className="w-5 h-5 mr-2 text-indigo-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          Footer Information
+                        </h3>
+                      </div>
+
+                      {/* Store Physical Location */}
+                      <div className="space-y-1 mb-4">
+                        <label
+                          htmlFor="location"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Location
+                        </label>
+                        <textarea
+                          id="location"
+                          name="location"
+                          rows={2}
+                          value={storeInfo.location}
+                          onChange={handleInputChange}
+                          maxLength={45}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border"
+                          placeholder="Your store's physical address"
+                        />
+                        <div className="flex justify-between mt-1">
+                          <p className="text-xs text-gray-500">
+                            Locate your physical location so users can visit
+                            you.
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {storeInfo.location.length}/45
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <div className="space-y-1">
+                        <label
+                          htmlFor="description"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Store TagLine
+                        </label>
                         <textarea
                           id="description"
                           name="description"
-                          rows={3}
-                          value={storeInfo.description}
+                          rows={2}
+                          value={storeInfo?.description}
                           onChange={handleInputChange}
                           maxLength={45}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border"
+                          placeholder="Brief description for your store"
                         />
-                        <p className="text-sm text-gray-500">
-                          {storeInfo.description.length}/45 characters
-                        </p>
+                        <div className="flex justify-between mt-1">
+                          <p className="text-xs text-gray-500">
+                            Will appear in the footer section.
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {storeInfo.description.length}/45
+                          </p>
+                        </div>
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">
-                        Brief description for your store. This will appear in
-                        various places.
-                      </p>
                     </div>
 
                     {/* Messages */}
@@ -424,6 +517,19 @@ export const UpdateStoreInfo = () => {
                         disabled={isLoading}
                         className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
+                        <svg
+                          className="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
                         {isLoading ? "Saving..." : "Save Changes"}
                       </button>
                     </div>
