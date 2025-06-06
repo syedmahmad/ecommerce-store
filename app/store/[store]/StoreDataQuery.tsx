@@ -27,7 +27,7 @@ export default function StorePage({ storeId }: any) {
     enabled: !!storeId,
   });
 
-  const featuredProducts = getAllProductsData?.data?.data;
+  const featuredProducts = getAllProductsData?.data?.data?.products;
 
   const { currentTheme } = useTheme();
 

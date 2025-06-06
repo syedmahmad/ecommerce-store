@@ -3,14 +3,25 @@ import React from "react";
 import { useAuthStatus } from "@/hooks/use-auth-status";
 import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/dashboard-layout";
-import { Loader2 } from "lucide-react";
+import {
+  CurrencyIcon,
+  FileTextIcon,
+  Loader2,
+  PackageIcon,
+  PlusIcon,
+  SettingsIcon,
+  ShoppingCartIcon,
+  UsersIcon,
+} from "lucide-react";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "../utils/Axios";
 import { UpdateStoreInfoAfterLogin } from "./customize-store/_components/UpdateStoreInfoAfterLogin";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
 
@@ -79,54 +90,140 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">
-            {" "}
-            Welcome, {`${userName}` || "User"}!{" "}
-          </h1>
-          <Button variant="outline" onClick={handleLogout}>
+      <div className="space-y-6 px-4 sm:px-0">
+        {/* Header Section */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Welcome back, {userName || "User"}!
+            </h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Your store management dashboard
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            className="w-full sm:w-auto justify-center"
+          >
             Sign Out
           </Button>
         </div>
-        <p className="text-muted-foreground">
-          You are now signed in to your account. You can manage your store from
-          this dashboard.
-        </p>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-lg border bg-card p-6">
-            <div className="text-sm font-medium text-muted-foreground">
-              Total Products
+
+        {/* Summary Cards - Responsive Grid */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Product Card */}
+          <div className="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Products
+                </p>
+                <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
+                  {productsData?.length || 0}
+                </p>
+              </div>
+              <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+                <PackageIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
             </div>
-            <div className="text-2xl font-bold">
-              {productsData?.length > 0 ? productsData?.length : 0}
-            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              Total products in your store
+            </p>
           </div>
-          <div className="rounded-lg border bg-card p-6">
-            <div className="text-sm font-medium text-muted-foreground">
-              Total Orders
+
+          {/* Orders Card */}
+          <div className="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Orders
+                </p>
+                <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
+                  0
+                </p>
+              </div>
+              <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/30">
+                <ShoppingCartIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
             </div>
-            <div className="text-2xl font-bold">0</div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              Total orders received
+            </p>
           </div>
-          <div className="rounded-lg border bg-card p-6">
-            <div className="text-sm font-medium text-muted-foreground">
-              Total Revenue
+
+          {/* Revenue Card */}
+          <div className="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Revenue
+                </p>
+                <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
+                  Rs0.00
+                </p>
+              </div>
+              <div className="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/30">
+                <CurrencyIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
             </div>
-            <div className="text-2xl font-bold">RS0.00</div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              Total earnings this month
+            </p>
           </div>
-          <div className="rounded-lg border bg-card p-6">
-            <div className="text-sm font-medium text-muted-foreground">
-              Customers
+
+          {/* Customers Card */}
+          <div className="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Customers
+                </p>
+                <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
+                  {testimonials?.length || 0}
+                </p>
+              </div>
+              <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30">
+                <UsersIcon className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              </div>
             </div>
-            <div className="text-2xl font-bold">
-              {testimonials && testimonials?.length > 0
-                ? testimonials?.length
-                : 0}
-            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              People who trust your business
+            </p>
+          </div>
+        </div>
+
+        {/* Quick Actions Section */}
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            <Button
+              variant="outline"
+              className="justify-start gap-2"
+              onClick={() => router.push("/dashboard/products")}
+            >
+              <PlusIcon className="h-4 w-4" />
+              Add New Product
+            </Button>
+            <Button variant="outline" className="justify-start gap-2">
+              <FileTextIcon className="h-4 w-4" />
+              View Orders
+            </Button>
+            <Button
+              variant="outline"
+              className="justify-start gap-2"
+              onClick={() => {
+                router.push("dashboard/customize-store");
+              }}
+            >
+              <SettingsIcon className="h-4 w-4" />
+              Store Settings
+            </Button>
           </div>
         </div>
       </div>
-      {/* the UI will only appear when user does not added his contact number and  */}
     </DashboardLayout>
   );
 }

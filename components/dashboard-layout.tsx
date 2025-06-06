@@ -140,9 +140,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       icon: Users,
       href: "/dashboard/customize-store",
     },
-    // { id: "orders", label: "Orders", icon: ShoppingCart, href: "/dashboard/orders" },
-    // { id: "customers", label: "Customers", icon: Users, href: "/dashboard/customers" },
-    // { id: "analytics", label: "Analytics", icon: BarChart, href: "/dashboard/analytics" },
     { id: "theme", label: "Theme", icon: Palette, href: "/dashboard/theme" },
     {
       id: "settings",
@@ -184,30 +181,34 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Link
           className="flex items-center gap-2 font-semibold"
           href="/dashboard"
+          aria-label="ZyloSpace Dashboard"
         >
           <ShoppingBag
             className="h-6 w-6"
             style={{ color: theme.primaryColor }}
+            aria-hidden="true"
           />
           <span className="hidden sm:inline">ZyloSpace</span>
         </Link>
 
-        <nav className="hidden flex-1 md:flex">
+        <nav className="hidden flex-1 md:flex" aria-label="Main navigation">
           {filteredNavItems.map((item) => (
             <Link
               key={item.id}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
                 activeTab === item.id
-                  ? "text-primary"
+                  ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:text-foreground"
               }`}
               href={item.href}
               style={{
                 color: activeTab === item.id ? theme.primaryColor : undefined,
               }}
+              aria-current={activeTab === item.id ? "page" : undefined}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className="h-4 w-4" aria-hidden="true" />
               <span className="hidden sm:inline">{item.label}</span>
+              <span className="sr-only sm:hidden">{item.label}</span>
             </Link>
           ))}
         </nav>
@@ -216,28 +217,32 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <Button
             variant="outline"
             size="icon"
-            className="hidden sm:flex"
+            className="hidden sm:flex hover:bg-accent/50"
             style={{
               borderColor: theme.borderColor,
               color: theme.textColor,
             }}
+            aria-label="Notifications"
           >
-            <Bell className="h-4 w-4" />
-            <span className="sr-only">Notifications</span>
+            <Bell className="h-4 w-4" aria-hidden="true" />
           </Button>
 
-          <Link href={`/store/${storeId}`} target="_blank">
+          <Link
+            href={`/store/${storeId}`}
+            target="_blank"
+            aria-label="Visit store (opens in new tab)"
+          >
             <Button
               variant="outline"
               size="sm"
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 hover:bg-accent/50"
               style={{
                 borderColor: theme.borderColor,
                 color: theme.textColor,
               }}
             >
-              <ExternalLink className="h-3 w-3" />
-              <span className="hidden sm:inline">View Store</span>
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              <span className="hidden sm:inline">Visit Store</span>
               <span className="sm:hidden">Store</span>
             </Button>
           </Link>
@@ -245,54 +250,73 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <Button
             variant="outline"
             size="icon"
-            className="md:hidden"
+            className="md:hidden hover:bg-accent/50"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             style={{
               borderColor: theme.borderColor,
               color: theme.textColor,
             }}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             ) : (
-              <Menu className="h-4 w-4" />
+              <Menu className="h-4 w-4" aria-hidden="true" />
             )}
           </Button>
         </div>
       </header>
 
-      {/* Mobile menu */}
+      {/* Enhanced mobile menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 z-20 mt-16 bg-background md:hidden"
+          className="fixed inset-0 z-20 mt-16 bg-background md:hidden overflow-y-auto"
           style={{
             backgroundColor: theme.backgroundColor,
           }}
+          role="dialog"
+          aria-modal="true"
         >
-          <nav className="flex flex-col p-4">
+          <nav
+            className="flex flex-col p-4 space-y-2"
+            aria-label="Mobile navigation"
+          >
+            <h3 className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Main Navigation
+            </h3>
             {navItems.map((item) => (
               <Link
                 key={item.id}
-                className={`flex items-center gap-3 px-4 py-3 text-sm font-medium ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
                   activeTab === item.id
-                    ? "text-primary"
+                    ? "bg-primary/10 text-primary"
                     : "text-muted-foreground"
                 }`}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                style={{
-                  color: activeTab === item.id ? theme.primaryColor : undefined,
-                }}
+                aria-current={activeTab === item.id ? "page" : undefined}
               >
-                <item.icon className="h-5 w-5" />
-                {item.label}
+                <item.icon
+                  className="h-5 w-5 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <span>{item.label}</span>
+                {activeTab === item.id && (
+                  <span
+                    className="ml-auto h-2 w-2 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                )}
               </Link>
             ))}
           </nav>
         </div>
       )}
 
-      <main className="flex-1 p-4 sm:p-6">{children}</main>
+      <main className="flex-1 p-4 sm:p-6" id="main-content" tabIndex={-1}>
+        {children}
+      </main>
     </div>
   );
 }
