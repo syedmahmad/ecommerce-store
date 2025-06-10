@@ -4,12 +4,19 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Upload, X } from "lucide-react";
 import { motion } from "framer-motion";
+import imageCompression from "browser-image-compression";
+import {
+  deleteImageFromFirebase,
+  uploadImageToFirebase,
+} from "@/app/utils/ImageUploader";
+import { useTheme } from "@/context/theme-context";
 
 interface Feature {
   title: string;
   description: string;
+  icon?: string; // URL to the uploaded icon
 }
 
 interface WhyShopWithUsData {
@@ -23,6 +30,10 @@ interface WhyShopWithUsData {
 export const WhyShopWithUs = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [uploadingIcons, setUploadingIcons] = useState<Record<number, boolean>>(
+    {}
+  );
 
   useEffect(() => {
     try {
@@ -44,16 +55,18 @@ export const WhyShopWithUs = () => {
 
   const whyShopWithUsData = whyShopithUs?.data;
 
-  console.log("whyShopWithUsData", whyShopWithUsData);
-
   const [sectionTitle, setSectionTitle] = useState("Why Shop With Us");
   const [description, setDescription] = useState(
     "We're committed to providing the best shopping experience for our customers"
   );
   const [features, setFeatures] = useState<Feature[]>([
-    { title: "Free Shipping", description: "Your Description here" },
-    { title: "Secure Payments", description: "Your Description here" },
-    { title: "24/7 Support", description: "Your Description here" },
+    { title: "Free Shipping", description: "Your Description here", icon: "" },
+    {
+      title: "Secure Payments",
+      description: "Your Description here",
+      icon: "",
+    },
+    { title: "24/7 Support", description: "Your Description here", icon: "" },
   ]);
 
   const [isVisible, setIsVisible] = useState(false);
@@ -68,9 +81,10 @@ export const WhyShopWithUs = () => {
       );
       setFeatures(
         Array.isArray(data.features) && data.features.length > 0
-          ? data.features.map(({ title, description }: Feature) => ({
+          ? data.features.map(({ title, description, icon }: Feature) => ({
               title,
               description,
+              icon,
             }))
           : [
               { title: "Free Shipping", description: "Your Description here" },
@@ -149,6 +163,8 @@ export const WhyShopWithUs = () => {
     const payload = {
       showOnUI: newVisibility,
     };
+
+    handleSave();
     const response = await PATCH(
       `/why-shop-with-us/visibility/${parseLCData.id}`,
       payload
@@ -161,6 +177,53 @@ export const WhyShopWithUs = () => {
       );
     } else {
       toast.error("Failed to update visibility.");
+    }
+  };
+
+  // const [uploadingIcons, setUploadingIcons] = useState<boolean[]>([]);
+
+  const handleIconUpload = async (index: number, file: File) => {
+    try {
+      // Mark this index as uploading
+      setUploadingIcons((prev) => ({ ...prev, [index]: true }));
+
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 100,
+        useWebWorker: true,
+      });
+
+      const ext = compressedFile.name.split(".").at(-1);
+      const path = `features/feature-${Date.now()}-${index}.${ext}`;
+      const iconUrl = await uploadImageToFirebase(compressedFile, path);
+
+      if (iconUrl) {
+        const updatedFeatures = [...features];
+        updatedFeatures[index].icon = iconUrl;
+        setFeatures(updatedFeatures);
+      }
+    } catch (err) {
+      console.error("Icon upload failed:", err);
+      toast.error("Failed to upload icon");
+    } finally {
+      // Mark this index as not uploading
+      setUploadingIcons((prev) => ({ ...prev, [index]: false }));
+    }
+  };
+
+  const removeIcon = async (index: number, iconUrl: any) => {
+    try {
+      const result = await deleteImageFromFirebase(iconUrl);
+      if (result) {
+        toast.success("Image successfully deleted.");
+        const updated = [...features];
+        updated[index].icon = undefined;
+        setFeatures(updated);
+      } else {
+        toast.error("Failed to delete image. Try again.");
+      }
+    } catch (error) {
+      toast.error("Failed to delete image. Try again.");
     }
   };
 
@@ -234,6 +297,57 @@ export const WhyShopWithUs = () => {
                 key={index}
                 className="border border-gray-200 rounded-md p-4 space-y-2 bg-gray-50"
               >
+                {/* Icon Upload Section */}
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="relative group">
+                    <label className="cursor-pointer">
+                      <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                        {feature.icon ? (
+                          <img
+                            src={feature.icon}
+                            alt={`${feature.title} icon`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Upload className="w-6 h-6 text-gray-500" />
+                        )}
+                        {uploadingIcons[index] && (
+                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <Loader2 className="w-6 h-6 text-white animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          if (e.target.files?.[0]) {
+                            handleIconUpload(index, e.target.files[0]);
+                          }
+                        }}
+                      />
+                    </label>
+                    {feature.icon && (
+                      <button
+                        type="button"
+                        onClick={() => removeIcon(index, feature.icon)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      {feature.icon ? "Change icon" : "Upload icon"}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Recommended: 100×100px
+                    </p>
+                  </div>
+                </div>
+
                 <input
                   type="text"
                   placeholder="Feature title"
@@ -322,6 +436,9 @@ export const WhyShopWithUsSection = ({
   features,
   compact = false,
 }: WhyShopWithUsSectionProps) => {
+  const { currentTheme } = useTheme();
+
+
   return (
     <motion.section
       initial={{ opacity: 0 }}
@@ -343,7 +460,10 @@ export const WhyShopWithUsSection = ({
               variants={titleAnimation}
               className={`${compact ? "text-2xl" : "text-3xl"} font-bold ${
                 compact ? "mb-2" : "mb-4"
-              }`}
+              }text-primary`}
+              style={{
+                color: currentTheme?.text,
+              }}
             >
               {sectionTitle}
             </motion.h2>
@@ -382,19 +502,33 @@ export const WhyShopWithUsSection = ({
               >
                 <motion.div
                   whileHover={{ scale: 1.1 }}
-                  className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+                  className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center overflow-hidden"
                   style={{
-                    backgroundColor: "#2563EB",
+                    backgroundColor: feature.icon ? "transparent" : "#2563EB",
                     color: "white",
                   }}
                 >
-                  <CheckCircle className="w-6 h-6 text-white" strokeWidth={2} />
+                  {feature.icon ? (
+                    <img
+                      src={feature.icon}
+                      alt={feature.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <CheckCircle
+                      className="w-6 h-6 text-white"
+                      strokeWidth={2}
+                    />
+                  )}
                 </motion.div>
 
                 <h3
                   className={`${compact ? "text-lg" : "text-xl"} font-bold ${
                     compact ? "mb-1" : "mb-2"
                   } text-center`}
+                  style={{
+                    color: currentTheme?.text,
+                  }}
                 >
                   {feature.title}
                 </h3>

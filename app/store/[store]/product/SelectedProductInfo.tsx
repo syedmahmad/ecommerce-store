@@ -827,8 +827,8 @@ export default function SingleProduct() {
                 {[
                   { text: "Contact Us", href: "/contact" },
                   { text: "FAQs", href: "/faqs" },
-                  { text: "Shipping Policy", href: "/shipping" },
-                  { text: "Returns & Refunds", href: "/returns" },
+                  { text: "Shipping Policy", href: "/" },
+                  { text: "Returns & Refunds", href: "/" },
                 ].map((item, index) => (
                   <li key={index}>
                     <Link

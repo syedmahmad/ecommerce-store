@@ -295,7 +295,7 @@ export function StoreLayoutWrapper({ children, storeId }: any) {
               </h3>
               <ul className="space-y-3 text-sm">
                 {[
-                  { text: "Contact Us", href: "#" },
+                  { text: "Contact Us", href: "/contact" },
                   { text: "FAQs", href: "#" },
                   { text: "Shipping Policy", href: "#" },
                   { text: "Returns & Refunds", href: "#" },

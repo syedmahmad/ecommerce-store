@@ -12,8 +12,13 @@ import { MinusIcon, PlusIcon, Star } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useTheme } from "@/context/theme-context";
+import { useParams } from "next/navigation";
 
 export const CustomerSection = () => {
+  const params = useParams();
+  const storeId = params.stor;
+
   const [userId, setUserId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
   const [customerData, setCustomerData] = useState([]);
@@ -160,7 +165,16 @@ export const CustomerSection = () => {
     }
   };
 
-  const handleAddOrUpdateCustomer = async () => {
+  const handleAddOrUpdateCustomer = async (e?: React.FormEvent) => {
+    // Prevent default form submission if called from form
+    if (e) e.preventDefault();
+
+    // Validate form before proceeding
+    if (!validateForm()) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     const lcData = localStorage.getItem("user");
     const parseLCData = lcData && JSON.parse(lcData);
 
@@ -271,6 +285,7 @@ export const CustomerSection = () => {
 
     const payload = {
       showOnUI: newVisibility,
+      userId: parseLCData.id,
     };
     const response = await PATCH(
       `/our-customer-section/visibility/${parseLCData.id}`,
@@ -301,18 +316,17 @@ export const CustomerSection = () => {
               Edit Section
             </h2>
 
-            {/* <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isVisible}
                   onChange={handleVisibility}
-                  disabled={!validateForm()}
+                  // disabled={!validateForm()}
                   className="sr-only peer"
                 />
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
-
 
               <div className="relative group">
                 <svg
@@ -334,7 +348,7 @@ export const CustomerSection = () => {
                   store. Currently, this section is visible.
                 </div>
               </div>
-            </div> */}
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -603,55 +617,57 @@ export const CustomerSection = () => {
   );
 };
 
-export const SingleCustomer = ({ customer, handleEdit, handleDelete }: any) => (
-  <div className="p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
-    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-      <div className="flex items-start space-x-3 sm:space-x-4">
-        <div className="relative flex-shrink-0">
-          <img
-            src={customer.imageUrl ?? "/avatar.png"}
-            alt={customer.name}
-            className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-sm"
-          />
-        </div>
-        <div className="flex-1">
-          <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
-            <p className="font-medium text-gray-900 break-words">
-              {customer.name}
+export const SingleCustomer = ({ customer, handleEdit, handleDelete }: any) => {
+  return (
+    <div className="p-4 sm:p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+        <div className="flex items-start space-x-3 sm:space-x-4">
+          <div className="relative flex-shrink-0">
+            <img
+              src={customer.imageUrl ?? "/avatar.png"}
+              alt={customer.name}
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-sm"
+            />
+          </div>
+          <div className="flex-1">
+            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+              <p className="font-medium text-gray-900 break-words">
+                {customer.name}
+              </p>
+              <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full self-start xs:self-auto">
+                {customer.status}
+              </span>
+            </div>
+            <div className="flex mt-1 mb-2 text-yellow-400">
+              {Array.from({ length: customer.rating }).map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-current" />
+              ))}
+            </div>
+            <p className="text-gray-600 italic text-sm sm:text-base">
+              "{customer.testimonial}"
             </p>
-            <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full self-start xs:self-auto">
-              {customer.status}
-            </span>
           </div>
-          <div className="flex mt-1 mb-2 text-yellow-400">
-            {Array.from({ length: customer.rating }).map((_, i) => (
-              <Star key={i} className="h-4 w-4 fill-current" />
-            ))}
-          </div>
-          <p className="text-gray-600 italic text-sm sm:text-base">
-            "{customer.testimonial}"
-          </p>
         </div>
-      </div>
-      <div className="flex justify-end sm:justify-normal space-x-2 sm:space-x-3">
-        <button
-          onClick={() => handleEdit(customer)}
-          className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors"
-          title="Edit"
-        >
-          <PencilIcon className="h-5 w-5" />
-        </button>
-        <button
-          onClick={() => handleDelete(customer.id)}
-          className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors"
-          title="Delete"
-        >
-          <TrashIcon className="h-5 w-5" />
-        </button>
+        <div className="flex justify-end sm:justify-normal space-x-2 sm:space-x-3">
+          <button
+            onClick={() => handleEdit(customer)}
+            className="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors"
+            title="Edit"
+          >
+            <PencilIcon className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => handleDelete(customer.id)}
+            className="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors"
+            title="Delete"
+          >
+            <TrashIcon className="h-5 w-5" />
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const container = {
   hidden: { opacity: 0 },
@@ -674,6 +690,8 @@ const titleAnimation = {
 };
 
 export const CustomerLivePreview = ({ customerData, formData }: any) => {
+  const { currentTheme } = useTheme();
+
   const hasPreviewTestimonial =
     formData.testimonial || formData.name || formData.imageUrl;
 
@@ -713,6 +731,9 @@ export const CustomerLivePreview = ({ customerData, formData }: any) => {
           <motion.h2
             variants={titleAnimation}
             className="text-3xl font-bold mb-4"
+            style={{
+              color: currentTheme?.text,
+            }}
           >
             {formData.heading || "What Our Customers Say"}
           </motion.h2>
@@ -726,92 +747,93 @@ export const CustomerLivePreview = ({ customerData, formData }: any) => {
           )}
         </motion.div>
 
-        {chunkedTestimonials.length > 0 ? (
-          chunkedTestimonials.map((row, rowIndex) => (
-            <motion.div
-              key={rowIndex}
-              variants={container}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-50px" }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 last:mb-0"
-            >
-              {row.map((testimonial: any) => (
+        {
+          chunkedTestimonials.length > 0
+            ? chunkedTestimonials.map((row, rowIndex) => (
                 <motion.div
-                  key={testimonial.id}
-                  variants={item}
-                  whileHover={{ y: -5 }}
-                  className={`bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all ${
-                    testimonial.isPreview
-                      ? "border-2 border-dashed border-blue-200"
-                      : ""
-                  }`}
+                  key={rowIndex}
+                  variants={container}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true, margin: "-50px" }}
+                  className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 last:mb-0"
                 >
-                  <div className="flex items-center mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-5 w-5 mr-1"
-                        fill={
-                          i < (testimonial.rating || 1)
-                            ? "var(--accent-color)"
-                            : "none"
-                        }
-                        style={{
-                          color:
-                            i < (testimonial.rating || 1)
-                              ? "var(--accent-color)"
-                              : "#d1d5db",
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <p className="mb-6 text-gray-600 dark:text-gray-300 italic">
-                    "
-                    {testimonial.testimonial ||
-                      "Customer testimonial preview text..."}
-                    "
-                  </p>
-                  <div className="flex items-center">
-                    <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 border-2 border-white dark:border-gray-700 shadow">
-                      <Image
-                        src={testimonial.imageUrl || "/avatar.png"}
-                        alt={testimonial.name || "Customer"}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                      />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white">
-                        {testimonial.name || "Customer Name"}
-                      </h4>
-                      <p className="text-sm text-muted-foreground">
-                        {testimonial.status || "Verified"}
+                  {row.map((testimonial: any) => (
+                    <motion.div
+                      key={testimonial.id}
+                      variants={item}
+                      whileHover={{ y: -5 }}
+                      className={`bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all ${
+                        testimonial.isPreview
+                          ? "border-2 border-dashed border-blue-200"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-center mb-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className="h-5 w-5 mr-1"
+                            fill={
+                              i < (testimonial.rating || 1)
+                                ? "var(--accent-color)"
+                                : "none"
+                            }
+                            style={{
+                              color:
+                                i < (testimonial.rating || 1)
+                                  ? "var(--accent-color)"
+                                  : "#d1d5db",
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <p className="mb-6 text-gray-600 dark:text-gray-300 italic">
+                        "
+                        {testimonial.testimonial ||
+                          "Customer testimonial preview text..."}
+                        "
                       </p>
-                    </div>
-                  </div>
-                  {testimonial.isPreview && (
-                    <div className="text-xs text-blue-500 mt-2 text-center">
-                      (Preview - Not saved yet)
-                    </div>
-                  )}
+                      <div className="flex items-center">
+                        <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 border-2 border-white dark:border-gray-700 shadow">
+                          <Image
+                            src={testimonial.imageUrl || "/avatar.png"}
+                            alt={testimonial.name || "Customer"}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 dark:text-white">
+                            {testimonial.name || "Customer Name"}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {testimonial.status || "Verified"}
+                          </p>
+                        </div>
+                      </div>
+                      {testimonial.isPreview && (
+                        <div className="text-xs text-blue-500 mt-2 text-center">
+                          (Preview - Not saved yet)
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
-          ))
-        ) : (
-          <div className="col-span-3 text-center py-8">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 border border-dashed border-gray-200 dark:border-gray-700">
-              <p className="text-gray-500 dark:text-gray-400">
-                No testimonials to display yet
-              </p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                Add a testimonial using the form to see it here
-              </p>
-            </div>
-          </div>
-        )}
+              ))
+            : null
+          // <div className="col-span-3 text-center py-8">
+          //   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 border border-dashed border-gray-200 dark:border-gray-700">
+          //     <p className="text-gray-500 dark:text-gray-400">
+          //       No testimonials to display yet
+          //     </p>
+          //     <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+          //       Add a testimonial using the form to see it here
+          //     </p>
+          //   </div>
+          // </div>
+        }
       </div>
     </motion.section>
   );

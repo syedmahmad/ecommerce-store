@@ -42,6 +42,15 @@ export const OurCustomerStoreFront = () => {
 
   const testimonials = data?.data;
 
+  console.log("testimonials", testimonials);
+
+  const showOnUI =
+    testimonials && testimonials?.length && testimonials[0]?.showOnUI;
+
+  if (!showOnUI) {
+    return null;
+  }
+
   if (isLoading) {
     return (
       <motion.div
@@ -56,7 +65,7 @@ export const OurCustomerStoreFront = () => {
     );
   }
 
-  if (!testimonials || testimonials?.length === 0) {
+  if (!testimonials) {
     return null;
   }
 
@@ -87,12 +96,21 @@ export const OurCustomerStoreFront = () => {
           >
             {testimonials?.heading || "What Our Customers Say"}
           </motion.h2>
-          {testimonials?.subHeading && (
+          {testimonials?.subHeading ? (
             <motion.p
               variants={titleAnimation}
               className="text-muted-foreground max-w-2xl mx-auto"
             >
-              {testimonials.subHeading}
+              {testimonials?.subHeading ||
+                "Don't just take our word for it. Here's what our customers have to say about their shopping experience."}
+            </motion.p>
+          ) : (
+            <motion.p
+              variants={titleAnimation}
+              className="text-muted-foreground max-w-2xl mx-auto"
+            >
+              Don't just take our word for it. Here's what our customers have to
+              say about their shopping experience.
             </motion.p>
           )}
         </motion.div>
@@ -137,7 +155,7 @@ export const OurCustomerStoreFront = () => {
                   <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4 border-2 border-white dark:border-gray-700 shadow">
                     <Image
                       src={testimonial.imageUrl || "/placeholder.svg"}
-                      alt={testimonial.name}
+                      alt={testimonial.name || "customer iamge"}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"

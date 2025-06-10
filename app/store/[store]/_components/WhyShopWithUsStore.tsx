@@ -98,7 +98,7 @@ export const WhyShopWithUsStoreFrontUI = () => {
                 variants={titleAnimation}
                 className="text-3xl font-bold mb-4"
               >
-                {sectionData.sectionTitle} hello
+                {sectionData.sectionTitle}
               </motion.h2>
               <motion.p
                 variants={descriptionAnimation}
@@ -117,7 +117,7 @@ export const WhyShopWithUsStoreFrontUI = () => {
             >
               {sectionData.features?.map(
                 (
-                  feature: { title: string; description: string },
+                  feature: { title: string; description: string; icon: string },
                   index: number
                 ) => (
                   <motion.div
@@ -128,16 +128,22 @@ export const WhyShopWithUsStoreFrontUI = () => {
                   >
                     <motion.div
                       whileHover={{ scale: 1.1 }}
-                      className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-                      style={{
-                        backgroundColor: "#2563EB",
-                        color: "white",
-                      }}
+                      className={`w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden flex items-center justify-center p-1 ${
+                        feature.icon ? "bg-white" : "bg-[#2563EB]"
+                      }`}
                     >
-                      <CheckCircle
-                        className="w-6 h-6 text-white"
-                        strokeWidth={2}
-                      />
+                      {feature.icon ? (
+                        <img
+                          src={feature.icon}
+                          alt={feature.title}
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      ) : (
+                        <CheckCircle
+                          className="w-6 h-6 text-white"
+                          strokeWidth={2}
+                        />
+                      )}
                     </motion.div>
 
                     <h3 className="text-xl font-bold mb-2 text-center">

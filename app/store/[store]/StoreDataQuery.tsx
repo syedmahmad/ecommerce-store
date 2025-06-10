@@ -282,7 +282,7 @@ export default function StorePage({ storeId }: any) {
       </section>
 
       {/* Promotional Banner */}
-      {saleData?.campaigns?.length && (
+      {saleData?.campaigns?.length > 0 && (
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="relative rounded-xl overflow-hidden">

@@ -1,7 +1,6 @@
 "use client";
 
-import type React from "react";
-
+import React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,71 +21,72 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const { currentTheme, previewTheme } = useAdminTheme();
+  const { setStorePreviewTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState("");
 
+  // Get user data from localStorage
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
-      const lcData = localStorage.getItem("user");
-      const user = lcData && JSON.parse(lcData);
-      if (user?.id) {
-        setUserId(user.id);
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        setUserId(user?.id || null);
+        setUserEmail(user?.email || null);
       }
     }
-  }, [userId]);
+  }, []);
 
-  // Getting store info to get the store id and pass it to the DashboardLayout so we can get the information
-  // about the store and show it in store
-  const getStoreInfo = useQuery({
-    queryKey: ["store-info"],
+  // Fetch store info
+  const { data: storeInfo } = useQuery({
+    queryKey: ["store-info", userId],
     queryFn: async () => {
-      const endpoint = `store/${userId}`;
-      return await GET(endpoint);
+      const endpoint: any = `store/${userId}`;
+      const response = await GET(endpoint);
+      return response ? response.data : undefined;
     },
     enabled: !!userId,
   });
 
-  const storeInfoFromBE = getStoreInfo?.data?.data;
-  const storeId = storeInfoFromBE && storeInfoFromBE?.id;
+  const storeId = storeInfo?.id;
+  const storeName = storeInfo?.name;
 
-  const pathname = usePathname();
-  const { currentTheme, previewTheme } = useAdminTheme();
-  const { setStorePreviewTheme } = useTheme();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("");
-
-  // Define a constant store name to use throughout the application
-  const storeName = storeInfoFromBE && storeInfoFromBE?.name;
-
-  // Use preview theme if available, otherwise use current theme
-  const theme = previewTheme || currentTheme;
-
-  // Set active tab based on pathname
+  // Set active tab based on current path
   useEffect(() => {
-    if (pathname.includes("/dashboard/products")) {
-      setActiveTab("products");
-    } else if (pathname.includes("/customize-store")) {
-      setActiveTab("customize-store");
-    } else if (pathname.includes("/dashboard/customers")) {
-      setActiveTab("customers");
-    } else if (pathname.includes("/dashboard/analytics")) {
-      setActiveTab("analytics");
-    } else if (pathname.includes("/dashboard/theme")) {
-      setActiveTab("theme");
-    } else if (pathname.includes("/dashboard/settings")) {
-      setActiveTab("settings");
-    } else if (pathname.includes("/dashboard/merchants")) {
-      setActiveTab("merchants");
-    } else {
-      setActiveTab("overview");
-    }
+    const tabRoutes: Record<string, string> = {
+      "/dashboard/products": "products",
+      "/dashboard/customize-store": "customize",
+      "/dashboard/customers": "customers",
+      "/dashboard/analytics": "analytics",
+      "/dashboard/theme": "theme",
+      "/dashboard/settings": "settings",
+      "/dashboard/merchants": "merchants",
+    };
+
+    const currentTab =
+      Object.entries(tabRoutes).find(([path]) =>
+        pathname.startsWith(path)
+      )?.[1] || "overview";
+
+    setActiveTab(currentTab);
   }, [pathname]);
 
-  // Sync admin theme with store preview theme when in preview mode
+  // Sync theme preview with store
   useEffect(() => {
     if (previewTheme) {
-      // Convert admin theme colors to store theme format for preview
       setStorePreviewTheme({
         id: "preview",
         name: "Preview",
@@ -97,70 +97,81 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         accent: previewTheme.accentColor,
       });
     } else {
-      // Clear store preview theme when not in preview mode
       setStorePreviewTheme(null);
     }
   }, [previewTheme, setStorePreviewTheme]);
 
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof localStorage !== "undefined") {
-      const lcData = localStorage.getItem("user");
-      const user = lcData && JSON.parse(lcData);
-      if (user?.email) {
-        setUserEmail(user.email);
-      }
-    }
-  }, [userEmail]);
-
-  // Create CSS variables for the theme
-  const themeStyles = {
-    "--admin-primary-color": theme.primaryColor,
-    "--admin-secondary-color": theme.secondaryColor,
-    "--admin-background-color": theme.backgroundColor,
-    "--admin-text-color": theme.textColor,
-    "--admin-header-color": theme.headerColor,
-    "--admin-sidebar-color": theme.sidebarColor,
-    "--admin-accent-color": theme.accentColor,
-    "--admin-border-color": theme.borderColor,
-  } as React.CSSProperties;
-
+  // Navigation items with simplified descriptions
   const navItems = [
-    { id: "overview", label: "Overview", icon: Home, href: "/dashboard" },
     {
-      id: "products",
-      label: "Products",
-      icon: Package,
-      href: "/dashboard/products",
+      id: "overview",
+      label: "Overview",
+      icon: Home,
+      href: "/dashboard",
+      description: "Store summary at a glance",
     },
     {
-      id: "customize-store",
+      id: "products",
+      label: "Manage Products",
+      icon: Package,
+      href: "/dashboard/products",
+      description: "Add and manage products",
+    },
+    {
+      id: "customize",
       label: "Customize Store",
       icon: Users,
       href: "/dashboard/customize-store",
+      description: "Edit your store’s header, banners, and layout sections",
     },
-    { id: "theme", label: "Theme", icon: Palette, href: "/dashboard/theme" },
+    {
+      id: "theme",
+      label: "Theme",
+      icon: Palette,
+      href: "/dashboard/theme",
+      description: "Change colors and style of your store",
+    },
     {
       id: "settings",
       label: "Settings",
       icon: Settings,
       href: "/dashboard/settings",
+      description: "Account and preferences",
     },
     {
       id: "merchants",
-      label: "View Merchants",
+      label: "Merchants",
       icon: Users,
       href: "/dashboard/merchants",
+      description: "View the list of merchants.",
+      adminOnly: true,
     },
   ];
 
-  const filteredNavItems = navItems.filter((item) => {
-    if (item.id === "merchants") {
-      return userEmail === "devm.ahmad@gmail.com"; // Only show 'View Merchants' for specific email
-    }
-    return true; // Show all other items
-  });
+  const filteredNavItems = navItems.filter(
+    (item) => !item.adminOnly || userEmail === "devm.ahmad@gmail.com"
+  );
+
+  // Apply theme styles
+  const themeStyles = {
+    "--admin-primary-color":
+      previewTheme?.primaryColor || currentTheme.primaryColor,
+    "--admin-secondary-color":
+      previewTheme?.secondaryColor || currentTheme.secondaryColor,
+    "--admin-background-color":
+      previewTheme?.backgroundColor || currentTheme.backgroundColor,
+    "--admin-text-color": previewTheme?.textColor || currentTheme.textColor,
+    "--admin-header-color":
+      previewTheme?.headerColor || currentTheme.headerColor,
+    "--admin-sidebar-color":
+      previewTheme?.sidebarColor || currentTheme.sidebarColor,
+    "--admin-accent-color":
+      previewTheme?.accentColor || currentTheme.accentColor,
+    "--admin-border-color":
+      previewTheme?.borderColor || currentTheme.borderColor,
+  } as React.CSSProperties;
+
+  const theme = previewTheme || currentTheme;
 
   return (
     <div
@@ -171,7 +182,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         color: theme.textColor,
       }}
     >
-      <header
+      {/* Header with subtle animation */}
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
         className="sticky top-0 z-10 flex h-16 items-center gap-4 px-4 sm:px-6 border-b"
         style={{
           backgroundColor: theme.headerColor,
@@ -181,71 +196,91 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <Link
           className="flex items-center gap-2 font-semibold"
           href="/dashboard"
-          aria-label="ZyloSpace Dashboard"
+          aria-label="Dashboard Home"
         >
           <ShoppingBag
             className="h-6 w-6"
             style={{ color: theme.primaryColor }}
-            aria-hidden="true"
           />
           <span className="hidden sm:inline">ZyloSpace</span>
+          {/* {storeName && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.75 }}
+              className="hidden md:inline text-sm font-normal ml-2"
+            >
+              {storeName}
+            </motion.span>
+          )} */}
         </Link>
 
-        <nav className="hidden flex-1 md:flex" aria-label="Main navigation">
-          {filteredNavItems.map((item) => (
-            <Link
-              key={item.id}
-              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
-                activeTab === item.id
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              href={item.href}
-              style={{
-                color: activeTab === item.id ? theme.primaryColor : undefined,
-              }}
-              aria-current={activeTab === item.id ? "page" : undefined}
-            >
-              <item.icon className="h-4 w-4" aria-hidden="true" />
-              <span className="hidden sm:inline">{item.label}</span>
-              <span className="sr-only sm:hidden">{item.label}</span>
-            </Link>
-          ))}
+        {/* Desktop Navigation */}
+        <nav className="hidden flex-1 md:flex ml-6">
+          <ul className="flex items-center gap-1">
+            {filteredNavItems.map((item) => (
+              <li key={item.id}>
+                <TooltipProvider delayDuration={100}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors rounded-lg group ${
+                          activeTab === item.id
+                            ? "bg-primary/10 text-primary"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
+                        }`}
+                        href={item.href}
+                        style={{
+                          color:
+                            activeTab === item.id
+                              ? theme.primaryColor
+                              : undefined,
+                        }}
+                      >
+                        <item.icon
+                          className="h-4 w-4"
+                          strokeWidth={activeTab === item.id ? 2.5 : 2}
+                        />
+                        <span className="hidden sm:inline">{item.label}</span>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-sm">
+                      {item.description}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </li>
+            ))}
+          </ul>
         </nav>
 
+        {/* Header Actions */}
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
-          <Button
-            variant="outline"
-            size="icon"
-            className="hidden sm:flex hover:bg-accent/50"
-            style={{
-              borderColor: theme.borderColor,
-              color: theme.textColor,
-            }}
-            aria-label="Notifications"
-          >
-            <Bell className="h-4 w-4" aria-hidden="true" />
-          </Button>
-
-          <Link
-            href={`/store/${storeId}`}
-            target="_blank"
-            aria-label="Visit store (opens in new tab)"
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 hover:bg-accent/50"
-              style={{
-                borderColor: theme.borderColor,
-                color: theme.textColor,
-              }}
-            >
-              <ExternalLink className="h-3 w-3" aria-hidden="true" />
-              <span className="hidden sm:inline">Visit Store</span>
-              <span className="sm:hidden">Store</span>
-            </Button>
-          </Link>
+          {storeId && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href={`/store/${storeId}`} target="_blank">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 hover:bg-accent/50"
+                      style={{
+                        borderColor: theme.borderColor,
+                        color: theme.textColor,
+                      }}
+                      aria-label="View live store"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      <span className="hidden sm:inline">View Store</span>
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  Open your live store in a new tab
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
 
           <Button
             variant="outline"
@@ -256,67 +291,81 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               borderColor: theme.borderColor,
               color: theme.textColor,
             }}
-            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isMobileMenuOpen}
+            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X className="h-4 w-4" aria-hidden="true" />
+              <X className="h-4 w-4" />
             ) : (
-              <Menu className="h-4 w-4" aria-hidden="true" />
+              <Menu className="h-4 w-4" />
             )}
           </Button>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Enhanced mobile menu */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-20 mt-16 bg-background md:hidden overflow-y-auto"
-          style={{
-            backgroundColor: theme.backgroundColor,
-          }}
-          role="dialog"
-          aria-modal="true"
-        >
-          <nav
-            className="flex flex-col p-4 space-y-2"
-            aria-label="Mobile navigation"
+      {/* Mobile Menu with smooth animation */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-20 mt-16 bg-background/95 backdrop-blur-sm md:hidden overflow-y-auto"
+            style={{ backgroundColor: theme.backgroundColor }}
           >
-            <h3 className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Main Navigation
-            </h3>
-            {navItems.map((item) => (
-              <Link
-                key={item.id}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg ${
-                  activeTab === item.id
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground"
-                }`}
-                href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                aria-current={activeTab === item.id ? "page" : undefined}
-              >
-                <item.icon
-                  className="h-5 w-5 flex-shrink-0"
-                  aria-hidden="true"
-                />
-                <span>{item.label}</span>
-                {activeTab === item.id && (
-                  <span
-                    className="ml-auto h-2 w-2 rounded-full bg-primary"
-                    aria-hidden="true"
-                  />
-                )}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      )}
+            <nav className="flex flex-col p-4 space-y-1">
+              <h3 className="px-4 py-3 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+                Menu
+              </h3>
+              {filteredNavItems.map((item) => (
+                <motion.div
+                  key={item.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Link
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      activeTab === item.id
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-muted-foreground hover:bg-accent/20"
+                    }`}
+                    href={item.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <item.icon
+                      className="h-5 w-5 flex-shrink-0"
+                      strokeWidth={activeTab === item.id ? 2.5 : 2}
+                    />
+                    <div className="flex-1">
+                      <div>{item.label}</div>
+                      <div className="text-xs opacity-70 mt-1">
+                        {item.description}
+                      </div>
+                    </div>
+                    {activeTab === item.id && (
+                      <span
+                        className="ml-auto h-2 w-2 rounded-full bg-primary"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </Link>
+                </motion.div>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <main className="flex-1 p-4 sm:p-6" id="main-content" tabIndex={-1}>
+      {/* Main Content with fade-in animation */}
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="flex-1 p-4 sm:p-6"
+        style={{ backgroundColor: theme.backgroundColor }}
+      >
         {children}
-      </main>
+      </motion.main>
     </div>
   );
 }
