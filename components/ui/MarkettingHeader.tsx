@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -8,8 +8,8 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { Button } from "./button";
 
 export default function MarketingHeader() {
-//   const router = useRouter();
-const pathname = usePathname();
+  //   const router = useRouter();
+  const pathname = usePathname();
   const colors = {
     primary: "#4f46e5", // More vibrant indigo
     secondary: "#10b981", // Emerald green
@@ -18,7 +18,7 @@ const pathname = usePathname();
     light: "#f8fafc", // Lightest slate
   };
 
-  const navItems = ["Features", "Pricing", "About"];
+  const navItems = ["Features", "Pricing", "About", "Services"];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -39,12 +39,13 @@ const pathname = usePathname();
       <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
         <Link className="flex items-center justify-center" href="/">
           <motion.div whileHover={{ rotate: 15 }} whileTap={{ scale: 0.9 }}>
-            <ShoppingBag
-              className="h-6 w-6 mr-2"
-              style={{ color: colors.primary }}
+            <img
+              src="/zyloSpacelogo.jpeg"
+              // src="/logo1.png"
+              alt="logo"
+              className="h-12 w-auto mr-2 object-contain"
             />
           </motion.div>
-          <span className="font-bold text-gray-900 text-lg">ZyloSpace</span>
         </Link>
 
         {/* Desktop Navigation - hidden on mobile */}
