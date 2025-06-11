@@ -40,7 +40,7 @@ export default function MarketingHeader() {
         <Link className="flex items-center justify-center" href="/">
           <motion.div whileHover={{ rotate: 15 }} whileTap={{ scale: 0.9 }}>
             <img
-              src="/zyloSpacelogo.jpeg"
+              src="/zylospacelogo0.jpeg"
               // src="/logo1.png"
               alt="logo"
               className="h-12 w-auto mr-2 object-contain"
