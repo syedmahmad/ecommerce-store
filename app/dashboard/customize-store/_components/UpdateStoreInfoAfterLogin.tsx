@@ -420,12 +420,16 @@ export const UpdateStoreInfoAfterLogin = () => {
                         </div>
                         <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                           {storeInfo.logo === null && (
-                            <button
-                              type="button"
-                              onClick={triggerFileInput}
-                              disabled={isLoading}
-                              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
+                          <button
+                            type="button"
+                            onClick={triggerFileInput}
+                            disabled={isLoading}
+                            aria-busy={isLoading}
+                            className={`inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
+                              ${isLoading ? 'opacity-50 cursor-not-allowed text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-gray-50'}
+                            `}
+                          >
+
                               {isLoading ? "Uploading..." : "Upload Logo"}
                               {isLoading && (
                                 <Loader2 className="ml-2 h-3 w-3 animate-spin" />
@@ -670,13 +674,31 @@ export const UpdateStoreInfoAfterLogin = () => {
                           Contact:
                         </p>
                         <p className="text-sm text-gray-600">
-                          {storeInfo.contactNumber}
+                          +92{storeInfo.contactNumber}
                         </p>
                       </div>
                     ) : (
                       <div className="mt-2 p-2 bg-yellow-50 rounded-lg">
                         <p className="text-xs text-yellow-700">
                           No contact number provided (required)
+                        </p>
+                      </div>
+                    )}
+
+              {/* Location  */}
+                    {storeInfo.contactNumber ? (
+                      <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-700">
+                          Location:
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {storeInfo.location}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-2 p-2 bg-yellow-50 rounded-lg">
+                        <p className="text-xs text-yellow-700">
+                          No location provided yet (required)
                         </p>
                       </div>
                     )}

@@ -136,31 +136,22 @@ export function AuthProvider({ children }: any) {
 
   const requestPasswordReset = async (email: string) => {
     try {
-      const response = await fetch("/api/password-reset/request", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
+
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const response = await axios.post(`${API_URL}/auth/forgot-password`, {
+        email,
       });
 
-      const data = await response.json();
+      const resData  = response.data;
 
-      if (!response.ok) {
-        throw new Error(data.error || "Password reset request failed");
+      if (!resData.success) {
+        throw new Error(resData?.data.error || "Password reset request failed");
       }
 
-      // toast({
-      //   title: "Password reset email sent",
-      //   description: "Check your email for a password reset link",
-      // });
+      toast.success(`Password Rest link has been sent to: ${email}`)
       return true;
     } catch (error: any) {
-      // toast({
-      //   title: "Password reset request failed",
-      //   description: error.message || "Something went wrong",
-      //   variant: "destructive",
-      // });
+      toast.error('Something went wrong while sending the reset link. Please try again.')
       return false;
     }
   };
@@ -171,19 +162,32 @@ export function AuthProvider({ children }: any) {
     password: string
   ) => {
     try {
-      const response = await fetch("/api/password-reset/confirm", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, token, password }),
+      // 
+      const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const response = await axios.post(`${API_URL}/auth/reset-password`, {
+        email,
+        resetToken: token,
+        password
       });
 
-      const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Password reset failed");
-      }
+      console.log('response',response)
+
+
+
+      // const response = await fetch("/api/password-reset/confirm", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ email, token, password }),
+      // });
+
+      // const data = await response.json();
+
+      // if (!response.ok) {
+      //   throw new Error(data.error || "Password reset failed");
+      // }
 
       // toast({
       //   title: "Password reset successful",
