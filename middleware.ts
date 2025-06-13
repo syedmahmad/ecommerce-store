@@ -1,65 +1,95 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// List of paths that require authentication
-const protectedPaths = ["/dashboard", "/dashboard/products", "/dashboard/settings"]
-
-// List of paths that are for authentication
-const authPaths = ["/login", "/register", "/forgot-password", "/reset-password"]
-
+const protectedPaths = ["/dashboard", "/dashboard/products", "/dashboard/settings"];
+const authPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
 
 export async function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname
+  const path = request.nextUrl.pathname;
+  const host = request.headers.get("host") || "";
+  const url = request.nextUrl;
 
-  // Check if the path is protected
-  const isProtectedPath = protectedPaths.some((prefix) => path.startsWith(prefix))
+  // 🚨 Debug logs (remove after verification)
+  console.log('\n--- Middleware Triggered ---');
+  console.log('Host:', host);
+  console.log('Path:', path);
 
-  // Check if the path is an auth path
-  const isAuthPath = authPaths.some((prefix) => path.startsWith(prefix))
+  // 🚦 Skip middleware for static files and API routes
+  if (
+    path.startsWith('/_next/') || 
+    path.startsWith('/api/') ||
+    path.startsWith('/favicon.ico') ||
+    path.match(/\.[a-z0-9]+$/i) // Skip files with extensions
+  ) {
+    return NextResponse.next();
+  }
 
-  // Get the token
-  // const token = await getToken({
-  //   req: request,
-  //   secret: process.env.NEXTAUTH_SECRET || "your-development-secret-key",
-  // })
+  // 🌐 Subdomain Detection
+  const isLocalDev = process.env.NODE_ENV === 'development';
+  const domainPattern = isLocalDev
+    ? /^(store\d+)\.localhost(?::\d+)?$/ // Local: store1.localhost:3000
+    : /^(store\d+)\.zylospace\.com$/;    // Prod: store1.zylospace.com
 
-  const token = await request.cookies.get("authToken")?.value
+  const match = host.match(domainPattern);
 
-  // If the path is protected and there's no token, redirect to login
+  // Case 1: Store Subdomain Handling
+  if (match?.[1]) {
+    const storeId = match[1].replace('store', '');
+    
+    // 🛑 Prevent infinite rewrite loops
+    if (path.startsWith(`/store/${storeId}`)) {
+      console.log('Skipping rewrite (already rewritten)');
+      return NextResponse.next();
+    }
+
+    // 🔄 Rewrite to internal path
+    const newPath = `/store/${storeId}${path === '/' ? '' : path}`;
+    console.log(`Rewriting ${host}${path} → ${newPath}`);
+    
+    url.pathname = newPath;
+    return NextResponse.rewrite(url);
+  }
+
+  // Case 2: Root Domain Handling
+  const isRootDomain = [
+    'zylospace.com', 
+    'www.zylospace.com', 
+    'localhost'
+  ].some(domain => host.includes(domain));
+
+  if (isRootDomain) {
+    return handleAuthLogic(request, path);
+  }
+
+  // Case 3: Unknown Subdomain → 404
+  console.log('Unknown subdomain - returning 404');
+  return new NextResponse(null, { status: 404 });
+}
+
+// 🔒 Auth Logic Helper
+async function handleAuthLogic(request: NextRequest, path: string) {
+  const isProtectedPath = protectedPaths.some(prefix => path.startsWith(prefix));
+  const isAuthPath = authPaths.some(prefix => path.startsWith(prefix));
+  const token = await request.cookies.get("authToken")?.value;
+
+  // Debug
+  console.log('Auth check - Protected:', isProtectedPath, 'Auth:', isAuthPath, 'Has Token:', !!token);
+
   if (isProtectedPath && !token) {
-    const url = new URL(`/login`, request.url)
-    url.searchParams.set("callbackUrl", encodeURI(request.url))
-    return NextResponse.redirect(url)
+    const redirectUrl = new URL('/login', request.url);
+    redirectUrl.searchParams.set('callbackUrl', encodeURI(request.url));
+    return NextResponse.redirect(redirectUrl);
   }
 
-  // If the user is logged in and trying to access an auth page, redirect to dashboard
-  if (isAuthPath && token) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+  if ((isAuthPath || path === "/") && token) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-  
- // ✅ If user is logged in and tries to visit an auth page, redirect to /dashboard
- if ((isAuthPath || path === "/") && token) {
-  return NextResponse.redirect(new URL("/dashboard", request.url))
+
+  return NextResponse.next();
 }
 
-return NextResponse.next()
-  
-}
-
-
-
-// Configure the paths that should invoke this middleware
 export const config = {
   matcher: [
-    /*
-     * Match all paths except for:
-     * 1. /api routes
-     * 2. /_next (Next.js internals)
-     * 3. /fonts (inside /public)
-     * 4. /examples (inside /public)
-     * 5. all root files inside /public (e.g. /favicon.ico)
-     */
-    "/((?!api|_next|fonts|examples|[\\w-]+\\.\\w+).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)' // Skip static files
   ],
-}
+};
