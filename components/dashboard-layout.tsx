@@ -255,7 +255,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Header Actions */}
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
-          {storeId && (
+          {/* {storeId && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -280,7 +280,39 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          )}
+          )} */}
+
+
+{storeId && (
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Link 
+          href={getStoreUrl(storeId)} 
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 hover:bg-accent/50"
+            style={{
+              borderColor: theme.borderColor,
+              color: theme.textColor,
+            }}
+            aria-label="View live store"
+          >
+            <ExternalLink className="h-3 w-3" />
+            <span className="hidden sm:inline">View Store</span>
+          </Button>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        Open {getStoreUrl(storeId)} in new tab
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+)}
 
           <Button
             variant="outline"
@@ -368,4 +400,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </motion.main>
     </div>
   );
+}
+
+
+// lib/store-url.ts
+export function getStoreUrl(storeId: string) {
+  if (process.env.NODE_ENV === 'development') {
+    return `http://store${storeId}.localhost:3000`;
+  }
+  return `https://store${storeId}.zylospace.com`;
 }
