@@ -408,5 +408,5 @@ export function getStoreUrl(storeId: string) {
   if (process.env.NODE_ENV === 'development') {
     return `http://store${storeId}.localhost:3000`;
   }
-  return `https://store${storeId}.zylospace.com`;
+  return `http://store${storeId}.zylospace.com`;
 }

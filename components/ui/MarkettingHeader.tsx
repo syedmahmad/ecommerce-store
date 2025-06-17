@@ -18,7 +18,7 @@ export default function MarketingHeader() {
     light: "#f8fafc", // Lightest slate
   };
 
-  const navItems = ["Features", "Pricing", "About", "Services"];
+  const navItems = ["Features", "Pricing", "About", "Services", "Contact-Us"];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {

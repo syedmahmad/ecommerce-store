@@ -231,7 +231,7 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                      Digital Solutions for Your Business
+                      Comprehensive Digital Solutions for Modern Businesses
                     </motion.h1>
                     <motion.p
                       className="max-w-[600px] text-gray-600 md:text-lg"
@@ -239,9 +239,10 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                      Whether you need an online store or custom software, we've
-                      got you covered. Launch your e-commerce platform in
-                      minutes or get tailored digital solutions.
+                      ZyloSpace offers a dual approach to digital transformation: 
+                      our instant e-commerce platform for rapid online presence 
+                      and bespoke software development for tailored business solutions. 
+                      Enterprise-grade technology made accessible.
                     </motion.p>
                   </motion.div>
                   <motion.div
@@ -258,7 +259,7 @@ export default function Home() {
                           style={{ backgroundColor: colors.primary }}
                           className="px-8 py-6 text-lg hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
                         >
-                          Start Your Store
+                          Launch Your Store
                           <motion.span
                             animate={{ x: [0, 4, 0] }}
                             transition={{
@@ -281,7 +282,7 @@ export default function Home() {
                           variant="outline"
                           className="px-8 py-6 text-lg border-2 border-gray-800 hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
                         >
-                          Explore Services
+                          Explore Custom Solutions
                           <motion.span
                             animate={{ x: [0, 4, 0] }}
                             transition={{
@@ -333,11 +334,11 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Our Comprehensive Offerings
+                  Our Integrated Digital Ecosystem
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">
-                  From ready-to-use solutions to custom-built software, we
-                  provide everything your business needs to thrive online
+                  From turnkey e-commerce to enterprise-grade custom development, 
+                  we provide end-to-end digital solutions to power your business growth
                 </p>
               </motion.div>
 
@@ -358,22 +359,22 @@ export default function Home() {
                       <ShoppingBag className="h-6 w-6 text-indigo-600" />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900">
-                      Online Store Builder
+                      ZyloSpace Commerce Platform
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    Launch your e-commerce store in minutes with our intuitive
-                    platform. No coding required - just focus on your products
-                    and customers.
+                    Our industry-leading e-commerce solution enables businesses 
+                    to deploy a fully-functional online store within hours. 
+                    Designed for growth with enterprise capabilities at SMB-friendly pricing.
                   </p>
                   <ul className="space-y-3 mb-8">
                     {[
-                      "Click-to-customize store builder",
-                      "5+ modern themes",
-                      "Secure payment processing",
-                      "Inventory management",
-                      "Built-in SEO tools",
-                      "Mobile-optimized designs",
+                      "Enterprise-grade store infrastructure",
+                      "Pre-built responsive themes",
+                      "PCI-compliant payment processing",
+                      "Real-time inventory synchronization",
+                      "Advanced SEO optimization",
+                      "Omnichannel retail capabilities",
                     ].map((item, i) => (
                       <li key={i} className="flex items-center">
                         <Check className="h-5 w-5 text-green-500 mr-2" />
@@ -381,16 +382,6 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  {/* <Link href="/store-builder">
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center text-indigo-600 font-medium"
-                    >
-                      Learn more about our store builder
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </motion.div>
-                  </Link> */}
                 </motion.div>
 
                 {/* Software Services Card */}
@@ -409,45 +400,47 @@ export default function Home() {
                       <Code className="h-6 w-6 text-blue-600" />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900">
-                      Custom Software Services
+                      Bespoke Software Development
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    Tailored digital solutions crafted by experts to meet your
-                    specific business requirements and challenges.
+                    Our engineering team delivers custom digital solutions 
+                    tailored to your unique business requirements. 
+                    From concept to deployment, we transform ideas into 
+                    scalable, secure, and high-performance applications.
                   </p>
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     {[
                       {
-                        name: "Web Development",
+                        name: "Web Applications",
                         icon: <Globe className="h-5 w-5" />,
                       },
                       {
-                        name: "Mobile Apps",
+                        name: "Mobile Solutions",
                         icon: <Smartphone className="h-5 w-5" />,
                       },
                       {
-                        name: "SaaS Products",
+                        name: "SaaS Platforms",
                         icon: <Cloud className="h-5 w-5" />,
                       },
                       {
-                        name: "UI/UX Design",
+                        name: "UX/UI Design",
                         icon: <PenTool className="h-5 w-5" />,
                       },
                       {
-                        name: "API Development",
+                        name: "API Integration",
                         icon: <Cpu className="h-5 w-5" />,
                       },
                       {
-                        name: "QA & Testing",
+                        name: "Quality Assurance",
                         icon: <Shield className="h-5 w-5" />,
                       },
                       {
-                        name: "E-commerce Solutions",
+                        name: "E-commerce Systems",
                         icon: <CreditCard className="h-5 w-5" />,
                       },
                       {
-                        name: "Cloud Integration",
+                        name: "Cloud Architecture",
                         icon: <Database className="h-5 w-5" />,
                       },
                     ].map((service, i) => (
@@ -470,7 +463,7 @@ export default function Home() {
                       whileTap={{ scale: 0.98 }}
                       className="inline-flex items-center text-blue-600 font-medium"
                     >
-                      Explore our software services
+                      Discover our development services
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </motion.div>
                   </Link>
@@ -492,14 +485,14 @@ export default function Home() {
                   variants={fadeInUp}
                   className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4"
                 >
-                  Why Choose ZyloSpace?
+                  The ZyloSpace Advantage
                 </motion.h1>
                 <motion.p
                   variants={fadeInUp}
                   className="text-lg text-gray-600 max-w-2xl mx-auto"
                 >
-                  We combine the simplicity of ready-to-use solutions with the
-                  power of custom development
+                  Combining the agility of SaaS products with the precision of 
+                  custom engineering to deliver exceptional value
                 </motion.p>
               </motion.div>
 
@@ -511,49 +504,49 @@ export default function Home() {
               >
                 {[
                   {
-                    title: "Instant Store Launch",
+                    title: "Rapid Deployment",
                     description:
-                      "Get your e-commerce store online in minutes with our intuitive builder.",
+                      "Launch enterprise-ready solutions in hours, not months, with our e-commerce platform.",
                     icon: "⚡",
                     color: "bg-purple-100",
                     borderColor: "border-purple-200",
                   },
                   {
-                    title: "Custom Development",
+                    title: "Tailored Solutions",
                     description:
-                      "Tailored software solutions designed specifically for your business needs.",
+                      "Custom-built applications designed specifically for your operational requirements.",
                     icon: "🛠️",
                     color: "bg-blue-100",
                     borderColor: "border-blue-200",
                   },
                   {
-                    title: "Expert Team",
+                    title: "Technical Excellence",
                     description:
-                      "Work with seasoned developers, designers, and e-commerce specialists.",
+                      "Architected by industry veterans with decades of combined experience.",
                     icon: "👨‍💻",
                     color: "bg-green-100",
                     borderColor: "border-green-200",
                   },
                   {
-                    title: "Responsive Design",
+                    title: "Cross-Platform",
                     description:
-                      "Flawless experience across all devices - desktop, tablet and mobile.",
+                      "Flawless experience across all devices and operating systems.",
                     icon: "📱",
                     color: "bg-red-100",
                     borderColor: "border-red-200",
                   },
                   {
-                    title: "Scalable Solutions",
+                    title: "Enterprise Scalability",
                     description:
-                      "Grow from small store to enterprise platform without switching providers.",
+                      "Solutions that grow with your business from startup to enterprise.",
                     icon: "📈",
                     color: "bg-yellow-100",
                     borderColor: "border-yellow-200",
                   },
                   {
-                    title: "Ongoing Support",
+                    title: "Dedicated Support",
                     description:
-                      "24/7 assistance for both store owners and custom software clients.",
+                      "24/7 technical assistance with guaranteed response times.",
                     icon: "🛎️",
                     color: "bg-indigo-100",
                     borderColor: "border-indigo-200",
@@ -606,11 +599,11 @@ export default function Home() {
                 transition={{ delay: 0.4 }}
               >
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                  Ready to transform your business?
+                  Ready to transform your digital strategy?
                 </h2>
                 <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                  Whether you need an online store or custom software, we have
-                  the perfect solution for you.
+                  Whether you need an immediate e-commerce presence or 
+                  sophisticated custom software, our solutions deliver measurable results.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <Link href="/register">
@@ -626,7 +619,7 @@ export default function Home() {
                         color: "white",
                       }}
                     >
-                      Start Your Store
+                      Begin Your Commerce Journey
                     </motion.div>
                   </Link>
                   <Link href="/contact-us">
@@ -638,7 +631,7 @@ export default function Home() {
                       whileTap={{ scale: 0.98 }}
                       className="inline-block px-8 py-4 rounded-lg font-medium transition-all duration-300 shadow-lg bg-white border-2 border-gray-800"
                     >
-                      Request Consultation
+                      Schedule Technical Consultation
                     </motion.div>
                   </Link>
                 </div>
@@ -656,34 +649,34 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Simple Process, Exceptional Results
+                  Our Proven Methodology
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">
-                  Whether you're launching a store or building custom software,
-                  our process is designed for success
+                  From initial concept to final deployment, our structured 
+                  approach ensures successful digital transformation
                 </p>
               </motion.div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                   {
-                    title: "1. Tell Us Your Needs",
+                    title: "1. Discovery & Strategy",
                     description:
-                      "Share your vision through our quick questionnaire or schedule a consultation.",
+                      "Comprehensive needs assessment to align technology with your business objectives.",
                     icon: <MessageSquare className="h-8 w-8 text-indigo-600" />,
                     color: "bg-indigo-100",
                   },
                   {
-                    title: "2. Choose Your Path",
+                    title: "2. Solution Architecture",
                     description:
-                      "Opt for our instant store builder or custom development services based on your requirements.",
+                      "Custom development or platform configuration based on your requirements.",
                     icon: <Settings className="h-8 w-8 text-blue-600" />,
                     color: "bg-blue-100",
                   },
                   {
-                    title: "3. Launch & Grow",
+                    title: "3. Deployment & Growth",
                     description:
-                      "Go live with your solution and leverage our tools and support to scale your business.",
+                      "Seamless implementation followed by continuous optimization and scaling.",
                     icon: <Rocket className="h-8 w-8 text-green-600" />,
                     color: "bg-green-100",
                   },
@@ -721,11 +714,11 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Trusted by Businesses Worldwide
+                  Trusted by Industry Leaders
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">
-                  Hear from entrepreneurs and enterprises who've transformed
-                  their businesses with ZyloSpace
+                  Organizations worldwide leverage ZyloSpace solutions to drive 
+                  digital innovation and business growth
                 </p>
               </motion.div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -733,25 +726,25 @@ export default function Home() {
                   {
                     rating: "★★★★★",
                     quote:
-                      "ZyloSpace's store builder helped us launch in record time. The simplicity is unmatched!",
+                      "ZyloSpace's commerce platform reduced our time-to-market by 80% while providing enterprise capabilities we couldn't find elsewhere at this price point.",
                     name: "Sarah Johnson",
-                    business: "Boutique Fashion Store",
+                    business: "Global Retail Chain",
                     type: "store",
                   },
                   {
                     rating: "★★★★★",
                     quote:
-                      "Their custom development team built us a perfect inventory management system that saved us 20 hours/week.",
+                      "Their custom development team delivered a complex inventory management system that integrated seamlessly with our legacy ERP, saving us $250k annually in operational costs.",
                     name: "Michael Chen",
-                    business: "Manufacturing Company",
+                    business: "Manufacturing Conglomerate",
                     type: "software",
                   },
                   {
                     rating: "★★★★☆",
                     quote:
-                      "We use both their e-commerce platform and custom APIs. The integration was seamless.",
+                      "The combination of their e-commerce platform and custom API development gave us the perfect hybrid solution for our multi-brand retail operation.",
                     name: "Emma Rodriguez",
-                    business: "Health & Wellness Brand",
+                    business: "Luxury Goods Group",
                     type: "both",
                   },
                 ].map((testimonial, index) => (
@@ -772,10 +765,10 @@ export default function Home() {
                       </div>
                       <div className="ml-auto text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
                         {testimonial.type === "store"
-                          ? "Store Builder"
+                          ? "Commerce Platform"
                           : testimonial.type === "software"
-                          ? "Custom Software"
-                          : "Both Services"}
+                          ? "Custom Development"
+                          : "Integrated Solution"}
                       </div>
                     </div>
                     <p className="text-gray-600 mb-6 italic">
@@ -804,11 +797,11 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-3xl font-bold text-white mb-4">
-                  Ready to Elevate Your Digital Presence?
+                  Ready to Accelerate Your Digital Transformation?
                 </h2>
                 <p className="text-indigo-100 max-w-2xl mx-auto mb-8 text-lg">
-                  Whether you need an online store or custom software, our team
-                  is ready to help you succeed.
+                  Whether you need rapid e-commerce deployment or sophisticated 
+                  custom software, our team delivers exceptional results
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <Link href="/register">
@@ -817,7 +810,7 @@ export default function Home() {
                       whileTap={{ scale: 0.95 }}
                       className="inline-block px-8 py-4 rounded-lg font-medium transition-all duration-300 shadow-xl bg-white text-indigo-600 hover:bg-gray-50"
                     >
-                      Start Free Trial
+                      Start Free Platform Trial
                     </motion.div>
                   </Link>
                   <Link href="/contact">
@@ -826,7 +819,7 @@ export default function Home() {
                       whileTap={{ scale: 0.95 }}
                       className="inline-block px-8 py-4 rounded-lg font-medium transition-all duration-300 shadow-xl bg-transparent border-2 border-white text-white hover:bg-white/10"
                     >
-                      Talk to an Expert
+                      Consult with Our Architects
                     </motion.div>
                   </Link>
                 </div>
@@ -843,11 +836,6 @@ export default function Home() {
                 <div className="flex items-center">
                   <motion.div whileHover={{ rotate: 15 }}>
                     <Code className="h-6 w-6 mr-2 text-indigo-300" />
-                    {/* <img
-                      src="/zylospacelogo.png"
-                      alt="logo"
-                      className="h- w-48 mr-2 text-indigo-300"
-                    /> */}
                   </motion.div>
                   <span className="font-bold text-xl">ZyloSpace</span>
                 </div>
@@ -873,14 +861,14 @@ export default function Home() {
               {/* Store Builder Links */}
               <div>
                 <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                  Store Builder
+                  Commerce Platform
                 </h3>
                 <ul className="space-y-3">
                   {[
                     "Features",
                     "Pricing",
                     "Templates",
-                    "Examples",
+                    "Case Studies",
                     "Integrations",
                   ].map((item, j) => (
                     <motion.li key={j} whileHover={{ x: 5 }}>
@@ -898,16 +886,16 @@ export default function Home() {
               {/* Services Links */}
               <div>
                 <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                  Services
+                  Development Services
                 </h3>
                 <ul className="space-y-3">
                   {[
-                    "Web Development",
-                    "Mobile Apps",
+                    "Web Applications",
+                    "Mobile Solutions",
                     "UI/UX Design",
                     "API Development",
-                    "QA Testing",
-                    "Consulting",
+                    "Quality Assurance",
+                    "Technical Consulting",
                   ].map((item, j) => (
                     <motion.li key={j} whileHover={{ x: 5 }}>
                       <a
@@ -924,16 +912,16 @@ export default function Home() {
               {/* Company Links */}
               <div>
                 <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                  Company
+                  Enterprise
                 </h3>
                 <ul className="space-y-3">
                   {[
                     "About Us",
+                    "Leadership",
                     "Careers",
-                    "Blog",
+                    "Press",
                     "Contact",
-                    "Privacy",
-                    "Terms",
+                    "Legal",
                   ].map((item, j) => (
                     <motion.li key={j} whileHover={{ x: 5 }}>
                       <a
@@ -955,7 +943,7 @@ export default function Home() {
               transition={{ delay: 0.2 }}
             >
               <p className="text-gray-400 text-sm">
-                © 2025 ZyloSpace. All rights reserved.
+                © 2025 ZyloSpace Technologies. All rights reserved.
               </p>
               <div className="mt-4 md:mt-0 flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
                 <motion.div
