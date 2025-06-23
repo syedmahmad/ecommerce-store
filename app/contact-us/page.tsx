@@ -204,10 +204,10 @@ const ContactUsPage = () => {
                         Speak directly with our solutions team
                       </p>
                       <a
-                        href="tel:+18005551234"
+                        href="tel:+923349998990"
                         className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1"
                       >
-                        +1 (800) 555-1234 <ArrowRight className="h-4 w-4" />
+                        +92 (334) 999-8990 <ArrowRight className="h-4 w-4" />
                       </a>
                     </div>
                   </motion.div>
@@ -228,7 +228,7 @@ const ContactUsPage = () => {
                         Schedule an in-person consultation
                       </p>
                       <div className="text-gray-800 inline-flex items-center gap-1">
-                        123 Tech Street, San Francisco, CA 94107{" "}
+                        1141 F Lake City Meadows Phase 1 Lahore{" "}
                         <ArrowRight className="h-4 w-4" />
                       </div>
                     </div>
@@ -429,8 +429,8 @@ const ContactUsPage = () => {
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
                     ZyloSpace HQ
                   </h3>
-                  <p className="text-gray-700 mb-1">123 Tech Street</p>
-                  <p className="text-gray-700">San Francisco, CA 94107</p>
+                  <p className="text-gray-700 mb-1">1141 F-Block Streat</p>
+                  <p className="text-gray-700">Lake City Meadows Phase 1 Lahore</p>
                   <Button
                     variant="outline"
                     className="mt-4 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
@@ -441,11 +441,11 @@ const ContactUsPage = () => {
               </div>
             </motion.div>
 
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              {["San Francisco", "New York", "London"].map((location, i) => (
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-6 gap-8">
+              {["Pakistan", "London"].map((location, i) => (
                 <motion.div
                   key={i}
-                  className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                  className={`bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:col-span-2 ${i === 0 ? "md:col-start-2" : ""}`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}

@@ -97,10 +97,7 @@ const OurServices = () => {
             </h2>
             <div className="w-20 h-1 bg-blue-600 mx-auto mb-6"></div>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              With almost 8 years of experience in tech collaborations and a
-              full commitment to delivering custom applications and services,
-              ZyloSpace has grown into a highly skilled team of professionals
-              capable of addressing clients' business challenges.
+              With a decade of tech expertise, ZyloSpace delivers tailored solutions that solve real business challenges. Our skilled team builds custom applications and services designed to scale with your growth—because your success is our mission.
             </p>
           </motion.div>
 

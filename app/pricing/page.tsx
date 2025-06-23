@@ -10,36 +10,51 @@ const plans = [
     features: [
       "Launch your store instantly",
       "Basic customizable themes",
-      "Secure & fast hosting",
+      "Fast hosting",
+      "SEO optimised",
       "Mobile-responsive design",
     ],
     cta: "Get Started",
     highlight: false,
   },
   {
-    name: "Pro",
-    price: "$19/mo",
+    name: "Enterprise", // Sounds more premium than "Custom"
+    price: "Tailored Pricing", // More professional than "Quotation"
     features: [
-      "Everything in Starter",
-      "Advanced theme customization",
-      "SEO tools & analytics",
-      "Email & chat support",
+      "Dedicated account manager",
+      "Fully custom theme & branding",
+      "Multi-store & wholesale support",
+      "Enterprise-grade security & SLA",
+      "Custom payment solutions",
+      "Priority 24/7 support (1-hour response)",
     ],
-    cta: "Upgrade to Pro",
-    highlight: true,
-  },
-  {
-    name: "Business",
-    price: "$49/mo",
-    features: [
-      "Everything in Pro",
-      "Multi-store support",
-      "Priority 24/7 support",
-      "Custom domain + branding",
-    ],
-    cta: "Go Business",
-    highlight: false,
-  },
+    cta: "Get a Custom Quote →", // More action-oriented
+    highlight: true, // Should be highlighted to draw attention
+  }
+  // {
+  //   name: "Pro",
+  //   price: "$19/mo",
+  //   features: [
+  //     "Everything in Starter",
+  //     "Advanced theme customization",
+  //     "SEO tools & analytics",
+  //     "Email & chat support",
+  //   ],
+  //   cta: "Upgrade to Pro",
+  //   highlight: true,
+  // },
+  // {
+  //   name: "Business",
+  //   price: "$49/mo",
+  //   features: [
+  //     "Everything in Pro",
+  //     "Multi-store support",
+  //     "Priority 24/7 support",
+  //     "Custom domain + branding",
+  //   ],
+  //   cta: "Go Business",
+  //   highlight: false,
+  // },
 ];
 
 const PricingPage = () => {
@@ -56,15 +71,15 @@ const PricingPage = () => {
             you. No hidden fees. Cancel anytime.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-8">
             {plans.map((plan, idx) => (
               <div
                 key={idx}
-                className={`border rounded-2xl p-8 shadow-md transition ${
+                className={`border md:col-span-2 rounded-2xl p-8 shadow-md transition ${
                   plan.highlight
                     ? "border-blue-600 shadow-lg bg-blue-50"
                     : "bg-white"
-                }`}
+                } ${idx === 0 ? "md:col-start-2" : ""}`}
               >
                 <h2 className="text-2xl font-semibold mb-2">{plan.name}</h2>
                 <p className="text-3xl font-bold mb-6">{plan.price}</p>
@@ -77,7 +92,7 @@ const PricingPage = () => {
                   ))}
                 </ul>
                 <a
-                  href="/register"
+                  href={plan.name === "Enterprise" ? "/contact-us" : "/register"}
                   className={`inline-block w-full text-center px-4 py-3 rounded-lg font-medium ${
                     plan.highlight
                       ? "bg-blue-600 text-white hover:bg-blue-700"
@@ -93,7 +108,7 @@ const PricingPage = () => {
           <div className="mt-16 text-gray-600 text-sm">
             <p>
               Need help choosing a plan?{" "}
-              <a href="/contact" className="text-blue-600 underline">
+              <a href="/contact-us" className="text-blue-600 underline">
                 Contact our team
               </a>
             </p>

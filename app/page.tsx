@@ -225,24 +225,27 @@ export default function Home() {
                   variants={staggerContainer}
                 >
                   <motion.div variants={fadeInUp} className="space-y-4">
-                    <motion.h1
+                    <motion.h2
                       className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 bg-clip-text text-transparent"
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                      Comprehensive Digital Solutions for Modern Businesses
-                    </motion.h1>
+                      {/* Comprehensive Digital Solutions for Modern Businesses */}
+                      {/* Launch Your E-Commerce Store in Minutes—No Code Needed */}
+                      Launch a pro store today and start selling online
+                    </motion.h2>
                     <motion.p
                       className="max-w-[600px] text-gray-600 md:text-lg"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                      ZyloSpace offers a dual approach to digital transformation: 
+                      Today’s the day! Launch your dream store today and start selling fast—no coding needed. Prefer hands-off? Our experts build it for you.
+                      {/* ZyloSpace offers a dual approach to digital transformation: 
                       our instant e-commerce platform for rapid online presence 
                       and bespoke software development for tailored business solutions. 
-                      Enterprise-grade technology made accessible.
+                      Enterprise-grade technology made accessible. */}
                     </motion.p>
                   </motion.div>
                   <motion.div
@@ -283,6 +286,7 @@ export default function Home() {
                           className="px-8 py-6 text-lg border-2 border-gray-800 hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
                         >
                           Explore Custom Solutions
+                          {/* Build My Store Now */}
                           <motion.span
                             animate={{ x: [0, 4, 0] }}
                             transition={{
@@ -365,16 +369,17 @@ export default function Home() {
                   <p className="text-gray-600 mb-6">
                     Our industry-leading e-commerce solution enables businesses 
                     to deploy a fully-functional online store within hours. 
-                    Designed for growth with enterprise capabilities at SMB-friendly pricing.
+                    Designed for growth with enterprise capabilities.
                   </p>
                   <ul className="space-y-3 mb-8">
                     {[
                       "Enterprise-grade store infrastructure",
                       "Pre-built responsive themes",
-                      "PCI-compliant payment processing",
+                      // "PCI-compliant payment processing",
                       "Real-time inventory synchronization",
                       "Advanced SEO optimization",
                       "Omnichannel retail capabilities",
+                      "State of the art technology"
                     ].map((item, i) => (
                       <li key={i} className="flex items-center">
                         <Check className="h-5 w-5 text-green-500 mr-2" />
@@ -412,12 +417,8 @@ export default function Home() {
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     {[
                       {
-                        name: "Web Applications",
-                        icon: <Globe className="h-5 w-5" />,
-                      },
-                      {
-                        name: "Mobile Solutions",
-                        icon: <Smartphone className="h-5 w-5" />,
+                        name: "E-commerce Systems",
+                        icon: <CreditCard className="h-5 w-5" />,
                       },
                       {
                         name: "SaaS Platforms",
@@ -436,8 +437,12 @@ export default function Home() {
                         icon: <Shield className="h-5 w-5" />,
                       },
                       {
-                        name: "E-commerce Systems",
-                        icon: <CreditCard className="h-5 w-5" />,
+                        name: "Web Applications",
+                        icon: <Globe className="h-5 w-5" />,
+                      },
+                      {
+                        name: "Mobile Solutions",
+                        icon: <Smartphone className="h-5 w-5" />,
                       },
                       {
                         name: "Cloud Architecture",
@@ -506,7 +511,7 @@ export default function Home() {
                   {
                     title: "Rapid Deployment",
                     description:
-                      "Launch enterprise-ready solutions in hours, not months, with our e-commerce platform.",
+                      "Launch enterprise-ready solutions in minutes, not months, with our e-commerce platform.",
                     icon: "⚡",
                     color: "bg-purple-100",
                     borderColor: "border-purple-200",
@@ -705,7 +710,7 @@ export default function Home() {
           </section>
 
           {/* Testimonial Section */}
-          <section className="w-full py-16 bg-gradient-to-b from-white to-gray-50">
+          {/* <section className="w-full py-16 bg-gradient-to-b from-white to-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
                 className="text-center mb-16"
@@ -786,7 +791,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </section>
+          </section> */}
 
           {/* CTA Section */}
           <section className="w-full py-20 bg-gradient-to-r from-indigo-500 to-blue-600">
@@ -813,7 +818,7 @@ export default function Home() {
                       Start Free Platform Trial
                     </motion.div>
                   </Link>
-                  <Link href="/contact">
+                  <Link href="/contact-us">
                     <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}

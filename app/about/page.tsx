@@ -230,13 +230,13 @@ const AboutPage = () => {
             <motion.a
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              href="/store-builder"
+              href="/register"
               className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
             >
               Launch Your Store Now
             </motion.a>
             <p className="mt-4 text-gray-500 text-sm">
-              No credit card required • Free trial available
+              No credit card required. Try it free—build your store in minutes!
             </p>
           </div>
         </section>
@@ -319,7 +319,7 @@ const AboutPage = () => {
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="/store-builder"
+                href="/register"
                 className="inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition"
               >
                 Start Your Store
@@ -327,7 +327,7 @@ const AboutPage = () => {
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="/contact"
+                href="/contact-us"
                 className="inline-block bg-transparent border border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition"
               >
                 Talk to Our Experts
