@@ -30,6 +30,20 @@ import {
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import MarketingHeader from "@/components/ui/MarkettingHeader";
+import MarketingFooter from "@/components/ui/MarkettingFooter";
+
+// Color scheme - Professional indigo-based palette
+const colors = {
+  primary: "#4f46e5", // Main indigo
+  primaryLight: "#6366f1", // Lighter indigo
+  primaryDark: "#4338ca", // Darker indigo
+  secondary: "#10b981", // Emerald green (accent)
+  dark: "#1e293b", // Dark slate for text
+  light: "#f8fafc", // Light background
+  gray: "#64748b", // Medium gray
+  lightGray: "#e2e8f0", // Light gray for borders
+  white: "#ffffff", // Pure white
+};
 
 // Enhanced animation variants
 const fadeInUp = {
@@ -67,20 +81,11 @@ const staggerContainer = {
   },
 };
 
-// Updated color scheme
-const colors = {
-  primary: "#4f46e5", // More vibrant indigo
-  secondary: "#10b981", // Emerald green
-  accent: "#f59e0b", // Amber
-  dark: "#1e293b", // Dark slate
-  light: "#f8fafc", // Lightest slate
-};
-
 function FeatureCard({ title, description, icon }: any) {
   return (
     <motion.div
       variants={fadeInUp}
-      className="flex flex-col items-center space-y-4 rounded-xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 hover:border-transparent"
+      className="flex flex-col items-center space-y-4 rounded-xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 hover:border-indigo-200"
       whileHover={{
         scale: 1.03,
         borderColor: colors.primary,
@@ -89,7 +94,7 @@ function FeatureCard({ title, description, icon }: any) {
       whileTap={{ scale: 0.98 }}
     >
       <motion.div
-        className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-50 text-indigo-600 text-3xl mb-2"
+        className="flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 text-3xl mb-2"
         whileHover={{
           rotate: 10,
           scale: 1.1,
@@ -181,7 +186,7 @@ export default function Home() {
             }}
           />
           <motion.div
-            className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-blue-100 blur-3xl opacity-20"
+            className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full bg-indigo-100 blur-3xl opacity-20"
             animate={{
               y: [0, -60, 0],
               x: [0, -30, 0],
@@ -194,7 +199,7 @@ export default function Home() {
             }}
           />
           <motion.div
-            className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full bg-purple-100 blur-3xl opacity-20"
+            className="absolute top-1/3 right-1/3 w-80 h-80 rounded-full bg-indigo-100 blur-3xl opacity-20"
             animate={{
               y: [0, -30, 0],
               x: [0, 40, 0],
@@ -231,8 +236,6 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                      {/* Comprehensive Digital Solutions for Modern Businesses */}
-                      {/* Launch Your E-Commerce Store in Minutes—No Code Needed */}
                       Launch a pro store today and start selling online
                     </motion.h2>
                     <motion.p
@@ -241,11 +244,9 @@ export default function Home() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                      Today’s the day! Launch your dream store today and start selling fast—no coding needed. Prefer hands-off? Our experts build it for you.
-                      {/* ZyloSpace offers a dual approach to digital transformation: 
-                      our instant e-commerce platform for rapid online presence 
-                      and bespoke software development for tailored business solutions. 
-                      Enterprise-grade technology made accessible. */}
+                      Today's the day! Launch your dream store today and start
+                      selling fast—no coding needed. Prefer hands-off? Our
+                      experts build it for you.
                     </motion.p>
                   </motion.div>
                   <motion.div
@@ -259,8 +260,7 @@ export default function Home() {
                       >
                         <Button
                           size="lg"
-                          style={{ backgroundColor: colors.primary }}
-                          className="px-8 py-6 text-lg hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
+                          className="px-8 py-6 text-lg bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-xl transition-all"
                         >
                           Launch Your Store
                           <motion.span
@@ -286,7 +286,6 @@ export default function Home() {
                           className="px-8 py-6 text-lg border-2 border-gray-800 hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all"
                         >
                           Explore Custom Solutions
-                          {/* Build My Store Now */}
                           <motion.span
                             animate={{ x: [0, 4, 0] }}
                             transition={{
@@ -341,15 +340,16 @@ export default function Home() {
                   Our Integrated Digital Ecosystem
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">
-                  From turnkey e-commerce to enterprise-grade custom development, 
-                  we provide end-to-end digital solutions to power your business growth
+                  From turnkey e-commerce to enterprise-grade custom
+                  development, we provide end-to-end digital solutions to power
+                  your business growth
                 </p>
               </motion.div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Store Builder Card */}
                 <motion.div
-                  className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 hover:border-indigo-200 transition-all"
+                  className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:border-indigo-300 transition-all"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
@@ -367,19 +367,18 @@ export default function Home() {
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    Our industry-leading e-commerce solution enables businesses 
-                    to deploy a fully-functional online store within hours. 
+                    Our industry-leading e-commerce solution enables businesses
+                    to deploy a fully-functional online store within hours.
                     Designed for growth with enterprise capabilities.
                   </p>
                   <ul className="space-y-3 mb-8">
                     {[
                       "Enterprise-grade store infrastructure",
                       "Pre-built responsive themes",
-                      // "PCI-compliant payment processing",
                       "Real-time inventory synchronization",
                       "Advanced SEO optimization",
                       "Omnichannel retail capabilities",
-                      "State of the art technology"
+                      "State of the art technology",
                     ].map((item, i) => (
                       <li key={i} className="flex items-center">
                         <Check className="h-5 w-5 text-green-500 mr-2" />
@@ -391,28 +390,28 @@ export default function Home() {
 
                 {/* Software Services Card */}
                 <motion.div
-                  className="bg-white p-8 rounded-xl shadow-lg border border-gray-100 hover:border-blue-200 transition-all"
+                  className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:border-indigo-300 transition-all"
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                   whileHover={{
                     y: -5,
-                    boxShadow: "0 15px 30px -5px rgba(59, 130, 246, 0.15)",
+                    boxShadow: "0 15px 30px -5px rgba(79, 70, 229, 0.15)",
                   }}
                 >
                   <div className="flex items-center mb-6">
-                    <div className="p-3 rounded-lg bg-blue-50 mr-4">
-                      <Code className="h-6 w-6 text-blue-600" />
+                    <div className="p-3 rounded-lg bg-indigo-50 mr-4">
+                      <Code className="h-6 w-6 text-indigo-600" />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900">
                       Bespoke Software Development
                     </h3>
                   </div>
                   <p className="text-gray-600 mb-6">
-                    Our engineering team delivers custom digital solutions 
-                    tailored to your unique business requirements. 
-                    From concept to deployment, we transform ideas into 
-                    scalable, secure, and high-performance applications.
+                    Our engineering team delivers custom digital solutions
+                    tailored to your unique business requirements. From concept
+                    to deployment, we transform ideas into scalable, secure, and
+                    high-performance applications.
                   </p>
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     {[
@@ -453,7 +452,7 @@ export default function Home() {
                         key={i}
                         className="flex items-center p-2 rounded-lg hover:bg-gray-50"
                       >
-                        <span className="text-blue-500 mr-2">
+                        <span className="text-indigo-500 mr-2">
                           {service.icon}
                         </span>
                         <span className="text-gray-700 text-sm">
@@ -466,7 +465,7 @@ export default function Home() {
                     <motion.div
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center text-blue-600 font-medium"
+                      className="inline-flex items-center text-indigo-600 font-medium"
                     >
                       Discover our development services
                       <ArrowRight className="ml-2 h-4 w-4" />
@@ -496,7 +495,7 @@ export default function Home() {
                   variants={fadeInUp}
                   className="text-lg text-gray-600 max-w-2xl mx-auto"
                 >
-                  Combining the agility of SaaS products with the precision of 
+                  Combining the agility of SaaS products with the precision of
                   custom engineering to deliver exceptional value
                 </motion.p>
               </motion.div>
@@ -513,48 +512,48 @@ export default function Home() {
                     description:
                       "Launch enterprise-ready solutions in minutes, not months, with our e-commerce platform.",
                     icon: "⚡",
-                    color: "bg-purple-100",
-                    borderColor: "border-purple-200",
+                    color: "bg-indigo-50",
+                    textColor: "text-indigo-600",
                   },
                   {
                     title: "Tailored Solutions",
                     description:
                       "Custom-built applications designed specifically for your operational requirements.",
                     icon: "🛠️",
-                    color: "bg-blue-100",
-                    borderColor: "border-blue-200",
+                    color: "bg-indigo-50",
+                    textColor: "text-indigo-600",
                   },
                   {
                     title: "Technical Excellence",
                     description:
                       "Architected by industry veterans with decades of combined experience.",
                     icon: "👨‍💻",
-                    color: "bg-green-100",
-                    borderColor: "border-green-200",
+                    color: "bg-indigo-50",
+                    textColor: "text-indigo-600",
                   },
                   {
                     title: "Cross-Platform",
                     description:
                       "Flawless experience across all devices and operating systems.",
                     icon: "📱",
-                    color: "bg-red-100",
-                    borderColor: "border-red-200",
+                    color: "bg-indigo-50",
+                    textColor: "text-indigo-600",
                   },
                   {
                     title: "Enterprise Scalability",
                     description:
                       "Solutions that grow with your business from startup to enterprise.",
                     icon: "📈",
-                    color: "bg-yellow-100",
-                    borderColor: "border-yellow-200",
+                    color: "bg-indigo-50",
+                    textColor: "text-indigo-600",
                   },
                   {
                     title: "Dedicated Support",
                     description:
                       "24/7 technical assistance with guaranteed response times.",
                     icon: "🛎️",
-                    color: "bg-indigo-100",
-                    borderColor: "border-indigo-200",
+                    color: "bg-indigo-50",
+                    textColor: "text-indigo-600",
                   },
                 ].map((feature, index) => (
                   <motion.div
@@ -568,10 +567,10 @@ export default function Home() {
                     transition={{ type: "spring", stiffness: 300 }}
                   >
                     <div
-                      className={`h-full p-6 rounded-xl border ${feature.color} ${feature.borderColor} transition-all duration-300 hover:border-opacity-50`}
+                      className={`h-full p-6 rounded-xl border border-gray-200 bg-white transition-all duration-300 hover:border-indigo-300`}
                     >
                       <div
-                        className={`w-14 h-14 rounded-lg ${feature.color} flex items-center justify-center text-3xl mb-5`}
+                        className={`w-14 h-14 rounded-lg ${feature.color} flex items-center justify-center text-3xl mb-5 ${feature.textColor}`}
                       >
                         {feature.icon}
                       </div>
@@ -582,13 +581,10 @@ export default function Home() {
                         {feature.description}
                       </p>
                       <motion.div
-                        className="w-8 h-1 rounded-full mt-4"
-                        initial={{ backgroundColor: "#e2e8f0" }}
+                        className="w-8 h-1 rounded-full mt-4 bg-gray-200"
                         whileHover={{
                           width: 48,
-                          backgroundColor: feature.borderColor
-                            .replace("border-", "bg-")
-                            .replace("-200", "-500"),
+                          backgroundColor: colors.primary,
                         }}
                         transition={{ duration: 0.3 }}
                       />
@@ -607,8 +603,9 @@ export default function Home() {
                   Ready to transform your digital strategy?
                 </h2>
                 <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                  Whether you need an immediate e-commerce presence or 
-                  sophisticated custom software, our solutions deliver measurable results.
+                  Whether you need an immediate e-commerce presence or
+                  sophisticated custom software, our solutions deliver
+                  measurable results.
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   <Link href="/register">
@@ -657,7 +654,7 @@ export default function Home() {
                   Our Proven Methodology
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">
-                  From initial concept to final deployment, our structured 
+                  From initial concept to final deployment, our structured
                   approach ensures successful digital transformation
                 </p>
               </motion.div>
@@ -669,26 +666,26 @@ export default function Home() {
                     description:
                       "Comprehensive needs assessment to align technology with your business objectives.",
                     icon: <MessageSquare className="h-8 w-8 text-indigo-600" />,
-                    color: "bg-indigo-100",
+                    color: "bg-indigo-50",
                   },
                   {
                     title: "2. Solution Architecture",
                     description:
                       "Custom development or platform configuration based on your requirements.",
-                    icon: <Settings className="h-8 w-8 text-blue-600" />,
-                    color: "bg-blue-100",
+                    icon: <Settings className="h-8 w-8 text-indigo-600" />,
+                    color: "bg-indigo-50",
                   },
                   {
                     title: "3. Deployment & Growth",
                     description:
                       "Seamless implementation followed by continuous optimization and scaling.",
-                    icon: <Rocket className="h-8 w-8 text-green-600" />,
-                    color: "bg-green-100",
+                    icon: <Rocket className="h-8 w-8 text-indigo-600" />,
+                    color: "bg-indigo-50",
                   },
                 ].map((step, index) => (
                   <motion.div
                     key={index}
-                    className="text-center p-8 rounded-xl"
+                    className="text-center p-8 rounded-xl bg-white border border-gray-200 hover:border-indigo-300"
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.2 }}
@@ -709,92 +706,8 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Testimonial Section */}
-          {/* <section className="w-full py-16 bg-gradient-to-b from-white to-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <motion.div
-                className="text-center mb-16"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Trusted by Industry Leaders
-                </h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                  Organizations worldwide leverage ZyloSpace solutions to drive 
-                  digital innovation and business growth
-                </p>
-              </motion.div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  {
-                    rating: "★★★★★",
-                    quote:
-                      "ZyloSpace's commerce platform reduced our time-to-market by 80% while providing enterprise capabilities we couldn't find elsewhere at this price point.",
-                    name: "Sarah Johnson",
-                    business: "Global Retail Chain",
-                    type: "store",
-                  },
-                  {
-                    rating: "★★★★★",
-                    quote:
-                      "Their custom development team delivered a complex inventory management system that integrated seamlessly with our legacy ERP, saving us $250k annually in operational costs.",
-                    name: "Michael Chen",
-                    business: "Manufacturing Conglomerate",
-                    type: "software",
-                  },
-                  {
-                    rating: "★★★★☆",
-                    quote:
-                      "The combination of their e-commerce platform and custom API development gave us the perfect hybrid solution for our multi-brand retail operation.",
-                    name: "Emma Rodriguez",
-                    business: "Luxury Goods Group",
-                    type: "both",
-                  },
-                ].map((testimonial, index) => (
-                  <motion.div
-                    key={index}
-                    className="bg-white p-8 rounded-xl shadow-md border border-gray-100 hover:border-indigo-200 transition-all"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{
-                      y: -5,
-                      boxShadow: `0 10px 25px -5px rgba(79, 70, 229, 0.1)`,
-                    }}
-                  >
-                    <div className="flex items-center mb-4">
-                      <div className="text-yellow-400 text-xl">
-                        {testimonial.rating}
-                      </div>
-                      <div className="ml-auto text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
-                        {testimonial.type === "store"
-                          ? "Commerce Platform"
-                          : testimonial.type === "software"
-                          ? "Custom Development"
-                          : "Integrated Solution"}
-                      </div>
-                    </div>
-                    <p className="text-gray-600 mb-6 italic">
-                      "{testimonial.quote}"
-                    </p>
-                    <div className="flex items-center">
-                      <div className="font-medium text-gray-900">
-                        {testimonial.name}
-                      </div>
-                      <div className="text-gray-500 text-sm ml-auto">
-                        {testimonial.business}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section> */}
-
           {/* CTA Section */}
-          <section className="w-full py-20 bg-gradient-to-r from-indigo-500 to-blue-600">
+          <section className="w-full py-20 bg-gradient-to-r from-indigo-600 to-indigo-700">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -805,7 +718,7 @@ export default function Home() {
                   Ready to Accelerate Your Digital Transformation?
                 </h2>
                 <p className="text-indigo-100 max-w-2xl mx-auto mb-8 text-lg">
-                  Whether you need rapid e-commerce deployment or sophisticated 
+                  Whether you need rapid e-commerce deployment or sophisticated
                   custom software, our team delivers exceptional results
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
@@ -833,152 +746,7 @@ export default function Home() {
           </section>
         </main>
 
-        {/* Enhanced Footer */}
-        <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <motion.div whileHover={{ rotate: 15 }}>
-                    <Code className="h-6 w-6 mr-2 text-indigo-300" />
-                  </motion.div>
-                  <span className="font-bold text-xl">ZyloSpace</span>
-                </div>
-                <p className="text-gray-400">
-                  Comprehensive digital solutions for businesses of all sizes.
-                </p>
-                <div className="flex space-x-4">
-                  {[Twitter, Facebook, Instagram, Linkedin, Github].map(
-                    (Icon, index) => (
-                      <motion.a
-                        key={index}
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors"
-                        whileHover={{ y: -3, color: "#a5b4fc" }}
-                      >
-                        <Icon className="h-5 w-5" />
-                      </motion.a>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {/* Store Builder Links */}
-              <div>
-                <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                  Commerce Platform
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "Features",
-                    "Pricing",
-                    "Templates",
-                    "Case Studies",
-                    "Integrations",
-                  ].map((item, j) => (
-                    <motion.li key={j} whileHover={{ x: 5 }}>
-                      <a
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        {item}
-                      </a>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Services Links */}
-              <div>
-                <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                  Development Services
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "Web Applications",
-                    "Mobile Solutions",
-                    "UI/UX Design",
-                    "API Development",
-                    "Quality Assurance",
-                    "Technical Consulting",
-                  ].map((item, j) => (
-                    <motion.li key={j} whileHover={{ x: 5 }}>
-                      <a
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        {item}
-                      </a>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Company Links */}
-              <div>
-                <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                  Enterprise
-                </h3>
-                <ul className="space-y-3">
-                  {[
-                    "About Us",
-                    "Leadership",
-                    "Careers",
-                    "Press",
-                    "Contact",
-                    "Legal",
-                  ].map((item, j) => (
-                    <motion.li key={j} whileHover={{ x: 5 }}>
-                      <a
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        {item}
-                      </a>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <motion.div
-              className="mt-16 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-            >
-              <p className="text-gray-400 text-sm">
-                © 2025 ZyloSpace Technologies. All rights reserved.
-              </p>
-              <div className="mt-4 md:mt-0 flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
-                <motion.div
-                  className="flex items-center space-x-2"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Mail className="h-5 w-5 text-gray-400" />
-                  <a
-                    href="mailto:contact@zylospace.com"
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
-                  >
-                    contact@zylospace.com
-                  </a>
-                </motion.div>
-                <motion.div
-                  className="flex items-center space-x-2"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Phone className="h-5 w-5 text-gray-400" />
-                  <a
-                    href="tel:+92334 9998990"
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
-                  >
-                    +92334 9998990
-                  </a>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </footer>
+        <MarketingFooter />
       </div>
     </>
   );

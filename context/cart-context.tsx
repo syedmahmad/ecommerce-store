@@ -116,18 +116,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = async (id: number) => {
-    const lcData = localStorage.getItem("user");
-    const parsedLCData = lcData && JSON.parse(lcData);
-    const currentUser = parsedLCData;
-
-    const userId = currentUser?.id;
-    if (!userId) {
+    const  guestId = localStorage.getItem("guestId");
+    if (!guestId) {
       toast.error("Something went wrong! Please try again.");
       return;
     }
 
     try {
-      await DELETE(`/cart/remove/${id}/${userId}`);
+      await DELETE(`/cart/remove?productId=${id}&guestId=${guestId}`);
 
       setItems((prevItems) => prevItems.filter((item) => item.id !== id));
       toast.success("Item removed from cart successfully.");

@@ -65,15 +65,16 @@ const POST = async (endPoint: string, data: any, config?: any) => {
 
 const DELETE = async (endPoint: string) => {
   try {
-     const user = localStorage.getItem('user');
-     const parseUser = user && JSON.parse(user)
-     const token = parseUser.token;
+    const userString = localStorage.getItem("user");
+    const parsedUser = userString ? JSON.parse(userString) : null;
+    const token = parsedUser?.token;
 
-    const response = await axiosInstance().delete(endPoint, {
-      headers: {
-        Authorization: `Bearer ${token}`, // inject JWT token here
-      },
-    });
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await axiosInstance().delete(endPoint, { headers });
     return response;
   } catch (error: any) {
     const { code, message } = error?.response?.data || {};
@@ -90,7 +91,7 @@ const DELETE = async (endPoint: string) => {
       handleError(error);
     }
   }
-};
+}
 
 const PUT = async (endPoint: string, data: any) => {
   try {

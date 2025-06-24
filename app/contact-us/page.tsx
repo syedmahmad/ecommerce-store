@@ -8,12 +8,6 @@ import {
   Clock,
   MessageSquare,
   User,
-  Twitter,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Github,
-  Code,
   ArrowRight,
   ChevronRight,
 } from "lucide-react";
@@ -21,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import MarketingFooter from "@/components/ui/MarkettingFooter";
+import { useState } from "react";
 
 // Animation variants
 const fadeInUp = {
@@ -260,137 +256,7 @@ const ContactUsPage = () => {
               </motion.div>
 
               {/* Contact Form */}
-              <motion.div
-                id="contact-form"
-                className="bg-white p-8 rounded-xl shadow-lg border border-gray-200"
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-              >
-                <div className="mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Send Us a Message
-                  </h2>
-                  <p className="text-gray-600">
-                    Fill out the form below and we'll get back to you promptly.
-                  </p>
-                </div>
-                <form className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Your Name <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                          <User className="h-5 w-5" />
-                        </div>
-                        <Input
-                          id="name"
-                          type="text"
-                          placeholder="John Doe"
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Email Address <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                          <Mail className="h-5 w-5" />
-                        </div>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="you@example.com"
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="subject"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Subject <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                      id="subject"
-                      type="text"
-                      placeholder="How can we help?"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="service"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Service Interested In
-                    </label>
-                    <select
-                      id="service"
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Select a service</option>
-                      <option value="store">Online Store Builder</option>
-                      <option value="web">Web Development</option>
-                      <option value="mobile">Mobile App Development</option>
-                      <option value="saas">SaaS Development</option>
-                      <option value="design">UI/UX Design</option>
-                      <option value="api">API Development</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Your Message <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute top-3 left-3 text-gray-400">
-                        <MessageSquare className="h-5 w-5" />
-                      </div>
-                      <Textarea
-                        id="message"
-                        placeholder="Tell us about your project, timeline, and budget..."
-                        className="pl-10 min-h-[150px]"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      type="submit"
-                      className="w-full py-6 text-lg bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center gap-2"
-                    >
-                      Send Message
-                      <Mail className="h-5 w-5" />
-                    </Button>
-                  </motion.div>
-                </form>
-              </motion.div>
+              <ContactUsForm />
             </div>
           </div>
         </section>
@@ -412,7 +278,6 @@ const ContactUsPage = () => {
                 Visit our office or schedule a meeting with our executive team
               </p>
             </motion.div>
-
             <motion.div
               className="rounded-xl overflow-hidden shadow-xl border border-gray-200 bg-white"
               initial={{ opacity: 0, y: 30 }}
@@ -421,23 +286,14 @@ const ContactUsPage = () => {
               whileHover={{ scale: 1.01 }}
               viewport={{ once: true }}
             >
-              {/* Replace with your actual map embed */}
-              <div className="aspect-w-16 aspect-h-9 bg-gray-100 flex items-center justify-center relative">
-                <div className="absolute inset-0 bg-[url('/assets/map-placeholder.jpg')] bg-cover bg-center opacity-80"></div>
-                <div className="relative z-10 text-center p-8 bg-white/90 backdrop-blur-sm rounded-lg border border-gray-200 shadow-sm">
-                  <MapPin className="h-12 w-12 text-indigo-600 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    ZyloSpace HQ
-                  </h3>
-                  <p className="text-gray-700 mb-1">1141 F-Block Streat</p>
-                  <p className="text-gray-700">Lake City Meadows Phase 1 Lahore</p>
-                  <Button
-                    variant="outline"
-                    className="mt-4 border-indigo-600 text-indigo-600 hover:bg-indigo-50"
-                  >
-                    Get Directions
-                  </Button>
-                </div>
+              <div className="relative w-full aspect-[16/9]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13606.7361853456!2d74.1962627!3d31.3978058!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391906685678c5ff%3A0x37ffab9cfcd9a8b9!2sLake%20City%20Lahore!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+                  className="absolute inset-0 w-full h-full border-0"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             </motion.div>
 
@@ -445,7 +301,9 @@ const ContactUsPage = () => {
               {["Pakistan", "London"].map((location, i) => (
                 <motion.div
                   key={i}
-                  className={`bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:col-span-2 ${i === 0 ? "md:col-start-2" : ""}`}
+                  className={`bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow md:col-span-2 ${
+                    i === 0 ? "md:col-start-2" : ""
+                  }`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
@@ -518,143 +376,243 @@ const ContactUsPage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <motion.div whileHover={{ rotate: 15 }}>
-                  <Code className="h-6 w-6 mr-2 text-indigo-300" />
-                </motion.div>
-                <span className="font-bold text-xl">ZyloSpace</span>
-              </div>
-              <p className="text-gray-400">
-                Comprehensive digital solutions for businesses of all sizes.
-              </p>
-              <div className="flex space-x-4">
-                {[
-                  { icon: Twitter, color: "text-blue-400" },
-                  { icon: Facebook, color: "text-blue-500" },
-                  { icon: Instagram, color: "text-pink-500" },
-                  { icon: Linkedin, color: "text-blue-300" },
-                  { icon: Github, color: "text-gray-300" },
-                ].map(({ icon: Icon, color }, index) => (
-                  <motion.a
-                    key={index}
-                    href="#"
-                    className={`${color} hover:text-white transition-colors`}
-                    whileHover={{ y: -3 }}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </motion.a>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                Company
-              </h3>
-              <ul className="space-y-3">
-                {["About Us", "Careers", "Case Studies", "Press"].map(
-                  (item, j) => (
-                    <motion.li key={j} whileHover={{ x: 5 }}>
-                      <a
-                        href="#"
-                        className="text-gray-400 hover:text-white transition-colors"
-                      >
-                        {item}
-                      </a>
-                    </motion.li>
-                  )
-                )}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                Resources
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  "Blog",
-                  "Documentation",
-                  "Webinars",
-                  "Community",
-                  "Help Center",
-                ].map((item, j) => (
-                  <motion.li key={j} whileHover={{ x: 5 }}>
-                    <a
-                      href="#"
-                      className="text-gray-400 hover:text-white transition-colors"
-                    >
-                      {item}
-                    </a>
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
-                Contact
-              </h3>
-              <ul className="space-y-3">
-                <motion.li whileHover={{ x: 5 }} className="flex items-start">
-                  <Mail className="h-5 w-5 text-gray-400 mr-2 mt-0.5" />
-                  <a
-                    href="mailto:contact@zylospace.com"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    contact@zylospace.com
-                  </a>
-                </motion.li>
-                <motion.li whileHover={{ x: 5 }} className="flex items-start">
-                  <Phone className="h-5 w-5 text-gray-400 mr-2 mt-0.5" />
-                  <a
-                    href="tel:+18005551234"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    +1 (800) 555-1234
-                  </a>
-                </motion.li>
-                <motion.li whileHover={{ x: 5 }} className="flex items-start">
-                  <MapPin className="h-5 w-5 text-gray-400 mr-2 mt-0.5" />
-                  <span className="text-gray-400">123 Tech Street, SF</span>
-                </motion.li>
-              </ul>
-            </div>
-          </div>
-
-          <motion.div
-            className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-gray-400 text-sm">
-              © 2025 ZyloSpace. All rights reserved.
-            </p>
-            <div className="mt-4 md:mt-0 flex flex-wrap justify-center gap-4 md:gap-6">
-              <a href="#" className="text-gray-400 hover:text-white text-sm">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm">
-                Terms of Service
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm">
-                Cookies
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm">
-                Sitemap
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 };
 
 export default ContactUsPage;
+
+export const ContactUsForm = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    service: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+  const handleChange = (e: any) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    console.log("Form submitted:", formData);
+    // try {
+    //   const response = await axios.post("/api/send-email", formData);
+    //   setSubmitStatus({
+    //     success: true,
+    //     message: "Message sent successfully! We will get back to you soon.",
+    //   });
+    //   // Reset form after successful submission
+    //   setFormData({
+    //     name: "",
+    //     email: "",
+    //     subject: "",
+    //     service: "",
+    //     message: "",
+    //   });
+    // } catch (error) {
+    //   setSubmitStatus({
+    //     success: false,
+    //     message: "Failed to send message. Please try again later.",
+    //   });
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
+  };
+
+  return (
+    <motion.div
+      id="contact-form"
+      className="bg-white p-8 rounded-xl shadow-lg border border-gray-200"
+      initial={{ opacity: 0, x: 30 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Send Us a Message
+        </h2>
+        <p className="text-gray-600">
+          Fill out the form below and we'll get back to you promptly.
+        </p>
+      </div>
+      {/* TODO: Will think on it... */}
+      {/* 
+      {submitStatus && (
+        <div
+          className={`mb-6 p-4 rounded-md ${
+            submitStatus.success
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {submitStatus.message}
+        </div>
+      )} */}
+
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Your Name <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <User className="h-5 w-5" />
+              </div>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                className="pl-10"
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Email Address <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                <Mail className="h-5 w-5" />
+              </div>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                className="pl-10"
+                required
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="subject"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Subject <span className="text-red-500">*</span>
+          </label>
+          <Input
+            id="subject"
+            type="text"
+            placeholder="How can we help?"
+            required
+            value={formData.subject}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="service"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Service Interested In
+          </label>
+          <select
+            id="service"
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            value={formData.service}
+            onChange={handleChange}
+          >
+            <option value="">Select a service</option>
+            <option value="store">Online Store Builder</option>
+            <option value="web">Web Development</option>
+            <option value="mobile">Mobile App Development</option>
+            <option value="saas">SaaS Development</option>
+            <option value="design">UI/UX Design</option>
+            <option value="api">API Development</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="message"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Your Message <span className="text-red-500">*</span>
+          </label>
+          <div className="relative">
+            <div className="absolute top-3 left-3 text-gray-400">
+              <MessageSquare className="h-5 w-5" />
+            </div>
+            <Textarea
+              id="message"
+              placeholder="Tell us about your project, timeline, and budget..."
+              className="pl-10 min-h-[150px]"
+              required
+              value={formData.message}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            type="submit"
+            className="w-full py-6 text-lg bg-indigo-600 hover:bg-indigo-700 flex items-center justify-center gap-2"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Sending...
+              </>
+            ) : (
+              <>
+                Send Message
+                <Mail className="h-5 w-5" />
+              </>
+            )}
+          </Button>
+        </motion.div>
+      </form>
+    </motion.div>
+  );
+};

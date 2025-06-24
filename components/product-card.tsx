@@ -21,62 +21,121 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme;
 
+  // const handleAddToCart = async (product: any) => {
+  //   if (product.stock <= 0) {
+  //     toast.error("Sorry, this product is currently out of stock.");
+  //     return;
+  //   }
+
+  //   setIsAdding(true);
+
+  //   try {
+  //     const lcData = localStorage.getItem("user");
+  //     const parsedLCData = lcData && JSON.parse(lcData);
+  //     const currentUser = parsedLCData;
+
+  //     const userId = currentUser?.id;
+  //     if (!userId) throw new Error("User not authenticated");
+
+  //     const payload = {
+  //       userId,
+  //       productId: product.id,
+  //       quantity: 1,
+  //     };
+
+  //     const response = await POST("/cart/add", payload);
+  //     console.log("response", response);
+
+  //     if (!response || response.status !== 201) {
+  //       throw new Error("Failed to add item to cart");
+  //     }
+
+  //     addItem({
+  //       id: product.id,
+  //       name: product.name,
+  //       price: product.price,
+  //       image: product.images,
+  //       quantity: 1,
+  //       discount: product.discount,
+  //       inventory: product.stock,
+  //     });
+
+  //     toast.success("Item Added To The Cart !");
+  //   } catch (error: any) {
+  //     toast.error(
+  //       "An error occurred while adding the item to the cart. Try Again"
+  //     );
+  //     if (error?.response?.data?.message === "Unauthorized") {
+  //       toast.warn(
+  //         `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+  //         {
+  //           autoClose: false,
+  //         }
+  //       );
+  //     }
+  //   } finally {
+  //     setIsAdding(false);
+  //   }
+  // };
+
+
   const handleAddToCart = async (product: any) => {
-    if (product.stock <= 0) {
-      toast.error("Sorry, this product is currently out of stock.");
-      return;
+  if (product.stock <= 0) {
+    toast.error("Sorry, this product is currently out of stock.");
+    return;
+  }
+
+  setIsAdding(true);
+
+  try {
+    // Step 1: Get or create guestId
+    let guestId = localStorage.getItem("guestId");
+    if (!guestId) {
+      guestId = crypto.randomUUID(); // Safe for modern browsers
+      localStorage.setItem("guestId", guestId);
     }
 
-    setIsAdding(true);
+    // Step 2: Prepare payload
+    const payload = {
+      guestId,
+      productId: product.id,
+      quantity: 1,
+    };
 
-    try {
-      const lcData = localStorage.getItem("user");
-      const parsedLCData = lcData && JSON.parse(lcData);
-      const currentUser = parsedLCData;
+    // Step 3: Send request to backend
+    const response = await POST("/cart/add", payload);
+    console.log("response", response);
 
-      const userId = currentUser?.id;
-      if (!userId) throw new Error("User not authenticated");
+    if (!response || (response.status !== 200 && response.status !== 201)) {
+      throw new Error("Failed to add item to cart");
+    }
 
-      const payload = {
-        userId,
-        productId: product.id,
-        quantity: 1,
-      };
+    // Step 4: Update local cart UI
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0]?.imageUrl ?? "", 
+      quantity: 1,
+      discount: product.discount,
+      inventory: product.stock,
+    });
 
-      const response = await POST("/cart/add", payload);
-      console.log("response", response);
+    toast.success("Item Added To The Cart!");
+  } catch (error: any) {
+    toast.error("An error occurred while adding the item to the cart. Try again.");
 
-      if (!response || response.status !== 201) {
-        throw new Error("Failed to add item to cart");
-      }
-
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images,
-        quantity: 1,
-        discount: product.discount,
-        inventory: product.stock,
-      });
-
-      toast.success("Item Added To The Cart !");
-    } catch (error: any) {
-      toast.error(
-        "An error occurred while adding the item to the cart. Try Again"
+    if (error?.response?.data?.message === "Unauthorized") {
+      toast.warn(
+        "Unauthorized access. Try reloading the page or log in again.",
+        { autoClose: false }
       );
-      if (error?.response?.data?.message === "Unauthorized") {
-        toast.warn(
-          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
-          {
-            autoClose: false,
-          }
-        );
-      }
-    } finally {
-      setIsAdding(false);
     }
-  };
+  } finally {
+    setIsAdding(false);
+  }
+};
+
 
   const discountedPrice =
     product.discount > 0

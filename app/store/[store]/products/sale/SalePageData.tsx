@@ -44,53 +44,111 @@ export const SalesPageData = () => {
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme;
 
+  // const handleAddToCart = async (product: any) => {
+  //   if (product.stock <= 0) {
+  //     toast.error("Sorry, this product is currently out of stock.");
+  //     return;
+  //   }
+
+  //   setIsAdding(true);
+
+  //   try {
+  //     const payload = {
+  //       userId: storeId,
+  //       productId: product.id,
+  //       quantity: 1,
+  //     };
+
+  //     const response = await POST("/cart/add", payload);
+
+  //     if (!response || response.status !== 201) {
+  //       throw new Error("Failed to add item to cart");
+  //     }
+
+  //     addItem({
+  //       id: product.id,
+  //       name: product.name,
+  //       price: product.price,
+  //       image: product.images,
+  //       quantity: 1,
+  //       discount: product.discount,
+  //       inventory: product.stock,
+  //     });
+  //   } catch (error: any) {
+  //     toast.error(
+  //       "An error occurred while adding the item to the cart. Try Again"
+  //     );
+
+  //     if (error?.response?.data?.message === "Unauthorized") {
+  //       toast.warn(
+  //         `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+  //         {
+  //           autoClose: false,
+  //         }
+  //       );
+  //     }
+  //   } finally {
+  //     setIsAdding(false);
+  //   }
+  // };
+
+
   const handleAddToCart = async (product: any) => {
-    if (product.stock <= 0) {
-      toast.error("Sorry, this product is currently out of stock.");
-      return;
+  if (product.stock <= 0) {
+    toast.error("Sorry, this product is currently out of stock.");
+    return;
+  }
+
+  setIsAdding(true);
+
+  try {
+    // Ensure guestId is available in localStorage
+    let guestId = localStorage.getItem("guestId");
+    if (!guestId) {
+      guestId = crypto.randomUUID(); // Or fallback if needed
+      localStorage.setItem("guestId", guestId);
     }
 
-    setIsAdding(true);
+    const payload = {
+      guestId,
+      productId: product.id,
+      quantity: 1,
+    };
 
-    try {
-      const payload = {
-        userId: storeId,
-        productId: product.id,
-        quantity: 1,
-      };
+    const response = await POST("/cart/add", payload);
 
-      const response = await POST("/cart/add", payload);
+    if (!response || (response.status !== 200 && response.status !== 201)) {
+      throw new Error("Failed to add item to cart");
+    }
 
-      if (!response || response.status !== 201) {
-        throw new Error("Failed to add item to cart");
-      }
+    // Optimistically update UI/cart state
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images, // if array, adjust accordingly
+      quantity: 1,
+      discount: product.discount,
+      inventory: product.stock,
+    });
 
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images,
-        quantity: 1,
-        discount: product.discount,
-        inventory: product.stock,
-      });
-    } catch (error: any) {
-      toast.error(
-        "An error occurred while adding the item to the cart. Try Again"
+    toast.success("Item added to cart!");
+  } catch (error: any) {
+    toast.error("An error occurred while adding the item to the cart. Try again.");
+
+    if (error?.response?.data?.message === "Unauthorized") {
+      toast.warn(
+        `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+        {
+          autoClose: false,
+        }
       );
-
-      if (error?.response?.data?.message === "Unauthorized") {
-        toast.warn(
-          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
-          {
-            autoClose: false,
-          }
-        );
-      }
-    } finally {
-      setIsAdding(false);
     }
-  };
+  } finally {
+    setIsAdding(false);
+  }
+};
+
 
   return (
     <StoreLayout>

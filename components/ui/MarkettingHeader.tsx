@@ -2,13 +2,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "./button";
 
 export default function MarketingHeader() {
-  //   const router = useRouter();
   const pathname = usePathname();
   const colors = {
     primary: "#4f46e5", // More vibrant indigo
@@ -18,7 +16,7 @@ export default function MarketingHeader() {
     light: "#f8fafc", // Lightest slate
   };
 
-  const navItems = ["Features", "Pricing", "About", "Services", "Contact-Us"];
+  const navItems = ["Features", "About", "Services", "Contact-Us", "Pricing"];
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -40,9 +38,9 @@ export default function MarketingHeader() {
         <Link className="flex items-center justify-center" href="/">
           <motion.div whileHover={{ rotate: 15 }} whileTap={{ scale: 0.9 }}>
             <img
-              src="/zylospacelogo.jpeg"
+              src="/zylospaceLogo.png"
               alt="logo"
-              className="h-16 w-auto mr-2 object-contain "
+              className="h-14 w-auto mr-3 object-contain"
             />
           </motion.div>
         </Link>

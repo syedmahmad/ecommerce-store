@@ -115,60 +115,119 @@ export default function SingleProduct() {
 
   const isOutOfStock = productsData && productsData?.stock <= 0;
 
+  // const handleAddToCart = async () => {
+  //   if (isOutOfStock) {
+  //     toast.error("Sorry, this product is currently out of stock.");
+  //     return;
+  //   }
+
+  //   setIsAdding(true);
+
+  //   try {
+  //     const lcData = localStorage.getItem("user");
+  //     const parsedLCData = lcData && JSON.parse(lcData);
+  //     const currentUser = parsedLCData;
+
+  //     const userId = currentUser?.id;
+  //     if (!userId) throw new Error("User not authenticated");
+
+  //     const payload = {
+  //       userId,
+  //       productId: productsData.id,
+  //       quantity: quantity,
+  //     };
+
+  //     const response = await POST("/cart/add", payload);
+
+  //     if (!response || response.status !== 201) {
+  //       throw new Error("Failed to add item to cart");
+  //     }
+
+  //     addItem({
+  //       id: Number(productsData.id),
+  //       name: productsData.name,
+  //       price: productsData.price,
+  //       image: productsData.images[0]?.imageUrl,
+  //       quantity: quantity,
+  //       discount: productsData.discount,
+  //       inventory: productsData.stock,
+  //     });
+  //   } catch (error: any) {
+  //     toast.error(
+  //       "An error occurred while adding the item to the cart. Try Again"
+  //     );
+
+  //     if (error?.response?.data?.message === "Unauthorized") {
+  //       toast.warn(
+  //         `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
+  //         {
+  //           autoClose: false,
+  //         }
+  //       );
+  //     }
+  //   } finally {
+  //     setIsAdding(false);
+  //   }
+  // };
+
+
+
   const handleAddToCart = async () => {
-    if (isOutOfStock) {
-      toast.error("Sorry, this product is currently out of stock.");
-      return;
+  if (isOutOfStock) {
+    toast.error("Sorry, this product is currently out of stock.");
+    return;
+  }
+
+  setIsAdding(true);
+
+  try {
+    // 1. Get or generate guestId
+    let guestId = localStorage.getItem("guestId");
+    if (!guestId) {
+      guestId = crypto.randomUUID(); // Generate a UUID for the guest
+      localStorage.setItem("guestId", guestId);
     }
 
-    setIsAdding(true);
+    // 2. Construct payload
+    const payload = {
+      guestId,
+      productId: productsData.id,
+      quantity,
+    };
 
-    try {
-      const lcData = localStorage.getItem("user");
-      const parsedLCData = lcData && JSON.parse(lcData);
-      const currentUser = parsedLCData;
+    // 3. Send request
+    const response = await POST("/cart/add", payload);
 
-      const userId = currentUser?.id;
-      if (!userId) throw new Error("User not authenticated");
+    if (!response || (response.status !== 200 && response.status !== 201)) {
+      throw new Error("Failed to add item to cart");
+    }
 
-      const payload = {
-        userId,
-        productId: productsData.id,
-        quantity: quantity,
-      };
+    // 4. Update cart state locally (optional optimization)
+    addItem({
+      id: Number(productsData.id),
+      name: productsData.name,
+      price: productsData.price,
+      image: productsData.images[0]?.imageUrl,
+      quantity,
+      discount: productsData.discount,
+      inventory: productsData.stock,
+    });
 
-      const response = await POST("/cart/add", payload);
+    toast.success("Item added to cart!");
+  } catch (error: any) {
+    toast.error("An error occurred while adding the item to the cart. Try again.");
 
-      if (!response || response.status !== 201) {
-        throw new Error("Failed to add item to cart");
-      }
-
-      addItem({
-        id: Number(productsData.id),
-        name: productsData.name,
-        price: productsData.price,
-        image: productsData.images[0]?.imageUrl,
-        quantity: quantity,
-        discount: productsData.discount,
-        inventory: productsData.stock,
-      });
-    } catch (error: any) {
-      toast.error(
-        "An error occurred while adding the item to the cart. Try Again"
+    if (error?.response?.data?.message === "Unauthorized") {
+      toast.warn(
+        `Unauthorized access. Try reloading the page or log in again.`,
+        { autoClose: false }
       );
-
-      if (error?.response?.data?.message === "Unauthorized") {
-        toast.warn(
-          `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
-          {
-            autoClose: false,
-          }
-        );
-      }
-    } finally {
-      setIsAdding(false);
     }
-  };
+  } finally {
+    setIsAdding(false);
+  }
+};
+
 
   const categories = [
     { name: "Home", path: `/store/${storeId}` },

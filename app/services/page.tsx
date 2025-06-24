@@ -8,9 +8,19 @@ import {
   Lightbulb,
   Code2,
   Globe2,
+  ShoppingCart,
+  RefreshCw,
+  Settings2,
 } from "lucide-react";
 
 const services = [
+  {
+    icon: <ShoppingCart className="w-8 h-8" />,
+    title: "Store Setup",
+    description:
+      "Launch your e-commerce presence rapidly with our expert store configuration service. Simply provide your store details, product catalog, and requirements, and our specialized team will have your fully functional store operational within hours. We handle platform setup, product listings, payment integration, and initial optimization so you can start selling immediately.",
+    color: "from-amber-500 to-amber-600",
+  },
   {
     icon: <Laptop2 className="w-8 h-8" />,
     title: "Web Development",
@@ -53,6 +63,18 @@ const services = [
       "ZyloSpace offers transformative solutions for businesses worldwide which harness cutting-edge technologies like AI, ML, cloud computing, and data analytics.",
     color: "from-indigo-500 to-indigo-600",
   },
+  {
+    icon: <RefreshCw className="w-8 h-8" />,
+    title: "Platform Migration",
+    description: "Seamlessly transition your existing store to our platform without downtime or data loss. Our migration experts handle everything - product data, customer accounts, order history, and SEO preservation - ensuring a smooth switch with optimized performance.",
+    color: "from-teal-500 to-teal-600"
+  },
+  {
+    icon: <Settings2 className="w-8 h-8" />,
+    title: "Enterprise Customization",
+    description: "For businesses needing tailored e-commerce solutions, we develop custom features, integrations, and workflows that extend our SaaS platform's capabilities to meet your unique operational requirements and business processes.",
+    color: "from-rose-500 to-rose-600"
+  }
 ];
 
 const containerVariants = {
