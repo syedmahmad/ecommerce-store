@@ -7,7 +7,6 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { DELETE } from "@/app/utils/Axios";
 import { toast } from "react-toastify";
 
@@ -105,6 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           updatedItems[existingItemIndex].quantity = newItem.inventory;
         } else {
           updatedItems[existingItemIndex].quantity = newQuantity;
+          toast.success("Item added in cart successfully.");
         }
 
         return updatedItems;
@@ -116,7 +116,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = async (id: number) => {
-    const  guestId = localStorage.getItem("guestId");
+    const guestId = localStorage.getItem("guestId");
     if (!guestId) {
       toast.error("Something went wrong! Please try again.");
       return;

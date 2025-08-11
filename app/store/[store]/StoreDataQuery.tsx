@@ -10,18 +10,15 @@ import { useQuery } from "@tanstack/react-query";
 import { GET } from "@/app/utils/Axios";
 import { WhyShopWithUsStoreFrontUI } from "./_components/WhyShopWithUsStore";
 import { OurCustomerStoreFront } from "./_components/OurCustomerStoreFront";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function StorePage({ storeId }: any) {
-  const router = useRouter();
-
   const featuredRef = useRef<HTMLDivElement>(null);
 
   const getAllProductsData = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${storeId}`;
+      const endpoint = `product?domain=${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId,
@@ -34,7 +31,7 @@ export default function StorePage({ storeId }: any) {
   const getSaleProductInfo = useQuery({
     queryKey: ["sale-product"],
     queryFn: async () => {
-      const endpoint = `sale-product?id=${storeId}`;
+      const endpoint = `sale-product?domain=${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId,
@@ -45,7 +42,7 @@ export default function StorePage({ storeId }: any) {
   const getBannerInfoData = useQuery({
     queryKey: ["banner-info"],
     queryFn: async () => {
-      const endpoint = `customise-store-banner?id=${storeId}`;
+      const endpoint = `customise-store-banner?domain=${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId,

@@ -28,14 +28,6 @@ export default function ThemePage0() {
               Customize your store's appearance
             </p>
           </div>
-          {/* <div className="flex flex-wrap gap-2">
-            <Link href={`/store/${storeName}`} target="_blank">
-              <Button variant="outline" className="flex items-center gap-2">
-                <ExternalLink className="h-4 w-4" />
-                View Store
-              </Button>
-            </Link>
-          </div> */}
         </div>
 
         <Tabs

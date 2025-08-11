@@ -64,6 +64,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const storeId = storeInfo?.id;
   const storeName = storeInfo?.name;
 
+  const domain = storeInfo?.domain;
+
+  const subdomain = domain && domain?.split(".")[0];
+
   // Set active tab based on current path
   useEffect(() => {
     const tabRoutes: Record<string, string> = {
@@ -255,11 +259,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Header Actions */}
         <div className="ml-auto flex items-center gap-2 sm:gap-4">
-          {/* {storeId && (
+          {subdomain && storeId && (
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href={`/store/${storeId}`} target="_blank">
+                  <Link
+                    href={getStoreUrl(subdomain, storeId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Button
                       variant="outline"
                       size="sm"
@@ -276,43 +284,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  Open your live store in a new tab
+                  Open {getStoreUrl(subdomain, storeId)} in new tab
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          )} */}
-
-
-{storeId && (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Link 
-          href={getStoreUrl(storeId)} 
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2 hover:bg-accent/50"
-            style={{
-              borderColor: theme.borderColor,
-              color: theme.textColor,
-            }}
-            aria-label="View live store"
-          >
-            <ExternalLink className="h-3 w-3" />
-            <span className="hidden sm:inline">View Store</span>
-          </Button>
-        </Link>
-      </TooltipTrigger>
-      <TooltipContent side="bottom">
-        Open {getStoreUrl(storeId)} in new tab
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
-)}
+          )}
 
           <Button
             variant="outline"
@@ -402,11 +378,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-
 // lib/store-url.ts
-export function getStoreUrl(storeId: string) {
-  if (process.env.NODE_ENV === 'development') {
-    return `http://store${storeId}.localhost:3000`;
+// export function getStoreUrl(subdomain: string, storeId: string) {
+//   if (process.env.NODE_ENV === "development") {
+//     return `http://${subdomain}${storeId}.localhost:3001`;
+//   }
+//   return `http://${subdomain}${storeId}.zylospace.com`;
+// }
+
+export function getStoreUrl(subdomain: string, storeId?: string) {
+  if (process.env.NODE_ENV === "development") {
+    return `http://${subdomain}.localhost:3001`; // Removes storeId from visible URL
   }
-  return `http://store${storeId}.zylospace.com`;
+  return `https://${subdomain}.zylospace.com`; // User-friendly URL
 }

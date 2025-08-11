@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   console.log('Host:', host);
   console.log('Path:', path);
 
-  // 🚦 Skip middleware for static files and API routes
+  // 🚀 Skip middleware for static files and API routes
   if (
     path.startsWith('/_next/') || 
     path.startsWith('/api/') ||
@@ -27,22 +27,34 @@ export async function middleware(request: NextRequest) {
   // 🌐 Subdomain Detection
   const isLocalDev = process.env.NODE_ENV === 'development';
   const domainPattern = isLocalDev
-    ? /^(store\d+)\.localhost(?::\d+)?$/ // Local: store1.localhost:3000
-    : /^(store\d+)\.zylospace\.com$/;    // Prod: store1.zylospace.com
+    ? /^([a-zA-Z0-9-]+)\.localhost(?::\d+)?$/ // Local: myawesomestore.localhost:3000
+    : /^([a-zA-Z0-9-]+)\.zylospace\.com$/;    // Prod: myawesomestore.zylospace.com
 
   const match = host.match(domainPattern);
+  const subdomain = match ? match[1] : undefined;
 
-  // Case 1: Store Subdomain Handling
-  if (match?.[1]) {
-    const storeId = match[1].replace('store', '');
-    
-    // 🛑 Prevent infinite rewrite loops
-    if (path.startsWith(`/store/${storeId}`)) {
+  // Case 1: Store Subdomain Handling (Friendly URL)
+  if (subdomain) {
+    // Skip if already rewritten
+    if (path.startsWith(`/store/`)) {
       console.log('Skipping rewrite (already rewritten)');
       return NextResponse.next();
     }
 
-    // 🔄 Rewrite to internal path
+    // 🔄 Resolve subdomain to storeId via API (or use as-is if format is store{id})
+    let storeId = subdomain;
+    if (!subdomain.startsWith('store')) {
+      try {
+        // Call your backend API to resolve subdomain → storeId
+        const response = await fetch(`${request.nextUrl.origin}/api/resolve-store?subdomain=${subdomain}`);
+        const data = await response.json();
+        storeId = data.storeId || subdomain; // Fallback to subdomain if API fails
+      } catch (error) {
+        console.error('Failed to resolve store:', error);
+      }
+    }
+
+    // Rewrite to internal path
     const newPath = `/store/${storeId}${path === '/' ? '' : path}`;
     console.log(`Rewriting ${host}${path} → ${newPath}`);
     
@@ -50,7 +62,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  // Case 2: Root Domain Handling
+  // Case 2: Root Domain Handling (Existing Auth Logic)
   const isRootDomain = [
     'zylospace.com', 
     'www.zylospace.com', 
@@ -66,14 +78,11 @@ export async function middleware(request: NextRequest) {
   return new NextResponse(null, { status: 404 });
 }
 
-// 🔒 Auth Logic Helper
+// 🔒 Auth Logic Helper (Unchanged)
 async function handleAuthLogic(request: NextRequest, path: string) {
   const isProtectedPath = protectedPaths.some(prefix => path.startsWith(prefix));
   const isAuthPath = authPaths.some(prefix => path.startsWith(prefix));
   const token = await request.cookies.get("authToken")?.value;
-
-  // Debug
-  console.log('Auth check - Protected:', isProtectedPath, 'Auth:', isAuthPath, 'Has Token:', !!token);
 
   if (isProtectedPath && !token) {
     const redirectUrl = new URL('/login', request.url);
@@ -90,6 +99,6 @@ async function handleAuthLogic(request: NextRequest, path: string) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)' // Skip static files
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)'
   ],
 };

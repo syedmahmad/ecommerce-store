@@ -21,11 +21,14 @@ import {
   Star,
   MapPin,
   Phone,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
 import { useQuery } from "@tanstack/react-query";
 import { GET, POST } from "@/app/utils/Axios";
 import { useParams } from "next/navigation";
+import clsx from "clsx";
 
 interface ProductImage {
   imageUrl: string;
@@ -66,7 +69,7 @@ export default function SingleProduct() {
   const [showHeader, setShowHeader] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string>("");
 
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const { currentTheme, storePreviewTheme } = useTheme();
   const params = useParams();
   const storeId = params.store as string;
@@ -115,119 +118,82 @@ export default function SingleProduct() {
 
   const isOutOfStock = productsData && productsData?.stock <= 0;
 
-  // const handleAddToCart = async () => {
-  //   if (isOutOfStock) {
-  //     toast.error("Sorry, this product is currently out of stock.");
-  //     return;
-  //   }
+  // Find the current quantity of this product in the cart
+  const cartItem = items.find((item: any) => item.id === productsData?.id);
+  const currentCartQuantity = cartItem ? cartItem.quantity : 0;
 
-  //   setIsAdding(true);
-
-  //   try {
-  //     const lcData = localStorage.getItem("user");
-  //     const parsedLCData = lcData && JSON.parse(lcData);
-  //     const currentUser = parsedLCData;
-
-  //     const userId = currentUser?.id;
-  //     if (!userId) throw new Error("User not authenticated");
-
-  //     const payload = {
-  //       userId,
-  //       productId: productsData.id,
-  //       quantity: quantity,
-  //     };
-
-  //     const response = await POST("/cart/add", payload);
-
-  //     if (!response || response.status !== 201) {
-  //       throw new Error("Failed to add item to cart");
-  //     }
-
-  //     addItem({
-  //       id: Number(productsData.id),
-  //       name: productsData.name,
-  //       price: productsData.price,
-  //       image: productsData.images[0]?.imageUrl,
-  //       quantity: quantity,
-  //       discount: productsData.discount,
-  //       inventory: productsData.stock,
-  //     });
-  //   } catch (error: any) {
-  //     toast.error(
-  //       "An error occurred while adding the item to the cart. Try Again"
-  //     );
-
-  //     if (error?.response?.data?.message === "Unauthorized") {
-  //       toast.warn(
-  //         `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
-  //         {
-  //           autoClose: false,
-  //         }
-  //       );
-  //     }
-  //   } finally {
-  //     setIsAdding(false);
-  //   }
-  // };
-
-
+  // Disable if out of stock OR if cart quantity >= stock
+  const isDisabled =
+    productsData?.stock <= 0 || currentCartQuantity >= productsData?.stock;
 
   const handleAddToCart = async () => {
-  if (isOutOfStock) {
-    toast.error("Sorry, this product is currently out of stock.");
-    return;
-  }
-
-  setIsAdding(true);
-
-  try {
-    // 1. Get or generate guestId
-    let guestId = localStorage.getItem("guestId");
-    if (!guestId) {
-      guestId = crypto.randomUUID(); // Generate a UUID for the guest
-      localStorage.setItem("guestId", guestId);
+    if (isDisabled) {
+      if (isDisabled) {
+        toast.error(
+          currentCartQuantity >= productsData?.stock
+            ? "You've already added the maximum available quantity to your cart."
+            : "Sorry, this product is currently out of stock."
+        );
+        return;
+      }
     }
 
-    // 2. Construct payload
-    const payload = {
-      guestId,
-      productId: productsData.id,
-      quantity,
-    };
-
-    // 3. Send request
-    const response = await POST("/cart/add", payload);
-
-    if (!response || (response.status !== 200 && response.status !== 201)) {
-      throw new Error("Failed to add item to cart");
+    if (isOutOfStock) {
+      toast.error("Sorry, this product is currently out of stock.");
+      return;
     }
 
-    // 4. Update cart state locally (optional optimization)
-    addItem({
-      id: Number(productsData.id),
-      name: productsData.name,
-      price: productsData.price,
-      image: productsData.images[0]?.imageUrl,
-      quantity,
-      discount: productsData.discount,
-      inventory: productsData.stock,
-    });
+    setIsAdding(true);
 
-    toast.success("Item added to cart!");
-  } catch (error: any) {
-    toast.error("An error occurred while adding the item to the cart. Try again.");
+    try {
+      // 1. Get or generate guestId
+      let guestId = localStorage.getItem("guestId");
+      if (!guestId) {
+        guestId = crypto.randomUUID(); // Generate a UUID for the guest
+        localStorage.setItem("guestId", guestId);
+      }
 
-    if (error?.response?.data?.message === "Unauthorized") {
-      toast.warn(
-        `Unauthorized access. Try reloading the page or log in again.`,
-        { autoClose: false }
+      // 2. Construct payload
+      const payload = {
+        guestId,
+        productId: productsData.id,
+        quantity,
+      };
+
+      // 3. Send request
+      const response = await POST("/cart/add", payload);
+
+      if (!response || (response.status !== 200 && response.status !== 201)) {
+        throw new Error("Failed to add item to cart");
+      }
+
+      // 4. Update cart state locally (optional optimization)
+      addItem({
+        id: Number(productsData.id),
+        name: productsData.name,
+        price: productsData.price,
+        image: productsData.images[0]?.imageUrl,
+        quantity,
+        discount: productsData.discount,
+        inventory: productsData.stock,
+      });
+
+      toast.success("Item added to cart!");
+    } catch (error: any) {
+      toast.error(
+        "An error occurred while adding the item to the cart. Try again."
       );
-    }
-  } finally {
-    setIsAdding(false);
-  }
-};
 
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          `Unauthorized access. Try reloading the page or log in again.`,
+          { autoClose: false }
+        );
+      }
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const categories = [
     { name: "Home", path: `/store/${storeId}` },
@@ -241,6 +207,8 @@ export default function SingleProduct() {
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
+
+  const isButtonDisabled = isAdding || isOutOfStock || isDisabled;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -365,20 +333,7 @@ export default function SingleProduct() {
             }`}
             style={{ borderColor: hexToRgba(theme.primary, 0.2) }}
           >
-            <div className="flex mb-4">
-              {/* <Input
-                type="search"
-                placeholder="Search products..."
-                className="w-full transition-all duration-300 focus:ring-2"
-                style={{
-                  backgroundColor: theme.background,
-                  borderColor: hexToRgba(theme.primary, 0.2),
-                  ...({
-                    "--tw-ring-color": hexToRgba(theme.primary, 0.25),
-                  } as React.CSSProperties),
-                }}
-              /> */}
-            </div>
+            <div className="flex mb-4"></div>
             <nav className="flex flex-col space-y-3">
               {categories.map((category) => (
                 <Link
@@ -412,11 +367,16 @@ export default function SingleProduct() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row gap-8">
             {/* Product Images Section */}
-            <div className="md:w-1/2">
+            <div className="md:w-1/2 relative group">
+              {/* Shadow and rounded container */}
               <div
-                className="relative aspect-square overflow-hidden rounded-xl mb-4 border"
-                style={{ borderColor: theme.secondary }}
+                className="relative aspect-square overflow-hidden rounded-xl mb-4 border shadow-lg"
+                style={{
+                  borderColor: theme.secondary,
+                  boxShadow: `0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 5px 10px -5px ${theme.primary}20`,
+                }}
               >
+                {/* Main Image */}
                 <Image
                   src={selectedImage || "/placeholder.svg"}
                   alt={productsData?.name || "product image"}
@@ -425,17 +385,19 @@ export default function SingleProduct() {
                   priority
                 />
 
+                {/* Discount Badge */}
                 {productsData?.discount > 0 && (
                   <div
-                    className="absolute top-4 right-4 text-white text-sm font-bold px-3 py-1 rounded-full"
+                    className="absolute top-4 right-4 text-white text-sm font-bold px-3 py-1 rounded-full z-10"
                     style={{ backgroundColor: theme.accent }}
                   >
                     {productsData.discount}% OFF
                   </div>
                 )}
 
+                {/* Out of Stock Badge */}
                 {isOutOfStock && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-10">
                     <Badge
                       className="px-4 py-2 text-base"
                       style={{ backgroundColor: theme.secondary }}
@@ -444,24 +406,65 @@ export default function SingleProduct() {
                     </Badge>
                   </div>
                 )}
+
+                {/* Navigation Arrows */}
+                {productsData?.images?.length > 1 && (
+                  <>
+                    <button
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const currentIndex = productsData.images.findIndex(
+                          (img) => img.imageUrl === selectedImage
+                        );
+                        const prevIndex =
+                          (currentIndex - 1 + productsData.images.length) %
+                          productsData.images.length;
+                        setSelectedImage(
+                          productsData.images[prevIndex].imageUrl
+                        );
+                      }}
+                      aria-label="Previous image"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const currentIndex = productsData.images.findIndex(
+                          (img) => img.imageUrl === selectedImage
+                        );
+                        const nextIndex =
+                          (currentIndex + 1) % productsData.images.length;
+                        setSelectedImage(
+                          productsData.images[nextIndex].imageUrl
+                        );
+                      }}
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </>
+                )}
               </div>
 
-              {/* Thumbnail Gallery */}
-              <div className="grid grid-cols-4 gap-3 mt-4">
+              {/* Thumbnail Gallery with improved styling */}
+              <div className="grid grid-cols-4 gap-3 mt-6 px-2">
                 {productsData?.images?.map((image, index) => (
                   <button
                     key={index}
-                    className={`aspect-square rounded-md overflow-hidden border-2 cursor-pointer transition-all duration-200 ${
+                    className={`aspect-square rounded-md overflow-hidden border-2 cursor-pointer transition-all duration-200 relative group/thumbnail ${
                       selectedImage === image.imageUrl
                         ? "ring-2 ring-offset-2"
-                        : ""
+                        : "hover:border-gray-300"
                     }`}
                     style={{
                       borderColor:
                         selectedImage === image.imageUrl
                           ? theme.primary
                           : "transparent",
-                      // ringColor: theme.primary,
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
                     }}
                     onClick={() => setSelectedImage(image.imageUrl)}
                     aria-label={`View product image ${index + 1}`}
@@ -471,8 +474,10 @@ export default function SingleProduct() {
                       alt={`${productsData?.name} - Image ${index + 1}`}
                       width={150}
                       height={150}
-                      className="object-cover w-full h-full hover:opacity-90"
+                      className="object-cover w-full h-full hover:opacity-90 transition-opacity duration-200"
                     />
+                    {/* Overlay effect on hover */}
+                    <div className="absolute inset-0 bg-black/0 group-hover/thumbnail:bg-black/10 transition-all duration-200" />
                   </button>
                 ))}
               </div>
@@ -647,14 +652,18 @@ export default function SingleProduct() {
                 </div>
                 <div className="flex-1">
                   <Button
-                    className="w-full h-12 rounded-lg font-medium transition-all hover:opacity-90"
+                    className={clsx(
+                      "w-full h-12 rounded-lg font-medium transition-all",
+                      isButtonDisabled
+                        ? "opacity-70 cursor-not-allowed"
+                        : "hover:opacity-90"
+                    )}
                     size="lg"
                     onClick={handleAddToCart}
-                    disabled={isAdding || isOutOfStock}
-                    style={{
-                      opacity: isOutOfStock ? 0.7 : 1,
-                      marginTop: "20px",
-                    }}
+                    disabled={isButtonDisabled}
+                    aria-busy={isAdding}
+                    aria-disabled={isButtonDisabled}
+                    style={{ marginTop: "20px" }}
                   >
                     {isAdding ? (
                       <>
@@ -663,6 +672,8 @@ export default function SingleProduct() {
                       </>
                     ) : isOutOfStock ? (
                       "Out of Stock"
+                    ) : isDisabled ? (
+                      "Maximum quantity added"
                     ) : (
                       <>
                         <ShoppingCart className="mr-2 h-5 w-5" />
@@ -841,180 +852,178 @@ export default function SingleProduct() {
           </div>
         </div>
       </main>
-
+      <StoreFooter
+        storeName={storeName}
+        location={location}
+        storeInfoFromBE={storeInfoFromBE}
+      />
       {/* Footer remains the same... */}
-
-      <footer
-        className="border-t bg-opacity-90 py-8 sm:py-12"
-        style={{
-          backgroundColor: theme.secondary,
-          borderColor: `${theme.primary}20`,
-          backdropFilter: "blur(4px)",
-        }}
-      >
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {/* About Us Section */}
-            <div className="md:col-span-2 lg:col-span-1">
-              <div className="flex items-center mb-4">
-                <div
-                  className="w-10 h-10 rounded-full mr-4 flex items-center justify-center text-white font-bold text-lg shadow-sm"
-                  style={{ backgroundColor: theme.primary }}
-                  aria-label={`Logo for ${storeName ?? "store"}`}
-                >
-                  {storeName?.charAt(0).toUpperCase() || "S"}
-                </div>
-                <span className="font-semibold text-xl">
-                  {storeName ?? "Store Name"}
-                </span>
-              </div>
-
-              <p className="text-muted-foreground leading-relaxed max-w-md">
-                {storeInfoFromBE?.description}
-              </p>
-            </div>
-
-            {/* Customer Service Section */}
-            <div className="lg:pl-8">
-              <h3
-                className="font-semibold text-lg mb-5 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-10 after:h-0.5"
-                style={{ color: theme.primary }}
-              >
-                Customer Service
-              </h3>
-              <ul className="space-y-3 text-sm">
-                {[
-                  { text: "Contact Us", href: "/contact" },
-                  { text: "FAQs", href: "/faqs" },
-                  { text: "Shipping Policy", href: "/" },
-                  { text: "Returns & Refunds", href: "/" },
-                ].map((item, index) => (
-                  <li key={index}>
-                    <Link
-                      href={item.href}
-                      className="text-muted-foreground hover:text-primary transition-all duration-300 hover:pl-2 flex items-center"
-                    >
-                      <span className="w-1 h-1 rounded-full bg-current mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                      {item.text}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Quick Links Section */}
-            <div className="lg:pl-8">
-              <h3
-                className="font-semibold text-lg mb-5 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-10 after:h-0.5"
-                style={{ color: theme.primary }}
-              >
-                Quick Links
-              </h3>
-              <ul className="space-y-3 text-sm">
-                {[
-                  { text: "Privacy Policy", href: "/privacy" },
-                  { text: "Terms of Service", href: "/terms" },
-                  { text: "Our Blog", href: "/blog" },
-                  { text: "About Us", href: "/about" },
-                ].map((item, index) => (
-                  <li key={index}>
-                    <Link
-                      href={item.href}
-                      className="text-muted-foreground hover:text-primary transition-all duration-300 hover:pl-2 flex items-center"
-                    >
-                      <span className="w-1 h-1 rounded-full bg-current mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                      {item.text}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Contact Info Section */}
-            <div className="md:col-span-2 lg:col-span-1 lg:pl-8">
-              <h3
-                className="font-semibold text-lg mb-5 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-10 after:h-0.5"
-                style={{ color: theme.primary }}
-              >
-                Get In Touch
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="mt-1 mr-3 text-muted-foreground">
-                    <MapPin className="w-5 h-5 mr-2 text-primary" />
-                  </div>
-
-                  <div>
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        location
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors break-all"
-                    >
-                      {location}
-                    </a>
-                  </div>
-                </div>
-
-                {/* <div className="flex items-start">
-                        <div className="mt-1 mr-3 text-muted-foreground">📧</div>
-                        <div>
-                          <p className="font-medium">Email us</p>
-                          <a
-                            href={`mailto:${ownerInfo?.email}`}
-                            className="text-sm text-muted-foreground hover:text-primary transition-colors break-all"
-                          >
-                            {ownerInfo?.email}
-                          </a>
-                        </div>
-                      </div> */}
-
-                <div className="flex items-start">
-                  <div className="mt-1 mr-3 text-muted-foreground">
-                    <Phone className="h-5 w-5 mr-2 text-primary" />
-                  </div>
-                  <div>
-                    {/* <p className="font-medium">Call us</p> */}
-                    <a
-                      href={`tel:+92${storeInfoFromBE?.contactNumber}`}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      +92{storeInfoFromBE?.contactNumber}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-center"
-            style={{ borderColor: `${theme.primary}20` }}
-          >
-            <div className="text-sm text-muted-foreground mb-4 md:mb-0">
-              © {new Date().getFullYear()} {storeName || "Our Store"}. All
-              rights reserved.
-            </div>
-            <div className="flex space-x-6">
-              {[
-                { text: "Privacy Policy", href: "/privacy" },
-                { text: "Terms of Service", href: "/terms" },
-                { text: "Cookie Policy", href: "/cookies" },
-              ].map((item, index) => (
-                <Link
-                  key={index}
-                  href={item.href}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors duration-300 uppercase tracking-wider"
-                >
-                  {item.text}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
+
+export const StoreFooter = ({ storeName, location, storeInfoFromBE }: any) => {
+  const { currentTheme, storePreviewTheme } = useTheme();
+
+  const theme = storePreviewTheme || currentTheme;
+
+  return (
+    <footer
+      className="border-t bg-opacity-90 py-8 sm:py-12"
+      style={{
+        backgroundColor: theme.secondary,
+        borderColor: `${theme.primary}20`,
+        backdropFilter: "blur(4px)",
+      }}
+    >
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+          {/* About Us Section */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <div className="flex items-center mb-4">
+              <div
+                className="w-10 h-10 rounded-full mr-4 flex items-center justify-center text-white font-bold text-lg shadow-sm"
+                style={{ backgroundColor: theme.primary }}
+                aria-label={`Logo for ${storeName ?? "store"}`}
+              >
+                {storeName?.charAt(0).toUpperCase() || "S"}
+              </div>
+              <span className="font-semibold text-xl">
+                {storeName ?? "Store Name"}
+              </span>
+            </div>
+
+            <p className="text-muted-foreground leading-relaxed max-w-md">
+              {storeInfoFromBE?.description}
+            </p>
+          </div>
+
+          {/* Customer Service Section */}
+          <div className="lg:pl-8">
+            <h3
+              className="font-semibold text-lg mb-5 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-10 after:h-0.5"
+              style={{ color: theme.primary }}
+            >
+              Customer Service
+            </h3>
+            <ul className="space-y-3 text-sm">
+              {[
+                { text: "Contact Us", href: "/contact" },
+                { text: "FAQs", href: "/faqs" },
+                { text: "Shipping Policy", href: "/" },
+                { text: "Returns & Refunds", href: "/" },
+              ].map((item, index) => (
+                <li key={index}>
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-primary transition-all duration-300 hover:pl-2 flex items-center"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-current mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    {item.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Quick Links Section */}
+          <div className="lg:pl-8">
+            <h3
+              className="font-semibold text-lg mb-5 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-10 after:h-0.5"
+              style={{ color: theme.primary }}
+            >
+              Quick Links
+            </h3>
+            <ul className="space-y-3 text-sm">
+              {[
+                { text: "Privacy Policy", href: "/privacy" },
+                { text: "Terms of Service", href: "/terms" },
+                { text: "Our Blog", href: "/blog" },
+                { text: "About Us", href: "/about" },
+              ].map((item, index) => (
+                <li key={index}>
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-primary transition-all duration-300 hover:pl-2 flex items-center"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-current mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    {item.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Info Section */}
+          <div className="md:col-span-2 lg:col-span-1 lg:pl-8">
+            <h3
+              className="font-semibold text-lg mb-5 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-10 after:h-0.5"
+              style={{ color: theme.primary }}
+            >
+              Get In Touch
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-start">
+                <div className="mt-1 mr-3 text-muted-foreground">
+                  <MapPin className="w-5 h-5 mr-2 text-primary" />
+                </div>
+
+                <div>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      location
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors break-all"
+                  >
+                    {location}
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start">
+                <div className="mt-1 mr-3 text-muted-foreground">
+                  <Phone className="h-5 w-5 mr-2 text-primary" />
+                </div>
+                <div>
+                  <a
+                    href={`tel:+92${storeInfoFromBE?.contactNumber}`}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    +92{storeInfoFromBE?.contactNumber}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="mt-16 pt-8 border-t flex flex-col md:flex-row justify-between items-center"
+          style={{ borderColor: `${theme.primary}20` }}
+        >
+          <div className="text-sm text-muted-foreground mb-4 md:mb-0">
+            © {new Date().getFullYear()} {storeName || "Our Store"}. All rights
+            reserved.
+          </div>
+          <div className="flex space-x-6">
+            {[
+              { text: "Privacy Policy", href: "/privacy" },
+              { text: "Terms of Service", href: "/terms" },
+              { text: "Cookie Policy", href: "/cookies" },
+            ].map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                className="text-xs text-muted-foreground hover:text-primary transition-colors duration-300 uppercase tracking-wider"
+              >
+                {item.text}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};

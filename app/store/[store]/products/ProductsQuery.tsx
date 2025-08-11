@@ -49,7 +49,7 @@ export const ProductsDataPage = () => {
   const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${storeId}`;
+      const endpoint = `product?domain=${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId, // don't send th

@@ -13,129 +13,91 @@ import { POST } from "@/app/utils/Axios";
 import { toast } from "react-toastify";
 
 export function ProductCard({ product, storeInfoFromBE }: any) {
-  // const { storeName, id } = storeInfoFromBE;
-  const { addItem } = useCart();
+  const { addItem, items } = useCart();
   const [isAdding, setIsAdding] = useState(false);
   const { currentTheme, storePreviewTheme } = useTheme();
+
+  const domain = storeInfoFromBE?.subdomain;
+
+  const storeSubdomain = domain && domain.split(".")[0];
 
   // Use preview theme if available, otherwise use current theme
   const theme = storePreviewTheme || currentTheme;
 
-  // const handleAddToCart = async (product: any) => {
-  //   if (product.stock <= 0) {
-  //     toast.error("Sorry, this product is currently out of stock.");
-  //     return;
-  //   }
+  // Find the current quantity of this product in the cart
+  const cartItem = items.find((item: any) => item.id === product.id);
+  const currentCartQuantity = cartItem ? cartItem.quantity : 0;
 
-  //   setIsAdding(true);
-
-  //   try {
-  //     const lcData = localStorage.getItem("user");
-  //     const parsedLCData = lcData && JSON.parse(lcData);
-  //     const currentUser = parsedLCData;
-
-  //     const userId = currentUser?.id;
-  //     if (!userId) throw new Error("User not authenticated");
-
-  //     const payload = {
-  //       userId,
-  //       productId: product.id,
-  //       quantity: 1,
-  //     };
-
-  //     const response = await POST("/cart/add", payload);
-  //     console.log("response", response);
-
-  //     if (!response || response.status !== 201) {
-  //       throw new Error("Failed to add item to cart");
-  //     }
-
-  //     addItem({
-  //       id: product.id,
-  //       name: product.name,
-  //       price: product.price,
-  //       image: product.images,
-  //       quantity: 1,
-  //       discount: product.discount,
-  //       inventory: product.stock,
-  //     });
-
-  //     toast.success("Item Added To The Cart !");
-  //   } catch (error: any) {
-  //     toast.error(
-  //       "An error occurred while adding the item to the cart. Try Again"
-  //     );
-  //     if (error?.response?.data?.message === "Unauthorized") {
-  //       toast.warn(
-  //         `${error?.response?.data?.message} access. Try reloading the page or logout then login back.`,
-  //         {
-  //           autoClose: false,
-  //         }
-  //       );
-  //     }
-  //   } finally {
-  //     setIsAdding(false);
-  //   }
-  // };
-
+  // Disable if out of stock OR if cart quantity >= stock
+  const isDisabled = product.stock <= 0 || currentCartQuantity >= product.stock;
 
   const handleAddToCart = async (product: any) => {
-  if (product.stock <= 0) {
-    toast.error("Sorry, this product is currently out of stock.");
-    return;
-  }
-
-  setIsAdding(true);
-
-  try {
-    // Step 1: Get or create guestId
-    let guestId = localStorage.getItem("guestId");
-    if (!guestId) {
-      guestId = crypto.randomUUID(); // Safe for modern browsers
-      localStorage.setItem("guestId", guestId);
+    if (isDisabled) {
+      if (isDisabled) {
+        toast.error(
+          currentCartQuantity >= product.stock
+            ? "You've already added the maximum available quantity to your cart."
+            : "Sorry, this product is currently out of stock."
+        );
+        return;
+      }
     }
 
-    // Step 2: Prepare payload
-    const payload = {
-      guestId,
-      productId: product.id,
-      quantity: 1,
-    };
-
-    // Step 3: Send request to backend
-    const response = await POST("/cart/add", payload);
-    console.log("response", response);
-
-    if (!response || (response.status !== 200 && response.status !== 201)) {
-      throw new Error("Failed to add item to cart");
+    if (product.stock <= 0) {
+      toast.error("Sorry, this product is currently out of stock.");
+      return;
     }
 
-    // Step 4: Update local cart UI
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images?.[0]?.imageUrl ?? "", 
-      quantity: 1,
-      discount: product.discount,
-      inventory: product.stock,
-    });
+    setIsAdding(true);
 
-    toast.success("Item Added To The Cart!");
-  } catch (error: any) {
-    toast.error("An error occurred while adding the item to the cart. Try again.");
+    try {
+      // Step 1: Get or create guestId
+      let guestId = localStorage.getItem("guestId");
+      if (!guestId) {
+        guestId = crypto.randomUUID(); // Safe for modern browsers
+        localStorage.setItem("guestId", guestId);
+      }
 
-    if (error?.response?.data?.message === "Unauthorized") {
-      toast.warn(
-        "Unauthorized access. Try reloading the page or log in again.",
-        { autoClose: false }
+      // Step 2: Prepare payload
+      const payload = {
+        guestId,
+        productId: product.id,
+        quantity: 1,
+      };
+
+      // Step 3: Send request to backend
+      const response = await POST("/cart/add", payload);
+      console.log("response", response);
+
+      if (!response || (response.status !== 200 && response.status !== 201)) {
+        throw new Error("Failed to add item to cart");
+      }
+
+      // Step 4: Update local cart UI
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images?.[0]?.imageUrl ?? "",
+        quantity: 1,
+        discount: product.discount,
+        inventory: product.stock,
+      });
+    } catch (error: any) {
+      toast.error(
+        "An error occurred while adding the item to the cart. Try again."
       );
-    }
-  } finally {
-    setIsAdding(false);
-  }
-};
 
+      if (error?.response?.data?.message === "Unauthorized") {
+        toast.warn(
+          "Unauthorized access. Try reloading the page or log in again.",
+          { autoClose: false }
+        );
+      }
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   const discountedPrice =
     product.discount > 0
@@ -150,10 +112,12 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
 
   return (
     <Card className="overflow-hidden h-full flex flex-col">
+      {/* <Link
+        href={`/store/${storeInfoFromBE?.id}/product/${product.id}`} */}
       <Link
-        href={`/store/${storeInfoFromBE?.id}/product/${product.id}`}
-        className="relative block"
+        href={getStoreUrl(storeSubdomain, { path: `product/${product.id}` })}
       >
+        className="relative block"
         <div className="relative">
           <Image
             src={product?.images[0]?.imageUrl || "/placeholder.svg"}
@@ -196,7 +160,7 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
                   currency: "PKR",
                 }).format(discountedPrice)}
 
-                {/* {discountedPrice} */}
+                {discountedPrice}
               </span>
               <span className="text-gray-500 line-through ml-2 text-sm">
                 {/* ${product.price.toFixed(2)} */}
@@ -232,9 +196,9 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
         <Button
           className="w-full"
           onClick={() => handleAddToCart(product)}
-          disabled={isAdding || isOutOfStock}
+          disabled={isAdding || isDisabled}
           style={{
-            backgroundColor: isOutOfStock ? "#d1d5db" : theme.primary,
+            backgroundColor: isDisabled ? "#d1d5db" : theme.primary,
             color: "#ffffff",
           }}
         >
@@ -243,8 +207,12 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Adding...
             </>
-          ) : isOutOfStock ? (
-            "Out of Stock"
+          ) : isDisabled ? (
+            currentCartQuantity >= product.stock ? (
+              "Max Quantity Added"
+            ) : (
+              "Out of Stock"
+            )
           ) : (
             "Add to Cart"
           )}
@@ -252,4 +220,27 @@ export function ProductCard({ product, storeInfoFromBE }: any) {
       </CardFooter>
     </Card>
   );
+}
+
+export function getStoreUrl(
+  subdomain: string,
+  options?: {
+    path?: string;
+    absolute?: boolean;
+  }
+) {
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? `http://${subdomain}.localhost:3001`
+      : `https://${subdomain}.zylospace.com`;
+
+  // For absolute URLs (when needed for external use)
+  if (options?.absolute) {
+    return options.path
+      ? `${baseUrl}/${options.path.replace(/^\//, "")}`
+      : baseUrl;
+  }
+
+  // For relative URLs (used in Next.js navigation)
+  return options?.path ? `/${options.path.replace(/^\//, "")}` : "/";
 }

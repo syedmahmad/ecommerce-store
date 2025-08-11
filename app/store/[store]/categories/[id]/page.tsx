@@ -33,16 +33,16 @@ export default function CategoryPage({ params }: any) {
   //   queryClient.invalidateQueries({ queryKey: ["get-product"] });
   // };
 
-  const getSenderQuery = useQuery({
+  const productsDataQuery = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${storeId}`;
+      const endpoint = `product?domain=${storeId}`;
       return await GET(endpoint);
     },
     enabled: !!storeId,
   });
 
-  const productsData = getSenderQuery?.data?.data;
+  const productsData = productsDataQuery?.data?.data;
 
   useEffect(() => {
     if (productsData.length) {

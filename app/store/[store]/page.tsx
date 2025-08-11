@@ -7,6 +7,7 @@ const queryClient = new QueryClient();
 
 export default function StoreDataQuery() {
   const params = useParams();
+  console.log("params", params);
   const storeId = params.store;
 
   return (
