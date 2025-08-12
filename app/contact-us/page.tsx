@@ -288,7 +288,7 @@ const ContactUsPage = () => {
             >
               <div className="relative w-full aspect-[16/9]">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13606.7361853456!2d74.1962627!3d31.3978058!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391906685678c5ff%3A0x37ffab9cfcd9a8b9!2sLake%20City%20Lahore!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d293.5299935226838!2d74.3980872115754!3d31.442754635920792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39190700747a58a5%3A0x90b32ad25139b4e1!2sFoodie%20Moodie%20Lake%20City%20Meadows%20Branch!5e0!3m2!1sen!2s!4v1754915915159!5m2!1sen!2s"
                   className="absolute inset-0 w-full h-full border-0"
                   allowFullScreen
                   loading="lazy"

@@ -44,7 +44,7 @@ export default function MarketingFooter() {
               ))}
             </div>
           </div>
-
+          <div></div>
           <div>
             <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
               Company
@@ -63,7 +63,7 @@ export default function MarketingFooter() {
             </ul>
           </div>
 
-          <div>
+          {/* <div>
             <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">
               Development Services
             </h3>
@@ -85,7 +85,7 @@ export default function MarketingFooter() {
                 </motion.li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           <div>
             <h3 className="text-sm font-semibold text-indigo-200 uppercase tracking-wider mb-4">

@@ -21,20 +21,20 @@ const services = [
       "Launch your e-commerce presence rapidly with our expert store configuration service. Simply provide your store details, product catalog, and requirements, and our specialized team will have your fully functional store operational within hours. We handle platform setup, product listings, payment integration, and initial optimization so you can start selling immediately.",
     color: "from-amber-500 to-amber-600",
   },
-  {
-    icon: <Laptop2 className="w-8 h-8" />,
-    title: "Web Development",
-    description:
-      "At ZyloSpace, we specialize in crafting cutting-edge web solutions tailored to your unique needs. Our expertise spans a wide range of technologies, including React.js, Next.js, Python development, and more.",
-    color: "from-blue-500 to-blue-600",
-  },
-  {
-    icon: <Smartphone className="w-8 h-8" />,
-    title: "Mobile Development",
-    description:
-      "Whether you seek native, hybrid, or cross-platform solutions, we possess the expertise and capabilities to transform your concept into a high-performance mobile application.",
-    color: "from-purple-500 to-purple-600",
-  },
+  // {
+  //   icon: <Laptop2 className="w-8 h-8" />,
+  //   title: "Web Development",
+  //   description:
+  //     "At ZyloSpace, we specialize in crafting cutting-edge web solutions tailored to your unique needs. Our expertise spans a wide range of technologies, including React.js, Next.js, Python development, and more.",
+  //   color: "from-blue-500 to-blue-600",
+  // },
+  // {
+  //   icon: <Smartphone className="w-8 h-8" />,
+  //   title: "Mobile Development",
+  //   description:
+  //     "Whether you seek native, hybrid, or cross-platform solutions, we possess the expertise and capabilities to transform your concept into a high-performance mobile application.",
+  //   color: "from-purple-500 to-purple-600",
+  // },
   {
     icon: <Shield className="w-8 h-8" />,
     title: "Quality Assurance",
@@ -49,13 +49,13 @@ const services = [
       "With a team of seasoned consultants and industry experts, we offer strategic insights, innovative solutions, and practical guidance to help you navigate complex challenges.",
     color: "from-yellow-500 to-yellow-600",
   },
-  {
-    icon: <Code2 className="w-8 h-8" />,
-    title: "Engineering",
-    description:
-      "We provide range of solutions that leverage advanced technologies to transform and optimise engineering processes.",
-    color: "from-red-500 to-red-600",
-  },
+  // {
+  //   icon: <Code2 className="w-8 h-8" />,
+  //   title: "Engineering",
+  //   description:
+  //     "We provide range of solutions that leverage advanced technologies to transform and optimise engineering processes.",
+  //   color: "from-red-500 to-red-600",
+  // },
   {
     icon: <Globe2 className="w-8 h-8" />,
     title: "Technology",
@@ -119,7 +119,7 @@ const OurServices = () => {
             </h2>
             <div className="w-20 h-1 bg-blue-600 mx-auto mb-6"></div>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              With a decade of tech expertise, ZyloSpace delivers tailored solutions that solve real business challenges. Our skilled team builds custom applications and services designed to scale with your growth—because your success is our mission.
+              With a decade of tech expertise, We craft tailored solutions that solve real business challenges. We build custom applications designed to scale with your growth-because your success is our mission.
             </p>
           </motion.div>
 

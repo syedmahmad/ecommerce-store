@@ -346,10 +346,10 @@ export default function Home() {
                 </p>
               </motion.div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
                 {/* Store Builder Card */}
                 <motion.div
-                  className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:border-indigo-300 transition-all"
+                  className="lg:col-start-2 lg:col-span-3 bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:border-indigo-300 transition-all"
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
@@ -389,7 +389,7 @@ export default function Home() {
                 </motion.div>
 
                 {/* Software Services Card */}
-                <motion.div
+                {/* <motion.div
                   className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:border-indigo-300 transition-all"
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -471,7 +471,7 @@ export default function Home() {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </motion.div>
                   </Link>
-                </motion.div>
+                </motion.div> */}
               </div>
             </div>
           </section>

@@ -235,14 +235,14 @@ const AboutPage = () => {
             >
               Launch Your Store Now
             </motion.a>
-            <p className="mt-4 text-gray-500 text-sm">
+            <p className="mt-4 text-gray-500 text-md font-bold">
               No credit card required. Try it free—build your store in minutes!
             </p>
           </div>
         </section>
 
         {/* Software Services Section */}
-        <section className="bg-gray-50 py-20">
+        {/* <section className="bg-gray-50 py-20">
           <div className="max-w-7xl mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -297,10 +297,10 @@ const AboutPage = () => {
               </motion.a>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Unified CTA */}
-        <section className="max-w-7xl mx-auto px-4 py-20">
+        {/* <section className="max-w-7xl mx-auto px-4 py-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -334,7 +334,7 @@ const AboutPage = () => {
               </motion.a>
             </div>
           </motion.div>
-        </section>
+        </section> */}
       </div>
     </>
   );
