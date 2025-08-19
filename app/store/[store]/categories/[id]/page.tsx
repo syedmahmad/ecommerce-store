@@ -28,10 +28,6 @@ export default function CategoryPage({ params }: any) {
   const [products, setProducts] = useState([]);
 
   const queryClient = useQueryClient();
-  // const reFetch = () => {
-  //   // fetch again so UI update automatically.
-  //   queryClient.invalidateQueries({ queryKey: ["get-product"] });
-  // };
 
   const productsDataQuery = useQuery({
     queryKey: ["get-product"],
