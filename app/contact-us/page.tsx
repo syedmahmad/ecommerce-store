@@ -200,10 +200,10 @@ const ContactUsPage = () => {
                         Speak directly with our solutions team
                       </p>
                       <a
-                        href="tel:+923349998990"
+                        href="tel:+447438463787"
                         className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1"
                       >
-                        +92 (334) 999-8990 <ArrowRight className="h-4 w-4" />
+                        +44 7438 463787 <ArrowRight className="h-4 w-4" />
                       </a>
                     </div>
                   </motion.div>
@@ -224,7 +224,8 @@ const ContactUsPage = () => {
                         Schedule an in-person consultation
                       </p>
                       <div className="text-gray-800 inline-flex items-center gap-1">
-                        1141 F Lake City Meadows Phase 1 Lahore{" "}
+                        {/* 1141 F Lake City Meadows Phase 1 Lahore{" "} */}
+                        Flat 16, wollstonecraft mansions, 6 fielders crescent, Barking. Post code: IG11 0BE
                         <ArrowRight className="h-4 w-4" />
                       </div>
                     </div>
