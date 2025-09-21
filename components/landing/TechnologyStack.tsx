@@ -1,6 +1,7 @@
-import React from 'react';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
-
+import React from "react";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
+import { motion } from "framer-motion";
+  
 interface TechFeatureProps {
   iconClass: string;
   title: string;
@@ -9,9 +10,17 @@ interface TechFeatureProps {
   gradientTo: string;
 }
 
-const TechFeature: React.FC<TechFeatureProps> = ({ gradientFrom, gradientTo, iconClass, title, description }) => (
+const TechFeature: React.FC<TechFeatureProps> = ({
+  gradientFrom,
+  gradientTo,
+  iconClass,
+  title,
+  description,
+}) => (
   <div className="flex items-center space-x-4">
-    <div className={`w-16 h-16 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-xl flex items-center justify-center`}>
+    <div
+      className={`w-16 h-16 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-xl flex items-center justify-center`}
+    >
       <i className={`${iconClass} text-white text-2xl`}></i>
     </div>
     <div>
@@ -24,13 +33,22 @@ const TechFeature: React.FC<TechFeatureProps> = ({ gradientFrom, gradientTo, ico
 interface TechIconProps {
   iconClass: string;
   label: string;
+  color?: string;
 }
 
-const TechIcon: React.FC<TechIconProps> = ({ iconClass, label }) => (
-  <div className="text-center">
-    <i className={`${iconClass} text-4xl text-gray-400 mb-2`}></i>
+const TechIcon: React.FC<TechIconProps> = ({ iconClass, label, color }) => (
+  <motion.div
+    className="text-center cursor-pointer"
+    whileHover={{ scale: 1.2, rotate: 5 }} // 👈 animation on hover
+    whileTap={{ scale: 0.95 }} // 👈 nice press effect
+    transition={{ type: "spring", stiffness: 300 }}
+  >
+    <i
+      className={`${iconClass} text-4xl mb-2`}
+      style={{ color: color || "#9CA3AF" }}
+    ></i>
     <p className="text-sm text-gray-600">{label}</p>
-  </div>
+  </motion.div>
 );
 
 const TechnologyStack: React.FC = () => {
@@ -38,15 +56,21 @@ const TechnologyStack: React.FC = () => {
   const sectionRef = useScrollAnimation<HTMLElement>();
 
   return (
-    <section id="technology" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50" ref={sectionRef}>
+    <section
+      id="technology"
+      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+      ref={sectionRef}
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Built with <span className="gradient-text">Cutting-Edge Technology</span>
+            Built with{" "}
+            <span className="gradient-text">Cutting-Edge Technology</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Our platform leverages the latest technologies to ensure your store is fast, secure, and scalable.
-            Experience the future of e-commerce today.
+            Our platform leverages the latest technologies to ensure your store
+            is fast, secure, and scalable. Experience the future of e-commerce
+            today.
           </p>
         </div>
 
@@ -77,17 +101,45 @@ const TechnologyStack: React.FC = () => {
             </div>
           </div>
           <div className="animate-slide-right">
-            <img className="rounded-2xl shadow-2xl" src="/assets/technology-image.png" alt="modern technology stack visualization, cloud infrastructure, AI components, security layers, purple and blue theme" />
+            <img
+              className="rounded-2xl shadow-2xl"
+              src="/assets/technology-image.png"
+              alt="modern technology stack visualization, cloud infrastructure, AI components, security layers, purple and blue theme"
+            />
           </div>
         </div>
 
         <div className="grid md:grid-cols-6 gap-8 items-center opacity-60">
-          <TechIcon iconClass="fa-brands fa-aws" label="AWS Cloud" />
-          <TechIcon iconClass="fa-brands fa-docker" label="Docker" />
-          <TechIcon iconClass="fa-brands fa-react" label="React" />
-          <TechIcon iconClass="fa-brands fa-node-js" label="Node.js" />
-          <TechIcon iconClass="fa-solid fa-database" label="MongoDB" />
-          <TechIcon iconClass="fa-solid fa-lock" label="SSL/TLS" />
+          <TechIcon
+            iconClass="fa-brands fa-aws"
+            label="AWS Cloud"
+            color="#FF9900"
+          />
+          <TechIcon
+            iconClass="fa-brands fa-docker"
+            label="Docker"
+            color="#2496ED"
+          />
+          <TechIcon
+            iconClass="fa-brands fa-react"
+            label="React"
+            color="#61DAFB"
+          />
+          <TechIcon
+            iconClass="fa-brands fa-node-js"
+            label="Node.js"
+            color="#339933"
+          />
+          <TechIcon
+            iconClass="fa-solid fa-database"
+            label="MongoDB"
+            color="#47A248"
+          />
+          <TechIcon
+            iconClass="fa-solid fa-lock"
+            label="SSL/TLS"
+            color="#000000"
+          />
         </div>
       </div>
     </section>

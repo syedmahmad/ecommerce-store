@@ -1,5 +1,5 @@
 "use client";
-import MarketingHeader from "@/components/ui/MarkettingHeader";
+import NewHeader from "@/components/landing/Header";
 import { motion } from "framer-motion";
 import {
   Laptop2,
@@ -66,15 +66,17 @@ const services = [
   {
     icon: <RefreshCw className="w-8 h-8" />,
     title: "Platform Migration",
-    description: "Seamlessly transition your existing store to our platform without downtime or data loss. Our migration experts handle everything - product data, customer accounts, order history, and SEO preservation - ensuring a smooth switch with optimized performance.",
-    color: "from-teal-500 to-teal-600"
+    description:
+      "Seamlessly transition your existing store to our platform without downtime or data loss. Our migration experts handle everything - product data, customer accounts, order history, and SEO preservation - ensuring a smooth switch with optimized performance.",
+    color: "from-teal-500 to-teal-600",
   },
   {
     icon: <Settings2 className="w-8 h-8" />,
     title: "Enterprise Customization",
-    description: "For businesses needing tailored e-commerce solutions, we develop custom features, integrations, and workflows that extend our SaaS platform's capabilities to meet your unique operational requirements and business processes.",
-    color: "from-rose-500 to-rose-600"
-  }
+    description:
+      "For businesses needing tailored e-commerce solutions, we develop custom features, integrations, and workflows that extend our SaaS platform's capabilities to meet your unique operational requirements and business processes.",
+    color: "from-rose-500 to-rose-600",
+  },
 ];
 
 const containerVariants = {
@@ -102,10 +104,10 @@ const itemVariants = {
 const OurServices = () => {
   return (
     <div>
-      <MarketingHeader />
+      <NewHeader />
       <section
         id="services"
-        className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white"
+        className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white mt-10"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -119,7 +121,10 @@ const OurServices = () => {
             </h2>
             <div className="w-20 h-1 bg-blue-600 mx-auto mb-6"></div>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              With a decade of tech expertise, We craft tailored solutions that solve real business challenges. We build custom applications designed to scale with your growth-because your success is our mission.
+              With a decade of tech expertise, We craft tailored solutions that
+              solve real business challenges. We build custom applications
+              designed to scale with your growth-because your success is our
+              mission.
             </p>
           </motion.div>
 
@@ -133,6 +138,7 @@ const OurServices = () => {
             {services.map((service, index) => (
               <motion.div
                 key={index}
+                // @ts-ignore
                 variants={itemVariants}
                 whileHover={{ y: -10 }}
                 className="group"

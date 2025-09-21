@@ -1,5 +1,5 @@
-import React from 'react';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
+import React from "react";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 interface SupportFeatureProps {
   iconClass: string;
@@ -9,9 +9,17 @@ interface SupportFeatureProps {
   gradientTo: string;
 }
 
-const SupportFeature: React.FC<SupportFeatureProps> = ({ iconClass, title, description, gradientFrom, gradientTo }) => (
+const SupportFeature: React.FC<SupportFeatureProps> = ({
+  iconClass,
+  title,
+  description,
+  gradientFrom,
+  gradientTo,
+}) => (
   <div className="flex items-start space-x-4">
-    <div className={`w-12 h-12 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-lg flex items-center justify-center flex-shrink-0`}>
+    <div
+      className={`w-12 h-12 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-lg flex items-center justify-center flex-shrink-0`}
+    >
       <i className={`${iconClass} text-white`}></i>
     </div>
     <div>
@@ -33,8 +41,8 @@ const SupportResources: React.FC = () => {
             World-Class <span className="gradient-text">Support</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Get the help you need, when you need it. Our expert support team and comprehensive resources
-            ensure your success every step of the way.
+            Get the help you need, when you need it. Our expert support team and
+            comprehensive resources ensure your success every step of the way.
           </p>
         </div>
 
@@ -72,21 +80,33 @@ const SupportResources: React.FC = () => {
             </div>
           </div>
           <div className="animate-slide-right">
-            <img className="rounded-2xl shadow-2xl" src="/assets/images/470040ed76-17e7ba528b81befc9bdb.png" alt="customer support team helping clients, modern office environment, friendly representatives, purple and blue theme" />
+            <img
+              className="rounded-2xl shadow-2xl"
+              src="/assets/support.png"
+              alt="customer support team helping clients, modern office environment, friendly representatives, purple and blue theme"
+            />
           </div>
         </div>
 
         <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl p-12">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center animate-fade-up">
-              <div className="text-4xl font-bold gradient-text mb-2">&lt; 2min</div>
+              <div className="text-4xl font-bold gradient-text mb-2">
+                &lt; 2min
+              </div>
               <p className="text-gray-600">Average response time</p>
             </div>
-            <div className="text-center animate-fade-up" style={{ animationDelay: '0.1s' }}>
+            <div
+              className="text-center animate-fade-up"
+              style={{ animationDelay: "0.1s" }}
+            >
               <div className="text-4xl font-bold gradient-text mb-2">98%</div>
               <p className="text-gray-600">Customer satisfaction rate</p>
             </div>
-            <div className="text-center animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            <div
+              className="text-center animate-fade-up"
+              style={{ animationDelay: "0.2s" }}
+            >
               <div className="text-4xl font-bold gradient-text mb-2">1000+</div>
               <p className="text-gray-600">Help articles & tutorials</p>
             </div>

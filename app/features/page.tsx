@@ -1,13 +1,12 @@
-'use client'
+"use client";
+import NewHeader from "@/components/landing/Header";
 import React from "react";
-import Header from "../_common/Header";
-import MarketingHeader from "@/components/ui/MarkettingHeader";
 
 const FeaturesPage = () => {
   return (
     <>
-    <MarketingHeader />
-      <div className="bg-white min-h-screen text-gray-800">
+      <NewHeader />
+      <div className="bg-white min-h-screen text-gray-800 mt-10">
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <h1 className="text-4xl font-bold text-center mb-6">
             Launch Your Online Store in Minutes

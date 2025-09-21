@@ -1,5 +1,5 @@
-import React from 'react';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
+import React from "react";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 interface AdvantageItemProps {
   iconClass: string;
@@ -7,7 +7,11 @@ interface AdvantageItemProps {
   description: string;
 }
 
-const AdvantageItem: React.FC<AdvantageItemProps> = ({ iconClass, title, description }) => (
+const AdvantageItem: React.FC<AdvantageItemProps> = ({
+  iconClass,
+  title,
+  description,
+}) => (
   <div className="flex items-start space-x-4">
     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
       <i className={`${iconClass} text-white`}></i>
@@ -26,12 +30,21 @@ interface MetricCardProps {
   delay: string;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({ iconClass, value, label, delay }) => {
+const MetricCard: React.FC<MetricCardProps> = ({
+  iconClass,
+  value,
+  label,
+  delay,
+}) => {
   // @ts-ignore
   const cardRef = useScrollAnimation<HTMLDivElement>();
   return (
-    // @ts-ignore
-    <div className="text-center animate-fade-up" style={{ animationDelay: delay }} ref={cardRef}>
+    <div
+      className="text-center animate-fade-up"
+      style={{ animationDelay: delay }}
+      // @ts-ignore
+      ref={cardRef}
+    >
       <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
         <i className={`${iconClass} text-3xl gradient-text`}></i>
       </div>
@@ -53,14 +66,19 @@ const ZyloSpaceAdvantage: React.FC = () => {
             The <span className="gradient-text">ZyloSpace</span> Advantage
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover why leading brands choose ZyloSpace over traditional e-commerce platforms.
-            We're not just another solution – we're your growth partner.
+            Discover why leading brands choose ZyloSpace over traditional
+            e-commerce platforms. We're not just another solution – we're your
+            growth partner.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
           <div className="animate-slide-left">
-            <img className="rounded-2xl shadow-xl" src="/assets/images/1b684c4be5-2bd9d495921c789b668f.png" alt="comparison chart showing ZyloSpace vs competitors, modern infographic design, purple and blue gradients" />
+            <img
+              className="rounded-2xl shadow-xl"
+              src="/assets/advantages.png"
+              alt="comparison chart showing ZyloSpace vs competitors, modern infographic design, purple and blue gradients"
+            />
           </div>
           <div className="space-y-8 animate-slide-right">
             <AdvantageItem
@@ -83,10 +101,30 @@ const ZyloSpaceAdvantage: React.FC = () => {
 
         <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl p-12">
           <div className="grid lg:grid-cols-4 gap-8">
-            <MetricCard iconClass="fa-solid fa-clock" value="< 2min" label="Average response time" delay="0s" />
-            <MetricCard iconClass="fa-solid fa-mobile-alt" value="Mobile-First" label="Optimized for mobile commerce" delay="0.1s" />
-            <MetricCard iconClass="fa-solid fa-globe" value="Global Reach" label="Multi-currency & multi-language" delay="0.2s" />
-            <MetricCard iconClass="fa-solid fa-headset" value="24/7 Support" label="Expert help when you need it" delay="0.3s" />
+            <MetricCard
+              iconClass="fa-solid fa-clock"
+              value="< 2min"
+              label="Average response time"
+              delay="0s"
+            />
+            <MetricCard
+              iconClass="fa-solid fa-mobile-alt"
+              value="Mobile-First"
+              label="Optimized for mobile commerce"
+              delay="0.1s"
+            />
+            <MetricCard
+              iconClass="fa-solid fa-globe"
+              value="Global Reach"
+              label="Multi-currency & multi-language"
+              delay="0.2s"
+            />
+            <MetricCard
+              iconClass="fa-solid fa-headset"
+              value="24/7 Support"
+              label="Expert help when you need it"
+              delay="0.3s"
+            />
           </div>
         </div>
       </div>

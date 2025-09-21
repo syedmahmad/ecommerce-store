@@ -1,12 +1,18 @@
-import React from 'react';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
+import React from "react";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
+import { useRouter } from "next/navigation";
 
 const CTA: React.FC = () => {
   // @ts-ignore
   const sectionRef = useScrollAnimation<HTMLElement>();
 
+  const router = useRouter();
   return (
-    <section id="cta" className="py-20 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden" ref={sectionRef}>
+    <section
+      id="cta"
+      className="py-20 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden"
+      ref={sectionRef}
+    >
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
         <div className="animate-fade-up">
@@ -15,11 +21,17 @@ const CTA: React.FC = () => {
           </h2>
           <p className="text-xl lg:text-2xl text-purple-100 mb-12 leading-relaxed">
             Join thousands of successful entrepreneurs who chose ZyloSpace.
-            Start your 14-day free trial today and see why we're the #1 choice for online stores.
+            Start your 14-day free trial today and see why we're the #1 choice
+            for online stores.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
-            <button className="bg-white text-purple-900 px-10 py-5 rounded-full font-bold text-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-pulse-custom">
+            <button
+              className="bg-white text-purple-900 px-10 py-5 rounded-full font-bold text-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 animate-pulse-custom"
+              onClick={() => {
+                router.push("/register");
+              }}
+            >
               <i className="fa-solid fa-rocket mr-3"></i>
               Start Your Free Trial
             </button>
@@ -47,8 +59,14 @@ const CTA: React.FC = () => {
       </div>
 
       <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500 rounded-full opacity-20 animate-float"></div>
-      <div className="absolute bottom-20 right-10 w-40 h-40 bg-blue-500 rounded-full opacity-20 animate-float" style={{ animationDelay: '-2s' }}></div>
-      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-indigo-500 rounded-full opacity-20 animate-float" style={{ animationDelay: '-4s' }}></div>
+      <div
+        className="absolute bottom-20 right-10 w-40 h-40 bg-blue-500 rounded-full opacity-20 animate-float"
+        style={{ animationDelay: "-2s" }}
+      ></div>
+      <div
+        className="absolute top-1/2 left-1/4 w-24 h-24 bg-indigo-500 rounded-full opacity-20 animate-float"
+        style={{ animationDelay: "-4s" }}
+      ></div>
     </section>
   );
 };

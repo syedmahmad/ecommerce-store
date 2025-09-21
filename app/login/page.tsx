@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/form";
 import Cookies from "js-cookie";
 import { useAuth } from "@/context/auth-context";
-import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
@@ -44,25 +43,19 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
 
-  // Get error message from URL if present
   const errorMessage = searchParams.get("error");
   const callbackUrl = "/dashboard";
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
     setError("");
-
     try {
       const success = await login(data.email, data.password);
       if (success) {
@@ -79,7 +72,6 @@ export default function LoginPage() {
   const handleGoogleSuccess = async (credentialResponse: any) => {
     setIsLoading(true);
     setError("");
-
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const response = await axios.post(`${API_URL}/auth/google`, {
@@ -89,19 +81,15 @@ export default function LoginPage() {
       if (response.status === 201) {
         const { token, user } = response.data;
         localStorage.setItem("user", JSON.stringify(user));
-
-        // ✅ Store the token in a cookie
         Cookies.set("authToken", token, {
-          expires: 7, // 7 days
+          expires: 7,
           secure: process.env.NODE_ENV === "production",
           sameSite: "Strict",
           path: "/",
         });
-
         router.push("/dashboard");
       }
     } catch (error: any) {
-      console.error("Google login failed:", error);
       setError(error.response?.data?.message || "Google login failed");
     } finally {
       setIsLoading(false);
@@ -109,16 +97,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Sign in to your account
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4 py-12 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md rounded-2xl shadow-2xl animate-fade-up">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-extrabold">
+            <span className="gradient-text">Welcome Back</span>
           </CardTitle>
-          <CardDescription className="text-center">
-            Enter your email and password to sign in
-          </CardDescription>
+          <CardDescription>Sign in to continue to ZyloSpace</CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-4">
           {(error || errorMessage) && (
             <Alert variant="destructive">
@@ -126,8 +113,10 @@ export default function LoginPage() {
               <AlertDescription>{error || errorMessage}</AlertDescription>
             </Alert>
           )}
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -145,6 +134,8 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
+
+              {/* Password */}
               <FormField
                 control={form.control}
                 name="password"
@@ -177,6 +168,7 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
+
               <div className="flex items-center justify-end">
                 <Link
                   href="/forgot-password"
@@ -185,7 +177,13 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+
+              {/* Sign in Button */}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -197,9 +195,11 @@ export default function LoginPage() {
               </Button>
             </form>
           </Form>
+
+          {/* Divider */}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-white px-2 text-gray-500">
@@ -207,19 +207,20 @@ export default function LoginPage() {
               </span>
             </div>
           </div>
+
+          {/* Google Button */}
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={() => {
-              console.log("Login Failed");
-            }}
+            onError={() => console.log("Login Failed")}
           />
         </CardContent>
+
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/register"
-              className="font-medium text-primary hover:underline"
+              className="font-medium gradient-text hover:underline"
             >
               Sign up
             </Link>
