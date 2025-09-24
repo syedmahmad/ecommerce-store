@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import { useRouter } from "next/navigation";
+import React, { use, useEffect, useRef } from "react";
 
 const Hero: React.FC = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -15,8 +16,14 @@ const Hero: React.FC = () => {
   //   return () => window.removeEventListener('scroll', handleScroll);
   // }, []);
 
+  const router = useRouter();
+
   return (
-    <section id="hero" className="pt-24 pb-20 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 relative overflow-hidden h-[800px]" ref={heroRef}>
+    <section
+      id="hero"
+      className="pt-24 pb-20 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 relative overflow-hidden h-[800px]"
+      ref={heroRef}
+    >
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -31,19 +38,22 @@ const Hero: React.FC = () => {
               in Minutes
             </h1>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Launch your e-commerce empire with our industry-leading platform. No coding required.
-              Enterprise-grade infrastructure. Unlimited growth potential.
+              Launch your e-commerce empire with our industry-leading platform.
+              No coding required. Enterprise-grade infrastructure. Unlimited
+              growth potential.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <button className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-pulse-custom">
+            <div className="flex justify-center mb-8">
+              <button
+                className="min-w-[280px] bg-gradient-to-r from-purple-600 to-blue-600 text-white px-12 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-pulse-custom"
+                onClick={() => {
+                  router.push("/register");
+                }}
+              >
                 <i className="fa-solid fa-rocket mr-2"></i>
                 Start Building Now
               </button>
-              <button className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-full font-semibold text-lg hover:border-purple-600 hover:text-purple-600 transition-all duration-300">
-                <i className="fa-solid fa-play mr-2"></i>
-                Watch Demo
-              </button>
             </div>
+
             <div className="flex items-center space-x-8 text-sm text-gray-600">
               <div className="flex items-center">
                 <i className="fa-solid fa-check text-green-500 mr-2"></i>
@@ -62,8 +72,15 @@ const Hero: React.FC = () => {
           <div className="animate-slide-right">
             <div className="relative">
               <div className="absolute -top-4 -right-4 w-72 h-72 bg-purple-200 rounded-full opacity-20 animate-float"></div>
-              <div className="absolute -bottom-4 -left-4 w-64 h-64 bg-blue-200 rounded-full opacity-20 animate-float" style={{ animationDelay: '-3s' }}></div>
-              <img className="relative z-10 rounded-2xl shadow-2xl hover-lift" src="/assets/hero-image.png" alt="modern e-commerce dashboard interface with purple and blue gradient, sleek design, multiple store analytics, clean UI" />
+              <div
+                className="absolute -bottom-4 -left-4 w-64 h-64 bg-blue-200 rounded-full opacity-20 animate-float"
+                style={{ animationDelay: "-3s" }}
+              ></div>
+              <img
+                className="relative z-10 rounded-2xl shadow-2xl hover-lift"
+                src="/assets/hero-image.png"
+                alt="modern e-commerce dashboard interface with purple and blue gradient, sleek design, multiple store analytics, clean UI"
+              />
             </div>
           </div>
         </div>

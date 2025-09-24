@@ -1,17 +1,17 @@
 "use client";
-import MarketingFooter from "@/components/ui/MarkettingFooter";
-import MarketingHeader from "@/components/ui/MarkettingHeader";
 import React from "react";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import Link from "next/link";
+import NewHeader from "@/components/landing/Header";
+import Footer from "@/components/landing/Footer";
 
 export default function CareersPage() {
   return (
     <>
-      <MarketingHeader />
+      <NewHeader />
       <CareerMetaData />
-      <MarketingFooter />
+      <Footer />
     </>
   );
 }
@@ -44,7 +44,7 @@ const slideUp = {
 
 export const CareerMetaData = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white mt-20">
       <Head>
         <title>Join Our Team - Senior Full Stack Developer</title>
         <meta
@@ -437,7 +437,7 @@ export const CareerMetaData = () => {
       </motion.div>
 
       {/* Footer */}
-      <motion.footer
+      {/* <motion.footer
         initial="hidden"
         whileInView="show"
         viewport={{ once: true }}
@@ -450,7 +450,7 @@ export const CareerMetaData = () => {
             reserved.
           </p>
         </div>
-      </motion.footer>
+      </motion.footer> */}
     </div>
   );
 };

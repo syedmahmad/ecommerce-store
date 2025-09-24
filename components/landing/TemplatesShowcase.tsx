@@ -1,5 +1,5 @@
-import React from 'react';
-import useScrollAnimation from '../../hooks/useScrollAnimation';
+import React from "react";
+import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 interface TemplateCardProps {
   imageSrc: string;
@@ -10,12 +10,23 @@ interface TemplateCardProps {
   delay: string;
 }
 
-const TemplateCard: React.FC<TemplateCardProps> = ({ imageSrc, imageAlt, title, description, variations, delay }) => {
+const TemplateCard: React.FC<TemplateCardProps> = ({
+  imageSrc,
+  imageAlt,
+  title,
+  description,
+  variations,
+  delay,
+}) => {
   // @ts-ignore
   const cardRef = useScrollAnimation<HTMLDivElement>();
   return (
-    // @ts-ignore
-    <div className="bg-white/10 glass-effect rounded-2xl p-6 hover-lift animate-fade-up" style={{ animationDelay: delay }} ref={cardRef}>
+    <div
+      className="bg-white/10 glass-effect rounded-2xl p-6 hover-lift animate-fade-up"
+      style={{ animationDelay: delay }}
+      // @ts-ignore
+      ref={cardRef}
+    >
       <img className="rounded-xl mb-6" src={imageSrc} alt={imageAlt} />
       <h3 className="text-xl font-bold mb-2">{title}</h3>
       <p className="text-gray-300 mb-4">{description}</p>
@@ -34,15 +45,20 @@ const TemplatesShowcase: React.FC = () => {
   const sectionRef = useScrollAnimation<HTMLElement>();
 
   return (
-    <section id="templates" className="py-20 bg-gradient-to-br from-gray-900 to-purple-900 text-white" ref={sectionRef}>
+    <section
+      id="templates"
+      className="py-20 bg-gradient-to-br from-gray-900 to-purple-900 text-white"
+      ref={sectionRef}
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
             Stunning Templates for Every Industry
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Choose from our curated collection of professional templates. Each one is optimized for
-            conversions and designed by world-class designers.
+            Choose from our curated collection of professional templates. Each
+            one is optimized for conversions and designed by world-class
+            designers.
           </p>
         </div>
 
@@ -73,12 +89,12 @@ const TemplatesShowcase: React.FC = () => {
           />
         </div>
 
-        <div className="text-center">
+        {/* <div className="text-center">
           <button className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <i className="fa-solid fa-eye mr-2"></i>
             View All 100+ Templates
           </button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

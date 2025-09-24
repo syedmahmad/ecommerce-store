@@ -1,7 +1,7 @@
 import React from "react";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 import { motion } from "framer-motion";
-  
+
 interface TechFeatureProps {
   iconClass: string;
   title: string;
@@ -17,17 +17,31 @@ const TechFeature: React.FC<TechFeatureProps> = ({
   title,
   description,
 }) => (
-  <div className="flex items-center space-x-4">
-    <div
-      className={`w-16 h-16 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-xl flex items-center justify-center`}
+  <motion.div
+    className="flex items-start space-x-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition cursor-pointer group"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    whileHover={{ scale: 1.03, y: -3 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
+    viewport={{ once: true }}
+  >
+    {/* Icon wrapper */}
+    <motion.div
+      className={`w-16 h-16 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-xl flex items-center justify-center shadow-md`}
+      whileHover={{ rotate: 8, scale: 1.1 }}
+      transition={{ type: "spring", stiffness: 250, damping: 15 }}
     >
-      <i className={`${iconClass} text-white text-2xl`}></i>
-    </div>
+      <i className={`${iconClass} text-white text-2xl`} />
+    </motion.div>
+
+    {/* Text */}
     <div>
-      <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+        {title}
+      </h3>
+      <p className="text-gray-600 leading-relaxed">{description}</p>
     </div>
-  </div>
+  </motion.div>
 );
 
 interface TechIconProps {
