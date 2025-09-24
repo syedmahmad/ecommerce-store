@@ -7,7 +7,6 @@ import {
   Code,
   Store,
   Smartphone,
-  Globe,
   Shield,
   Users,
   Cpu,
@@ -15,7 +14,7 @@ import {
   Cloud,
   Server,
 } from "lucide-react";
-import MarketingHeader from "@/components/ui/MarkettingHeader";
+import NewHeader from "@/components/landing/Header";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -24,7 +23,7 @@ const fadeInUp = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: "easeOut",
+      ease: "easeInOut",
     },
   },
 };
@@ -98,8 +97,8 @@ const AboutPage = () => {
 
   return (
     <>
-      <MarketingHeader />
-      <div className="bg-white text-gray-800 min-h-screen">
+      <NewHeader />
+      <div className="bg-white text-gray-800 min-h-screen mt-10">
         {/* Hero Section */}
         <section className="bg-gradient-to-b from-indigo-50 to-white py-24">
           <motion.div
@@ -145,6 +144,7 @@ const AboutPage = () => {
 
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             <motion.div
+              // @ts-ignore
               variants={fadeInUp}
               initial="hidden"
               whileInView="visible"
@@ -163,6 +163,7 @@ const AboutPage = () => {
             </motion.div>
 
             <motion.div
+              // @ts-ignore
               variants={fadeInUp}
               initial="hidden"
               whileInView="visible"
@@ -182,6 +183,7 @@ const AboutPage = () => {
             </motion.div>
 
             <motion.div
+              // @ts-ignore
               variants={fadeInUp}
               initial="hidden"
               whileInView="visible"
@@ -211,6 +213,7 @@ const AboutPage = () => {
             {storeFeatures.map((feature, index) => (
               <motion.div
                 key={index}
+                // @ts-ignore
                 variants={fadeInUp}
                 whileHover={{ y: -5 }}
                 className="bg-white p-6 rounded-lg shadow-md border border-gray-200 text-center hover:border-indigo-300 transition-all"

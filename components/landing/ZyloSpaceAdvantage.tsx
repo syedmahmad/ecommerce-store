@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 
 interface AdvantageItemProps {
@@ -7,20 +7,39 @@ interface AdvantageItemProps {
   description: string;
 }
 
+import { motion } from "framer-motion";
+
 const AdvantageItem: React.FC<AdvantageItemProps> = ({
   iconClass,
   title,
   description,
 }) => (
-  <div className="flex items-start space-x-4">
-    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-      <i className={`${iconClass} text-white`}></i>
-    </div>
+  <motion.div
+    className="flex items-start space-x-4 p-4 rounded-lg cursor-pointer transition-all"
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    whileHover={{ scale: 1.03, y: -5 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
+    viewport={{ once: true }}
+  >
+    {/* Icon wrapper */}
+    <motion.div
+      className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg"
+      whileHover={{ rotate: 10, scale: 1.1 }}
+      transition={{ type: "spring", stiffness: 300 }}
+    >
+      <motion.i
+        className={`${iconClass} text-white text-lg`}
+        whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.6 } }}
+      />
+    </motion.div>
+
+    {/* Text content */}
     <div>
       <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
       <p className="text-gray-600">{description}</p>
     </div>
-  </div>
+  </motion.div>
 );
 
 interface MetricCardProps {
@@ -30,27 +49,41 @@ interface MetricCardProps {
   delay: string;
 }
 
+// import { motion } from "framer-motion";
+
 const MetricCard: React.FC<MetricCardProps> = ({
   iconClass,
   value,
   label,
   delay,
 }) => {
-  // @ts-ignore
-  const cardRef = useScrollAnimation<HTMLDivElement>();
   return (
-    <div
-      className="text-center animate-fade-up"
-      style={{ animationDelay: delay }}
-      // @ts-ignore
-      ref={cardRef}
+    <motion.div
+      className="text-center p-6 rounded-2xl bg-white shadow-md cursor-pointer relative overflow-hidden group"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.05, y: -5 }}
+      transition={{ duration: 0.6, delay: parseFloat(delay), ease: "easeOut" }}
+      viewport={{ once: true }}
     >
-      <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
-        <i className={`${iconClass} text-3xl gradient-text`}></i>
-      </div>
-      <h4 className="text-xl font-bold text-gray-900 mb-2">{value}</h4>
-      <p className="text-gray-600">{label}</p>
-    </div>
+      {/* Gradient glow border on hover */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+      {/* Icon */}
+      <motion.div
+        className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg relative z-10"
+        whileHover={{ rotate: 10, scale: 1.1 }}
+        transition={{ type: "spring", stiffness: 250, damping: 15 }}
+      >
+        <i className={`${iconClass} text-3xl text-white`} />
+      </motion.div>
+
+      {/* Text */}
+      <h4 className="text-xl font-bold text-gray-900 mb-2 relative z-10">
+        {value}
+      </h4>
+      <p className="text-gray-600 relative z-10">{label}</p>
+    </motion.div>
   );
 };
 

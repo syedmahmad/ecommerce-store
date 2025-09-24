@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import React from "react";
 import useScrollAnimation from "../../hooks/useScrollAnimation";
 
@@ -16,17 +17,31 @@ const SupportFeature: React.FC<SupportFeatureProps> = ({
   gradientFrom,
   gradientTo,
 }) => (
-  <div className="flex items-start space-x-4">
-    <div
-      className={`w-12 h-12 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-lg flex items-center justify-center flex-shrink-0`}
+  <motion.div
+    className="flex items-start space-x-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition cursor-pointer group"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    whileHover={{ scale: 1.02, y: -2 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
+    viewport={{ once: true }}
+  >
+    {/* Icon wrapper */}
+    <motion.div
+      className={`w-12 h-12 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-lg flex items-center justify-center flex-shrink-0 shadow-md`}
+      whileHover={{ rotate: 8, scale: 1.1 }}
+      transition={{ type: "spring", stiffness: 250, damping: 15 }}
     >
-      <i className={`${iconClass} text-white`}></i>
-    </div>
+      <i className={`${iconClass} text-white text-lg`} />
+    </motion.div>
+
+    {/* Text */}
     <div>
-      <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-600">{description}</p>
+      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
+        {title}
+      </h3>
+      <p className="text-gray-600 leading-relaxed">{description}</p>
     </div>
-  </div>
+  </motion.div>
 );
 
 const SupportResources: React.FC = () => {
@@ -36,15 +51,24 @@ const SupportResources: React.FC = () => {
   return (
     <section id="support" className="py-20 bg-white" ref={sectionRef}>
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
+        >
           <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            World-Class <span className="gradient-text">Support</span>
+            World-Class{" "}
+            <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              Support
+            </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Get the help you need, when you need it. Our expert support team and
             comprehensive resources ensure your success every step of the way.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
           <div className="animate-slide-left">

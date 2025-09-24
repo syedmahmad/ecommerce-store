@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface FooterLinkProps {
   href: string;
@@ -7,7 +7,10 @@ interface FooterLinkProps {
 
 const FooterLink: React.FC<FooterLinkProps> = ({ href, children }) => (
   <li>
-    <a href={href} className="hover:text-white transition-colors cursor-pointer">
+    <a
+      href={href}
+      className="hover:text-white transition-colors cursor-pointer"
+    >
       {children}
     </a>
   </li>
@@ -26,20 +29,33 @@ const Footer: React.FC = () => {
               <span className="text-2xl font-bold">ZyloSpace</span>
             </div>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              The world's leading e-commerce platform. Build, launch, and scale your online business
-              with our comprehensive suite of tools and services.
+              The world's leading e-commerce platform. Build, launch, and scale
+              your online business with our comprehensive suite of tools and
+              services.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
+              <a
+                href="#"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer"
+              >
                 <i className="fa-brands fa-twitter"></i>
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
+              <a
+                href="#"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer"
+              >
                 <i className="fa-brands fa-facebook"></i>
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
+              <a
+                href="#"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer"
+              >
                 <i className="fa-brands fa-linkedin"></i>
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer">
+              <a
+                href="#"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer"
+              >
                 <i className="fa-brands fa-instagram"></i>
               </a>
             </div>
@@ -48,33 +64,33 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-semibold mb-6">Platform</h3>
             <ul className="space-y-3 text-gray-400">
-              <FooterLink href="#features">Features</FooterLink>
-              <FooterLink href="#templates">Templates</FooterLink>
+              <FooterLink href="/features">Features</FooterLink>
+              {/* <FooterLink href="#templates">Templates</FooterLink> */}
               <FooterLink href="#integrations">Integrations</FooterLink>
-              <FooterLink href="#">API Documentation</FooterLink>
-              <FooterLink href="#">System Status</FooterLink>
+              {/* <FooterLink href="#">API Documentation</FooterLink> */}
+              {/* <FooterLink href="#">System Status</FooterLink> */}
             </ul>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-6">Support</h3>
             <ul className="space-y-3 text-gray-400">
-              <FooterLink href="#">Help Center</FooterLink>
-              <FooterLink href="#">Community</FooterLink>
-              <FooterLink href="#support">Contact Support</FooterLink>
-              <FooterLink href="#">Migration Help</FooterLink>
-              <FooterLink href="#">ZyloSpace Academy</FooterLink>
+              {/* <FooterLink href="#">Help Center</FooterLink> */}
+              {/* <FooterLink href="#">Community</FooterLink> */}
+              <FooterLink href="/contact-us">Contact Support</FooterLink>
+              <FooterLink href="/contact-us">Migration Help</FooterLink>
+              {/* <FooterLink href="#">ZyloSpace Academy</FooterLink> */}
             </ul>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-6">Company</h3>
             <ul className="space-y-3 text-gray-400">
-              <FooterLink href="#">About Us</FooterLink>
-              <FooterLink href="#">Careers</FooterLink>
-              <FooterLink href="#">Press</FooterLink>
-              <FooterLink href="#">Partners</FooterLink>
-              <FooterLink href="#">Investors</FooterLink>
+              <FooterLink href="/about">About Us</FooterLink>
+              <FooterLink href="/careers">Careers</FooterLink>
+              {/* <FooterLink href="#">Press</FooterLink> */}
+              {/* <FooterLink href="#">Partners</FooterLink> */}
+              {/* <FooterLink href="#">Investors</FooterLink> */}
             </ul>
           </div>
         </div>
