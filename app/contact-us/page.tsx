@@ -235,10 +235,10 @@ const ContactUsPage = () => {
                         Speak directly with our solutions team
                       </p>
                       <a
-                        href="tel:+923349998990"
+                        href="tel:+447438463787"
                         className="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center gap-1"
                       >
-                        +92 (334) 999-8990 <ArrowRight className="h-4 w-4" />
+                        +44 7438 463787 <ArrowRight className="h-4 w-4" />
                       </a>
                     </div>
                   </motion.div>

@@ -104,10 +104,11 @@ export default function MarketingFooter() {
               <motion.li whileHover={{ x: 5 }} className="flex items-start">
                 <Phone className="h-5 w-5 text-gray-400 mr-2 mt-0.5" />
                 <a
-                  href="tel:+18005551234"
+                  href="tel:+447438463787"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
-                  +92334 9998990
+                  {/* +92334 9998990 */}
+                  +44 7438 463787
                 </a>
               </motion.li>
               <a
@@ -121,7 +122,8 @@ export default function MarketingFooter() {
                 >
                   <MapPin className="h-5 w-5 text-gray-400 mr-2 mt-0.5" />
                   <span className="text-gray-400 hover:text-white transition-colors">
-                    1141 F Lake City Meadows Phase 1 Lahore
+                    {/* 1141 F Lake City Meadows Phase 1 Lahore */}
+                    Flat 16, wollstonecraft mansions, 6 fielders crescent, Barking. Post code: IG11 0BE
                   </span>
                 </motion.li>
               </a>
