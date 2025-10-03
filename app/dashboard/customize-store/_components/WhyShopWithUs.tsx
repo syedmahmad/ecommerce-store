@@ -230,11 +230,12 @@ export const WhyShopWithUs = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4">
       {/* Left Panel: Form Section */}
-      <div className="lg:col-span-5 space-y-6 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-800">Edit Section</h2>
+      <div className="lg:col-span-5 space-y-6 bg-white p-6 rounded-2xl border border-violet-200 shadow-md">
+        <div className="flex justify-between items-center border-b border-violet-100 pb-4">
+          <h2 className="text-xl font-semibold text-gray-900">Edit Section</h2>
 
           <div className="flex items-center space-x-2">
+            {/* Visibility Toggle */}
             <label className="inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -242,10 +243,10 @@ export const WhyShopWithUs = () => {
                 onChange={handleVisibility}
                 className="sr-only peer"
               />
-              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-gradient-to-r peer-checked:from-violet-500 peer-checked:to-indigo-500 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:h-5 after:w-5 after:rounded-full after:transition-all peer-checked:after:translate-x-5 shadow-sm"></div>
             </label>
 
-            {/* Info Icon with Tooltip */}
+            {/* Info Tooltip */}
             <div className="relative group">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -261,47 +262,49 @@ export const WhyShopWithUs = () => {
                   d="M13 16h-1v-4h-1m1-4h.01M12 18.5A6.5 6.5 0 105.5 12 6.5 6.5 0 0012 18.5z"
                 />
               </svg>
-              <div className="absolute z-10 w-64 px-3 py-2 text-sm text-white bg-gray-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
+              <div className="absolute z-10 w-64 px-3 py-2 text-sm text-white bg-gray-800 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 bottom-full left-1/2 transform -translate-x-1/2 mb-2">
                 If you hide this section, it will not be visible in your store.
-                Currently, this section is visible.
               </div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
+          {/* Section Title */}
           <label className="block">
             <span className="text-gray-700 font-medium">Section Title</span>
             <input
               type="text"
               value={sectionTitle}
               onChange={(e) => setSectionTitle(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full border border-violet-200 rounded-lg p-2 focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
             />
           </label>
 
+          {/* Description */}
           <label className="block">
             <span className="text-gray-700 font-medium">Description</span>
             <textarea
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full border border-violet-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </label>
 
+          {/* Features List */}
           <div className="space-y-4">
             <span className="text-gray-700 font-medium">Features</span>
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-md p-4 space-y-2 bg-gray-50"
+                className="border border-violet-200 rounded-xl p-4 space-y-2 bg-gradient-to-br from-violet-50 via-white to-indigo-50"
               >
-                {/* Icon Upload Section */}
+                {/* Icon Upload */}
                 <div className="flex items-center gap-3 mb-2">
                   <div className="relative group">
                     <label className="cursor-pointer">
-                      <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                      <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center overflow-hidden">
                         {feature.icon ? (
                           <img
                             src={feature.icon}
@@ -309,10 +312,10 @@ export const WhyShopWithUs = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <Upload className="w-6 h-6 text-gray-500" />
+                          <Upload className="w-6 h-6 text-violet-600" />
                         )}
                         {uploadingIcons[index] && (
-                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                             <Loader2 className="w-6 h-6 text-white animate-spin" />
                           </div>
                         )}
@@ -332,14 +335,14 @@ export const WhyShopWithUs = () => {
                       <button
                         type="button"
                         onClick={() => removeIcon(index, feature.icon)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
                       >
                         <X className="w-3 h-3" />
                       </button>
                     )}
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-600">
                       {feature.icon ? "Change icon" : "Upload icon"}
                     </p>
                     <p className="text-xs text-gray-400">
@@ -355,7 +358,7 @@ export const WhyShopWithUs = () => {
                   onChange={(e) =>
                     handleFeatureChange(index, "title", e.target.value)
                   }
-                  className="block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+                  className="block w-full border border-violet-200 rounded-lg p-2 focus:ring-2 focus:ring-violet-500"
                 />
                 <textarea
                   rows={2}
@@ -364,17 +367,22 @@ export const WhyShopWithUs = () => {
                   onChange={(e) =>
                     handleFeatureChange(index, "description", e.target.value)
                   }
-                  className="block w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500"
+                  className="block w-full border border-violet-200 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             ))}
           </div>
 
+          {/* Save Button */}
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+            className={`w-full px-4 py-2 rounded-lg transition-colors ${
+              isSaving
+                ? "bg-indigo-300 text-white cursor-not-allowed"
+                : "bg-gradient-to-r from-violet-500 to-indigo-500 text-white hover:from-violet-600 hover:to-indigo-600 shadow-sm"
+            }`}
           >
             {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSaving ? "Saving..." : "Save Section"}
@@ -382,10 +390,10 @@ export const WhyShopWithUs = () => {
         </div>
       </div>
 
-      {/* Right Panel: Preview Section */}
+      {/* Right Panel: Preview */}
       <div className="lg:col-span-7 space-y-4">
-        <h2 className="text-xl font-semibold text-gray-800">Live Preview</h2>
-        <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+        <h2 className="text-xl font-semibold text-gray-900">Live Preview</h2>
+        <div className="border border-violet-200 rounded-2xl p-4 bg-white shadow-md">
           <WhyShopWithUsSection
             sectionTitle={sectionTitle}
             description={description}
@@ -437,7 +445,6 @@ export const WhyShopWithUsSection = ({
   compact = false,
 }: WhyShopWithUsSectionProps) => {
   const { currentTheme } = useTheme();
-
 
   return (
     <motion.section

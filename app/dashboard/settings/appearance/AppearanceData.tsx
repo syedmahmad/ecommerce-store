@@ -116,7 +116,7 @@ export default function AppearancePage() {
         >
           <TabsList className="mb-6">
             <TabsTrigger value="admin">Admin Panel</TabsTrigger>
-            <TabsTrigger value="store">Store Frontend</TabsTrigger>
+            {/* <TabsTrigger value="store">Store Frontend</TabsTrigger> */}
           </TabsList>
 
           <TabsContent value="admin">

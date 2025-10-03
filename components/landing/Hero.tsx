@@ -35,7 +35,7 @@ const Hero: React.FC = () => {
             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
               Build Your
               <span className="gradient-text"> Dream Store</span>
-              in Minutes
+              &nbsp; in Minutes
             </h1>
             <p className="text-xl text-gray-600 mb-8 leading-relaxed">
               Launch your e-commerce empire with our industry-leading platform.

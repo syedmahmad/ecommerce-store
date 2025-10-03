@@ -98,15 +98,19 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md rounded-2xl shadow-2xl animate-fade-up">
+      <Card className="w-full max-w-md rounded-2xl shadow-xl border border-gray-100 animate-fade-up bg-white">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-extrabold">
-            <span className="gradient-text">Welcome Back</span>
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Welcome Back
+            </span>
           </CardTitle>
-          <CardDescription>Sign in to continue to ZyloSpace</CardDescription>
+          <CardDescription className="text-gray-600">
+            Sign in to continue to ZyloSpace
+          </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {(error || errorMessage) && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -115,7 +119,7 @@ export default function LoginPage() {
           )}
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               {/* Email */}
               <FormField
                 control={form.control}
@@ -126,6 +130,7 @@ export default function LoginPage() {
                     <FormControl>
                       <Input
                         placeholder="name@example.com"
+                        className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                         {...field}
                         disabled={isLoading}
                       />
@@ -147,13 +152,14 @@ export default function LoginPage() {
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
+                          className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                           {...field}
                           disabled={isLoading}
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                           tabIndex={-1}
                         >
                           {showPassword ? (
@@ -169,10 +175,11 @@ export default function LoginPage() {
                 )}
               />
 
+              {/* Forgot password */}
               <div className="flex items-center justify-end">
                 <Link
                   href="/forgot-password"
-                  className="text-sm font-medium text-primary hover:underline"
+                  className="text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -181,7 +188,7 @@ export default function LoginPage() {
               {/* Sign in Button */}
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:opacity-90"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -220,7 +227,7 @@ export default function LoginPage() {
             Don&apos;t have an account?{" "}
             <Link
               href="/register"
-              className="font-medium gradient-text hover:underline"
+              className="font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline"
             >
               Sign up
             </Link>

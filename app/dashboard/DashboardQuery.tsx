@@ -92,134 +92,112 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 px-4 sm:px-0">
-        {/* Header Section - More refined spacing */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="space-y-12 px-4 sm:px-0">
+        {/* Header Section */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight">
+            <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent drop-shadow-md">
               Welcome, {userName || "User"}!
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
               Here's what's happening with your store today
             </p>
           </div>
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="w-full sm:w-auto justify-center border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="w-full sm:w-auto justify-center px-6 py-2.5 rounded-full border border-gray-200 dark:border-gray-700 
+                 bg-white/30 dark:bg-gray-800/40 backdrop-blur-sm
+                 hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:text-white 
+                 transition-all duration-300 hover:shadow-[0_0_18px_rgba(139,92,246,0.6)]"
           >
             <LogOutIcon className="h-4 w-4 mr-2" />
             Sign Out
           </Button>
         </div>
 
-        {/* Summary Cards - More refined design with subtle animations */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Product Card */}
-          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xs border border-gray-100 dark:border-gray-700 hover:shadow-sm transition-shadow duration-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Products
-                </p>
-                <p className="text-2xl font-semibold mt-2 text-gray-900 dark:text-white">
-                  {productsData?.length || 0}
-                </p>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              title: "Products",
+              value: productsData?.length || 0,
+              icon: PackageIcon,
+            },
+            { title: "Orders", value: 0, icon: ShoppingCartIcon },
+            { title: "Revenue", value: "Rs0.00", icon: CurrencyIcon },
+            {
+              title: "Customers",
+              value: testimonials?.length || 0,
+              icon: UsersIcon,
+            },
+          ].map(({ title, value, icon: Icon }, i) => (
+            <div
+              key={i}
+              className="rounded-2xl relative bg-white/70 dark:bg-gray-900/60 
+                   border border-white/20 dark:border-gray-800 
+                   shadow-md backdrop-blur-xl 
+                   hover:shadow-[0_0_30px_rgba(139,92,246,0.4)] hover:scale-[1.02]
+                   transition-transform duration-300 p-6"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {title}
+                  </p>
+                  <p className="text-3xl font-extrabold mt-2 bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-md">
+                    {value}
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg">
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
               </div>
-              <div className="p-3 rounded-full bg-blue-50/50 dark:bg-blue-900/20">
-                <PackageIcon className="h-5 w-5 text-blue-500 dark:text-blue-400" />
-              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                {title === "Products"
+                  ? "Total products in inventory"
+                  : title === "Orders"
+                  ? "Orders this month"
+                  : title === "Revenue"
+                  ? "Monthly earnings"
+                  : "Happy customers"}
+              </p>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-              Total products in inventory
-            </p>
-          </div>
-
-          {/* Orders Card */}
-          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xs border border-gray-100 dark:border-gray-700 hover:shadow-sm transition-shadow duration-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Orders
-                </p>
-                <p className="text-2xl font-semibold mt-2 text-gray-900 dark:text-white">
-                  0
-                </p>
-              </div>
-              <div className="p-3 rounded-full bg-green-50/50 dark:bg-green-900/20">
-                <ShoppingCartIcon className="h-5 w-5 text-green-500 dark:text-green-400" />
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-              Orders this month
-            </p>
-          </div>
-
-          {/* Revenue Card */}
-          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xs border border-gray-100 dark:border-gray-700 hover:shadow-sm transition-shadow duration-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Revenue
-                </p>
-                <p className="text-2xl font-semibold mt-2 text-gray-900 dark:text-white">
-                  Rs0.00
-                </p>
-              </div>
-              <div className="p-3 rounded-full bg-purple-50/50 dark:bg-purple-900/20">
-                <CurrencyIcon className="h-5 w-5 text-purple-500 dark:text-purple-400" />
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-              Monthly earnings
-            </p>
-          </div>
-
-          {/* Customers Card */}
-          <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow-xs border border-gray-100 dark:border-gray-700 hover:shadow-sm transition-shadow duration-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Customers
-                </p>
-                <p className="text-2xl font-semibold mt-2 text-gray-900 dark:text-white">
-                  {testimonials?.length || 0}
-                </p>
-              </div>
-              <div className="p-3 rounded-full bg-amber-50/50 dark:bg-amber-900/20">
-                <UsersIcon className="h-5 w-5 text-amber-500 dark:text-amber-400" />
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-              Happy customers
-            </p>
-          </div>
+          ))}
         </div>
 
-        {/* Quick Actions Section - More polished */}
-        <div className="mt-8">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4 tracking-tight">
+        {/* Quick Actions */}
+        <div className="mt-12">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 tracking-tight">
             Quick Actions
           </h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3">
             <Button
               variant="outline"
-              className="justify-start gap-2 h-11 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="flex flex-col items-start h-28 px-5 py-4 rounded-2xl border border-purple-500/40 
+                   text-left bg-white/40 dark:bg-gray-900/40 backdrop-blur-md
+                   hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:text-white 
+                   hover:shadow-[0_0_22px_rgba(59,130,246,0.4)] transition-all"
               onClick={() => router.push("/dashboard/products")}
             >
-              <PlusIcon className="h-4 w-4" />
-              Add New Product
+              <PlusIcon className="h-5 w-5 mb-2" />
+              <span className="font-medium">Add New Product</span>
+              <span className="text-xs opacity-70">
+                Quickly add items to your store
+              </span>
             </Button>
 
             <Button
               variant="outline"
-              className="justify-start gap-2 h-11 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              onClick={() => {
-                router.push("dashboard/customize-store");
-              }}
+              className="flex flex-col items-start h-28 px-5 py-4 rounded-2xl border border-purple-500/40 
+                   text-left bg-white/40 dark:bg-gray-900/40 backdrop-blur-md
+                   hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:text-white 
+                   hover:shadow-[0_0_22px_rgba(139,92,246,0.5)] transition-all"
+              onClick={() => router.push("dashboard/customize-store")}
             >
-              <SettingsIcon className="h-4 w-4" />
-              Store Settings
+              <SettingsIcon className="h-5 w-5 mb-2" />
+              <span className="font-medium">Store Settings</span>
+              <span className="text-xs opacity-70">Manage your storefront</span>
             </Button>
           </div>
         </div>

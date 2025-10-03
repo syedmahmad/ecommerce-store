@@ -16,7 +16,7 @@
 
 //   // 🚀 Skip middleware for static files and API routes
 //   if (
-//     path.startsWith('/_next/') || 
+//     path.startsWith('/_next/') ||
 //     path.startsWith('/api/') ||
 //     path.startsWith('/favicon.ico') ||
 //     path.match(/\.[a-z0-9]+$/i) // Skip files with extensions
@@ -57,15 +57,15 @@
 //     // Rewrite to internal path
 //     const newPath = `/store/${storeId}${path === '/' ? '' : path}`;
 //     console.log(`Rewriting ${host}${path} → ${newPath}`);
-    
+
 //     url.pathname = newPath;
 //     return NextResponse.rewrite(url);
 //   }
 
 //   // Case 2: Root Domain Handling (Existing Auth Logic)
 //   const isRootDomain = [
-//     'zylospace.com', 
-//     'www.zylospace.com', 
+//     'zylospace.com',
+//     'www.zylospace.com',
 //     'localhost'
 //   ].some(domain => host.includes(domain));
 
@@ -105,8 +105,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const protectedPaths = ["/dashboard", "/dashboard/products", "/dashboard/settings"];
-const authPaths = ["/login", "/register", "/forgot-password", "/reset-password"];
+const protectedPaths = [
+  "/dashboard",
+  "/dashboard/products",
+  "/dashboard/settings",
+];
+const authPaths = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -133,11 +142,11 @@ export async function middleware(request: NextRequest) {
   const subdomain = match ? match[1] : undefined;
 
   // ✅ Root domain → normal Next.js routing (app/page.tsx)
-  const isRootDomain = [
-    "zylospace.com",
-    "www.zylospace.com",
-    "localhost",
-  ].includes(host);
+  const isRootDomain =
+    host === "localhost" ||
+    host.startsWith("localhost:") || // allow localhost with any port
+    host === "zylospace.com" ||
+    host === "www.zylospace.com";
 
   if (isRootDomain) {
     return handleAuthLogic(request, path);
@@ -196,7 +205,5 @@ async function handleAuthLogic(request: NextRequest, path: string) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

@@ -95,42 +95,58 @@ export function ThemeSelector() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4">
+    <div className="space-y-8">
+      {/* Theme Grid */}
+      <div className="flex flex-col sm:flex-row gap-6 flex-wrap">
         {themes.map((theme) => (
           <Card
             key={theme.id}
-            className={`cursor-pointer transition-all relative overflow-hidden ${
-              selectedTheme?.id === theme?.id
-                ? "ring-2 ring-primary"
-                : "hover:shadow-md"
-            }`}
             onClick={() => handleSelectTheme(theme)}
+            className={`cursor-pointer transition-all relative overflow-hidden rounded-xl backdrop-blur-lg ${
+              selectedTheme?.id === theme?.id
+                ? "ring-2 ring-offset-2 ring-purple-500 shadow-lg scale-[1.02]"
+                : "hover:shadow-md hover:scale-[1.01]"
+            }`}
           >
+            {/* Selected Badge */}
             {selectedTheme?.id === theme?.id && (
-              <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1 z-10">
-                <Check className="h-4 w-4" />
+              <div className="absolute top-2 right-2 rounded-full p-1.5 shadow-md z-10 animate-pulse bg-gradient-to-r from-purple-500 to-blue-500">
+                <Check className="h-4 w-4 text-white" />
               </div>
             )}
+
             <CardContent className="p-0">
-              <div className="relative h-40 w-full">
+              {/* Theme Preview */}
+              <div className="relative h-40 w-full overflow-hidden rounded-t-xl">
                 <div
-                  className="absolute inset-0 opacity-10"
+                  className="absolute inset-0 opacity-20"
                   style={{ backgroundColor: theme.primary }}
                 />
-                <div className="p-4 h-full flex flex-col">
+                <div className="p-4 h-full flex flex-col gap-2">
                   <div
-                    className="h-6 w-full rounded-md mb-2"
+                    className="h-6 w-full rounded-md border shadow-sm"
                     style={{ backgroundColor: theme.primary }}
-                  ></div>
+                  />
                   <div
-                    className="flex-1 rounded-md"
+                    className="flex-1 rounded-md border shadow-sm"
                     style={{ backgroundColor: theme.secondary }}
-                  ></div>
+                  />
                 </div>
               </div>
+
+              {/* Theme Info */}
               <div className="p-4">
-                <h3 className="font-medium">{theme.name}</h3>
+                <h3
+                  className={`font-semibold ${
+                    selectedTheme?.id === theme?.id
+                      ? "bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+                      : "text-gray-800"
+                  }`}
+                >
+                  {theme.name}
+                </h3>
+
+                {/* Color Palette */}
                 <div className="flex mt-3 gap-2">
                   {[
                     theme.primary,
@@ -140,7 +156,7 @@ export function ThemeSelector() {
                   ].map((color, i) => (
                     <div
                       key={i}
-                      className="h-5 w-5 rounded-full border"
+                      className="h-5 w-5 rounded-full border shadow-sm transition hover:scale-110"
                       style={{ backgroundColor: color }}
                     />
                   ))}
@@ -151,17 +167,20 @@ export function ThemeSelector() {
         ))}
       </div>
 
+      {/* Action Buttons */}
       <div className="flex justify-end gap-4">
         <Button
           variant="outline"
           onClick={() => setSelectedTheme(currentTheme)}
           disabled={selectedTheme?.id === currentTheme.id}
+          className="border border-gray-300 text-gray-600 hover:text-purple-600 hover:border-purple-400 transition-all backdrop-blur-sm"
         >
           Reset
         </Button>
         <Button
           onClick={handleApplyTheme}
           disabled={isApplying || selectedTheme?.id === currentTheme.id}
+          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md transition-all"
         >
           {isApplying ? "Applying..." : "Apply Theme"}
         </Button>

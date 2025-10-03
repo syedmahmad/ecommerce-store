@@ -48,7 +48,7 @@ export const CustomizeStoreFront = () => {
   return (
     <DashboardLayout>
       <div className="w-full py-4 px-4 sm:py-6 sm:px-6">
-        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900">
           Customize Store
         </h1>
 
@@ -59,10 +59,10 @@ export const CustomizeStoreFront = () => {
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id)}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap ${
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                   activeTab === tab.id
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md"
+                    : "bg-gray-100 text-gray-700 hover:text-purple-600 hover:border hover:border-purple-400"
                 }`}
               >
                 {tab.label}
@@ -72,7 +72,7 @@ export const CustomizeStoreFront = () => {
         </div>
 
         {/* Content area */}
-        <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+        <div className="bg-white shadow rounded-lg p-4 sm:p-6 border border-gray-100 hover:border-purple-200 transition-colors">
           {renderContent()}
         </div>
       </div>

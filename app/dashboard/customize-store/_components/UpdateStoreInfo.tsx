@@ -216,13 +216,13 @@ export const UpdateStoreInfo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-gray-900">
-            Store Current Inforamtion
+            Store Current Information
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="mt-2 text-lg text-indigo-700">
             Update your store information and branding
           </p>
         </div>
@@ -231,14 +231,14 @@ export const UpdateStoreInfo = () => {
           <div className="md:grid md:grid-cols-3 md:gap-6">
             {/* Left side - Form */}
             <div className="md:col-span-2">
-              <div className="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-lg">
+              <div className="px-4 py-5 bg-white sm:p-6 shadow-lg rounded-xl border border-violet-200">
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-6">
                     {/* Header Section */}
-                    <div className="border-b border-gray-200 pb-6">
+                    <div className="border-b border-violet-200 pb-6">
                       <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                         <svg
-                          className="w-5 h-5 mr-2 text-indigo-600"
+                          className="w-5 h-5 mr-2 text-violet-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -258,7 +258,7 @@ export const UpdateStoreInfo = () => {
                     <div>
                       <label
                         htmlFor="name"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-indigo-700"
                       >
                         Store Name
                       </label>
@@ -269,29 +269,28 @@ export const UpdateStoreInfo = () => {
                           id="name"
                           value={storeInfo.name}
                           onChange={handleInputChange}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                          className="block w-full rounded-md border-violet-200 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm p-2 border"
                         />
                       </div>
                     </div>
 
                     {/* Domain */}
-                    {/* Domain */}
                     <div>
                       <label
                         htmlFor="domain"
-                        className="block text-sm font-medium text-gray-700 mb-1"
+                        className="block text-sm font-medium text-indigo-700 mb-1"
                       >
                         Store Domain
                       </label>
                       <div className="flex rounded-lg shadow-sm">
-                        <span className="inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                        <span className="inline-flex items-center rounded-l-lg border border-r-0 border-violet-200 bg-violet-50 px-3 text-indigo-600 sm:text-sm">
                           https://
                         </span>
                         <input
                           type="text"
                           name="subdomain"
                           id="subdomain"
-                          value={storeInfo.domain.split(".")[0]} // Gets the "mudassar-naveed" part
+                          value={storeInfo.domain.split(".")[0]}
                           onChange={(e) => {
                             const domainParts = storeInfo.domain.split(".");
                             domainParts[0] = e.target.value;
@@ -302,11 +301,10 @@ export const UpdateStoreInfo = () => {
                               },
                             });
                           }}
-                          className="block w-full min-w-0 flex-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border-t border-b border-l"
+                          className="block w-full min-w-0 flex-1 border-violet-200 focus:border-violet-500 focus:ring-violet-500 sm:text-sm p-3 border-t border-b border-l"
                         />
-                        <span className="inline-flex items-center border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
-                          .{storeInfo.domain.split(".").slice(1).join(".")}{" "}
-                          {/* Gets the ".zylospace.com" part */}
+                        <span className="inline-flex items-center border border-l-0 border-violet-200 bg-violet-50 px-3 text-indigo-600 sm:text-sm">
+                          .{storeInfo.domain.split(".").slice(1).join(".")}
                         </span>
                       </div>
                     </div>
@@ -315,12 +313,12 @@ export const UpdateStoreInfo = () => {
                     <div className="space-y-1">
                       <label
                         htmlFor="contactNumber"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-indigo-700"
                       >
                         Contact Number <span className="text-red-500">*</span>
                       </label>
                       <div className="relative flex items-center">
-                        <span className="absolute left-3 text-gray-500 text-sm">
+                        <span className="absolute left-3 text-indigo-500 text-sm">
                           +92
                         </span>
                         <input
@@ -330,16 +328,15 @@ export const UpdateStoreInfo = () => {
                           value={storeInfo.contactNumber}
                           onChange={handleInputChange}
                           placeholder="3001234567"
-                          className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-12 p-2.5 border`}
+                          className="block w-full rounded-md border-violet-200 shadow-sm focus:border-violet-500 focus:ring-violet-500 sm:text-sm pl-12 p-2.5 border"
                         />
                       </div>
-                      <p className="mt-1 text-xs text-gray-500">
+                      <p className="mt-1 text-xs text-indigo-600">
                         This will be displayed to customers so they can contact
                         you
                       </p>
                     </div>
 
-                    {/* Logo Upload */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Store Logo
@@ -362,7 +359,11 @@ export const UpdateStoreInfo = () => {
                               type="button"
                               onClick={triggerFileInput}
                               disabled={isLoading}
-                              className={isLoading ? "cursor-not-allowed bg-gray-100 px-3 py-2 text-gray-400 border-gray-200" : "inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"}
+                              className={
+                                isLoading
+                                  ? "cursor-not-allowed bg-gray-100 px-3 py-2 text-gray-400 border-gray-200"
+                                  : "inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                              }
                             >
                               Change
                             </button>
@@ -515,7 +516,12 @@ export const UpdateStoreInfo = () => {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex justify-center rounded-md border border-transparent 
+                               bg-gradient-to-r from-violet-500 to-indigo-500 py-2 px-4 
+                               text-sm font-medium text-white shadow-md 
+                               hover:from-violet-600 hover:to-indigo-600 
+                               focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 
+                               disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <svg
                           className="w-4 h-4 mr-2"
@@ -540,15 +546,14 @@ export const UpdateStoreInfo = () => {
 
             {/* Right side - Preview */}
             <div className="mt-5 md:mt-0 md:col-span-1">
-              <div className="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-lg sticky top-8">
+              <div className="px-4 py-5 bg-white sm:p-6 shadow-lg rounded-xl border border-violet-200 sticky top-8">
                 <h2 className="text-lg font-medium text-gray-900 mb-4">
                   Live Preview
                 </h2>
 
-                <div className="border border-gray-200 rounded-lg p-6">
+                <div className="border border-violet-200 rounded-lg p-6 bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50">
                   <div className="flex flex-col items-center text-center">
-                    {/* Logo Preview */}
-                    <div className="h-24 w-24 rounded-full bg-gray-100 overflow-hidden mb-4">
+                    <div className="h-24 w-24 rounded-full bg-violet-100 overflow-hidden mb-4">
                       <img
                         className="h-full w-full object-cover"
                         src={
@@ -560,18 +565,13 @@ export const UpdateStoreInfo = () => {
                       />
                     </div>
 
-                    {/* Store Name Preview */}
                     <h3 className="text-xl font-bold text-gray-900">
                       {storeInfo.name}
                     </h3>
-
-                    {/* Domain Preview */}
                     <p className="text-sm text-indigo-600 mt-1">
                       https://{storeInfo.domain}
                     </p>
-
-                    {/* Description Preview */}
-                    <p className="text-gray-600 mt-4 text-sm">
+                    <p className="text-indigo-700 mt-4 text-sm">
                       {storeInfo.description}
                     </p>
                   </div>

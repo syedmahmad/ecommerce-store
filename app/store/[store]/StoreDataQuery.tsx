@@ -161,6 +161,7 @@ export default function StorePage({ storeId }: any) {
           className="relative h-[500px] w-full"
           initial="hidden"
           animate="visible"
+          // @ts-ignore
           variants={imageVariants}
         >
           <Image
@@ -186,6 +187,7 @@ export default function StorePage({ storeId }: any) {
             <motion.div className="max-w-xl" variants={containerVariants}>
               <motion.h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight"
+                // @ts-ignore
                 variants={itemVariants}
               >
                 {bannerData?.title || "Welcome to Our Store"}
@@ -193,6 +195,7 @@ export default function StorePage({ storeId }: any) {
 
               <motion.p
                 className="text-lg md:text-xl text-white/90 mb-6 md:mb-8 max-w-lg"
+                // @ts-ignore
                 variants={itemVariants}
               >
                 {bannerData?.description ||
@@ -201,6 +204,7 @@ export default function StorePage({ storeId }: any) {
 
               <motion.div
                 className="flex flex-wrap gap-4"
+                // @ts-ignore
                 variants={itemVariants}
               >
                 <Button

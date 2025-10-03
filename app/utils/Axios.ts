@@ -1,136 +1,56 @@
-import axios from "axios";
+// axios.ts
+import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const axiosInstance = () =>
-  axios.create({
-    baseURL: API_URL,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-const handleError = (error: any) => {
-  const errorMessage = error?.response?.data?.message;
-  if (
-    typeof errorMessage === "string" &&
-    errorMessage.startsWith("Store with owner ID") &&
-    errorMessage.endsWith("not found.")
-  ) {
-    toast.warn(errorMessage);
-    Cookies.remove("authToken");
-    window.location.href = "/";
+// 🔹 Request Interceptor (inject JWT from cookies)
+axiosInstance.interceptors.request.use((config) => {
+  const token = Cookies.get("authToken"); // ✅ get from cookie
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
+  return config;
+});
 
-  throw error;
-};
+// 🔹 Response Interceptor (centralized error handling)
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError<any>) => {
+    const errorMessage = error?.response?.data?.message;
 
-const GET = async (endPoint: string) => {
-  try {
-    const response = await axiosInstance().get(endPoint);
-    return response;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-const POST = async (endPoint: string, data: any, config?: any) => {
-  try {
-    let token: string | null = null;
-
-    try {
-      const user = localStorage.getItem('user');
-      token = user ? JSON.parse(user)?.token || null : null;
-    } catch (err) {
-      console.warn('Error parsing user from localStorage', err);
+    if (
+      typeof errorMessage === "string" &&
+      errorMessage.startsWith("Store with owner ID") &&
+      errorMessage.endsWith("not found.")
+    ) {
+      toast.warn(errorMessage);
+      Cookies.remove("authToken");
+      window.location.href = "/";
     }
 
-    const mergedConfig = {
-      ...(config || {}),
-      headers: {
-        ...(config?.headers || {}),
-        ...(token && { Authorization: `Bearer ${token}` }), // ✅ Only add if token exists
-      },
-    };
-
-    const response = await axiosInstance().post(endPoint, data, mergedConfig);
-    return response;
-  } catch (error) {
-    handleError(error);
+    return Promise.reject(error);
   }
-};
+);
 
+// 🔹 API Helpers (super clean now)
+const GET = (endPoint: string, config?: any) =>
+  axiosInstance.get(endPoint, config);
+const POST = (endPoint: string, data?: any, config?: any) =>
+  axiosInstance.post(endPoint, data, config);
+const PUT = (endPoint: string, data?: any, config?: any) =>
+  axiosInstance.put(endPoint, data, config);
+const PATCH = (endPoint: string, data?: any, config?: any) =>
+  axiosInstance.patch(endPoint, data, config);
+const DELETE = (endPoint: string, config?: any) =>
+  axiosInstance.delete(endPoint, config);
 
-const DELETE = async (endPoint: string) => {
-  try {
-    const userString = localStorage.getItem("user");
-    const parsedUser = userString ? JSON.parse(userString) : null;
-    const token = parsedUser?.token;
-
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
-    const response = await axiosInstance().delete(endPoint, { headers });
-    return response;
-  } catch (error: any) {
-    const { code, message } = error?.response?.data || {};
-
-    if (code === "SENDER_IN_USE") {
-      const toastId = "sender-in-use-warning";
-      if (!toast.isActive(toastId)) {
-        toast.warn(message || "Sender is already in use", {
-          toastId,
-          autoClose: false,
-        });
-      }
-    } else {
-      handleError(error);
-    }
-  }
-}
-
-const PUT = async (endPoint: string, data: any) => {
-  try {
-    const user = localStorage.getItem('user');
-     const parseUser = user && JSON.parse(user)
-     const token = parseUser.token;
-    const response = await axiosInstance().put(endPoint, data, {
-      headers: {
-        Authorization: `Bearer ${token}`, // inject JWT token here
-      },
-    });
-
-    return response;
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-const PATCH = async (endPoint: string, data: any, config?: any) => {
-  try {
-
-    const user = localStorage.getItem('user');
-     const parseUser = user && JSON.parse(user)
-     const token = parseUser.token;
-
-    const mergedConfig = {
-      ...(config || {}),
-      headers: {
-        ...(config?.headers || {}),
-        Authorization: `Bearer ${token}`, // inject JWT token here
-      },
-    };
-    const response = await axiosInstance().patch(endPoint, data, mergedConfig);
-    console.log('response',response)
-    return response;
-  } catch (error: any) {
-    console.log('error',error)
-    handleError(error);
-  }
-};
-
-export { GET, POST, DELETE, PUT, PATCH };
+export { GET, POST, PUT, PATCH, DELETE, axiosInstance };

@@ -17,25 +17,25 @@ import { TrashIcon } from "@heroicons/react/24/outline";
  * image, and button text. Use this in the dashboard customization flow.
  */
 export const CustomiseBanner = () => {
-  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<string | null | any>(null);
 
   useEffect(() => {
     if (typeof localStorage !== "undefined") {
       const lcData = localStorage.getItem("user");
       const user = lcData && JSON.parse(lcData);
       if (user?.id) {
-        setUserId(user.id);
+        setUser(user);
       }
     }
-  }, [userId]);
+  }, [user]);
 
   const getBannerInfoData = useQuery({
     queryKey: ["banner-info"],
     queryFn: async () => {
-      const endpoint = `customise-store-banner?id=${userId}`;
+      const endpoint = `customise-store-banner/admin?id=${user?.id}`;
       return await GET(endpoint);
     },
-    enabled: !!userId,
+    enabled: !!user?.uuid,
   });
 
   const saveBannerData = getBannerInfoData?.data?.data;
@@ -157,7 +157,7 @@ export const CustomiseBanner = () => {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
       const response = await POST(
-        `${API_URL}/customise-store-banner?id=${parseLCData.id}`,
+        `${API_URL}/customise-store-banner?id=${parseLCData.uuid}`,
         payload
       );
       if (response?.status === 201) {
@@ -217,11 +217,17 @@ export const CustomiseBanner = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-6">
       {/* Left Panel: Form Section */}
-      <div className="lg:col-span-5 space-y-6 bg-white p-6 rounded-xl shadow-lg w-full">
-        <h2 className="text-2xl font-semibold text-gray-800">Store Banner</h2>
+      <div
+        className="lg:col-span-5 space-y-6 bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50 
+                  p-6 rounded-2xl shadow-lg border border-violet-100"
+      >
+        <h2 className="text-2xl font-semibold text-gray-900 border-b pb-2 border-violet-200">
+          Store Banner
+        </h2>
 
+        {/* Title Input */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-800 mb-1">
             Store Banner Title
           </label>
           <input
@@ -230,12 +236,15 @@ export const CustomiseBanner = () => {
             value={bannerData.storeBannerTitle}
             onChange={handleChange}
             placeholder="Enter banner title"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-2 rounded-xl border border-gray-300 
+                   focus:outline-none focus:ring-2 focus:ring-violet-500 
+                   shadow-sm transition"
           />
         </div>
 
+        {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-800 mb-1">
             Store Banner Description
           </label>
           <textarea
@@ -244,14 +253,17 @@ export const CustomiseBanner = () => {
             onChange={handleChange}
             rows={4}
             placeholder="Enter banner description"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-2 rounded-xl border border-gray-300 
+                   focus:outline-none focus:ring-2 focus:ring-violet-500 
+                   shadow-sm transition"
           />
         </div>
 
-        {bannerData?.imageUrl ? null : (
+        {/* Upload Image */}
+        {!bannerData?.imageUrl && (
           <div>
             <label
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-gray-800 mb-1"
               htmlFor="upload"
             >
               Upload Image
@@ -261,26 +273,32 @@ export const CustomiseBanner = () => {
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              className="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg p-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              className="block w-full text-sm text-gray-700 border border-violet-200 rounded-xl p-2 
+                     file:mr-4 file:py-2 file:px-4 file:rounded-full 
+                     file:border-0 file:text-sm file:font-semibold 
+                     file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200 
+                     shadow-sm"
             />
           </div>
         )}
 
+        {/* Image Preview */}
         {bannerData.imageUrl && (
-          <div className="mt-4 relative group w-full max-w-xs">
-            <span className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="mt-4 relative w-full max-w-xs">
+            <span className="block text-sm font-medium text-gray-800 mb-2">
               Image Preview
             </span>
-            <div className="relative border rounded-lg overflow-hidden shadow-sm">
+            <div className="relative border border-violet-200 rounded-xl overflow-hidden shadow-md">
               <img
                 src={bannerData.imageUrl}
                 alt="Banner Preview"
-                className="w-full h-auto object-cover rounded-lg"
+                className="w-full h-auto object-cover rounded-xl"
               />
               <button
                 onClick={() => handleDeleteImage(bannerData)}
                 title="Delete Image"
-                className="absolute top-2 right-2 bg-white p-1 rounded-full shadow hover:bg-red-100 transition"
+                className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md 
+                       hover:bg-red-100 transition"
               >
                 <TrashIcon className="w-5 h-5 text-red-600" />
               </button>
@@ -291,8 +309,9 @@ export const CustomiseBanner = () => {
           </div>
         )}
 
+        {/* Button Text */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-800 mb-1">
             Banner Button Text
           </label>
           <input
@@ -301,24 +320,30 @@ export const CustomiseBanner = () => {
             value={bannerData.storeBannerButtonText}
             onChange={handleChange}
             placeholder="Enter button text"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            className="w-full px-4 py-2 rounded-xl border border-gray-300 
+                   focus:outline-none focus:ring-2 focus:ring-violet-500 
+                   shadow-sm transition"
           />
         </div>
 
+        {/* Save Button */}
         <button
           onClick={handleSave}
           disabled={isUploading || isSavingData}
-          className={`w-full bg-blue-600 text-white py-3 rounded-lg font-medium transition ${
-            isUploading || isSavingData
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-blue-700"
-          }`}
+          className={`w-full py-3 rounded-xl font-medium transition shadow-md 
+        ${
+          isUploading || isSavingData
+            ? "bg-violet-300 text-white opacity-70 cursor-not-allowed"
+            : "bg-gradient-to-r from-violet-500 to-indigo-500 text-white hover:from-violet-600 hover:to-indigo-600"
+        }`}
         >
-          {isUploading ? "Uploading......." : "Save Changes"}
+          {isUploading ? "Uploading..." : "Save Changes"}
         </button>
       </div>
+
+      {/* Right Panel: Preview */}
       <div className="lg:col-span-7">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 border-b border-violet-200 pb-2">
           Live Preview
         </h2>
         <StoreBannerPreview bannerData={bannerData} />

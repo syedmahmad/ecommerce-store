@@ -28,13 +28,15 @@ export const ProductList = () => {
   const getAllProducts = useQuery({
     queryKey: ["get-product"],
     queryFn: async () => {
-      const endpoint = `product?id=${userId}`;
+      const endpoint = `product/admin?id=${userId}`;
       return await GET(endpoint);
     },
     enabled: !!userId,
   });
 
-  const productsData = getAllProducts?.data?.data?.products;
+  console.log("getAllProducts", getAllProducts?.data?.data);
+
+  const productsData = getAllProducts?.data?.data;
   const isOnSale = productsData && productsData?.isOnSale;
 
   console.log("isOnSale", isOnSale);

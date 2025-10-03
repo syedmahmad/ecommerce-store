@@ -8,12 +8,10 @@ import { Button } from "@/components/ui/button";
 import { useAdminTheme } from "@/context/admin-theme-context";
 import { useTheme } from "@/context/theme-context";
 import {
-  Bell,
   Home,
   Package,
   Palette,
   Settings,
-  ShoppingBag,
   Users,
   Menu,
   X,
@@ -186,156 +184,109 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         color: theme.textColor,
       }}
     >
-      {/* Header with subtle animation */}
+      {/* Header */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        className="sticky top-0 z-10 flex h-16 items-center gap-4 px-4 sm:px-6 border-b"
-        style={{
-          backgroundColor: theme.headerColor,
-          borderColor: theme.borderColor,
-        }}
+        transition={{ duration: 0.4 }}
+        className="sticky top-0 z-30 flex h-16 items-center justify-between px-4 sm:px-6 
+               backdrop-blur-md bg-black/60 border-b border-white/10 shadow-md"
       >
-        <Link
-          className="flex items-center gap-2 font-semibold"
-          href="/dashboard"
-          aria-label="Dashboard Home"
-        >
-          <ShoppingBag
-            className="h-6 w-6"
-            style={{ color: theme.primaryColor }}
-          />
-          <span className="hidden sm:inline">ZyloSpace</span>
-          {/* {storeName && (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.75 }}
-              className="hidden md:inline text-sm font-normal ml-2"
-            >
-              {storeName}
-            </motion.span>
-          )} */}
+        {/* Brand */}
+        <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3">
+          <i className="fa-solid fa-rocket text-white text-base sm:text-lg"></i>
+          <div>
+            <span className="text-base sm:text-lg font-bold text-white drop-shadow-sm tracking-tight block">
+              ZyloSpace
+            </span>
+            <span className="text-[10px] sm:text-xs text-gray-300 hidden sm:block">
+              Admin Panel
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden flex-1 md:flex ml-6">
-          <ul className="flex items-center gap-1">
-            {filteredNavItems.map((item) => (
-              <li key={item.id}>
-                <TooltipProvider delayDuration={100}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors rounded-lg group ${
-                          activeTab === item.id
-                            ? "bg-primary/10 text-primary"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/20"
-                        }`}
-                        href={item.href}
-                        style={{
-                          color:
-                            activeTab === item.id
-                              ? theme.primaryColor
-                              : undefined,
-                        }}
-                      >
-                        <item.icon
-                          className="h-4 w-4"
-                          strokeWidth={activeTab === item.id ? 2.5 : 2}
-                        />
-                        <span className="hidden sm:inline">{item.label}</span>
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="text-sm">
-                      {item.description}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </li>
-            ))}
-          </ul>
+        <nav className="hidden md:flex ml-6 space-x-4 sm:space-x-6">
+          {filteredNavItems.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`relative px-1.5 py-0.5 text-sm font-semibold transition ${
+                activeTab === item.id
+                  ? "text-violet-300 drop-shadow-[0_0_6px_rgba(139,92,246,0.7)]"
+                  : "text-gray-200 hover:text-white"
+              }`}
+            >
+              {item.label}
+              {activeTab === item.id && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-violet-400 rounded-full shadow-[0_0_8px_rgba(139,92,246,0.9)]"></span>
+              )}
+            </Link>
+          ))}
         </nav>
 
-        {/* Header Actions */}
-        <div className="ml-auto flex items-center gap-2 sm:gap-4">
+        {/* Actions */}
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
           {subdomain && storeId && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={getStoreUrl(subdomain, storeId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center gap-2 hover:bg-accent/50"
-                      style={{
-                        borderColor: theme.borderColor,
-                        color: theme.textColor,
-                      }}
-                      aria-label="View live store"
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                      <span className="hidden sm:inline">View Store</span>
-                    </Button>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  Open {getStoreUrl(subdomain, storeId)} in new tab
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Link
+              href={getStoreUrl(subdomain, storeId)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button
+                size="sm"
+                className="px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl border border-violet-400/50 
+                     text-white bg-violet-500/20 backdrop-blur-sm 
+                     hover:bg-violet-500/30 transition shadow-[0_0_10px_rgba(139,92,246,0.4)]"
+              >
+                <ExternalLink className="h-3 w-3 mr-1" />
+                View Store
+              </Button>
+            </Link>
           )}
 
+          {/* Mobile Menu Button */}
           <Button
-            variant="outline"
             size="icon"
-            className="md:hidden hover:bg-accent/50"
+            className="md:hidden rounded-full p-2 border border-violet-400/40 
+                 hover:bg-violet-500/20 transition shadow-sm"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            style={{
-              borderColor: theme.borderColor,
-              color: theme.textColor,
-            }}
-            aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5 text-white" />
             ) : (
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5 text-white" />
             )}
           </Button>
         </div>
       </motion.header>
 
-      {/* Mobile Menu with smooth animation */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-20 mt-16 bg-background/95 backdrop-blur-sm md:hidden overflow-y-auto"
-            style={{ backgroundColor: theme.backgroundColor }}
+            transition={{ duration: 0.25 }}
+            className="absolute top-16 left-0 right-0 z-20 md:hidden overflow-y-auto 
+                   bg-gradient-to-b from-purple-900/95 to-blue-900/95 backdrop-blur-xl shadow-xl"
           >
-            <nav className="flex flex-col p-4 space-y-1">
-              <h3 className="px-4 py-3 text-sm font-medium uppercase tracking-wider text-muted-foreground">
+            <nav className="flex flex-col p-4 space-y-2">
+              <h3 className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-purple-300">
                 Menu
               </h3>
               {filteredNavItems.map((item) => (
                 <motion.div
                   key={item.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                 >
                   <Link
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                       activeTab === item.id
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-accent/20"
+                        ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md"
+                        : "text-gray-300 hover:text-white hover:bg-white/10"
                     }`}
                     href={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
@@ -352,7 +303,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                     </div>
                     {activeTab === item.id && (
                       <span
-                        className="ml-auto h-2 w-2 rounded-full bg-primary"
+                        className="ml-auto h-2 w-2 rounded-full bg-white"
                         aria-hidden="true"
                       />
                     )}
@@ -364,12 +315,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Main Content with fade-in animation */}
+      {/* Main Content */}
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        className="flex-1 p-4 sm:p-6"
+        transition={{ duration: 0.4 }}
+        className="flex-1 p-3 sm:p-4 md:p-6"
         style={{ backgroundColor: theme.backgroundColor }}
       >
         {children}
@@ -390,5 +341,5 @@ export function getStoreUrl(subdomain: string, storeId?: string) {
   if (process.env.NODE_ENV === "development") {
     return `http://${subdomain}.localhost:3001`; // Removes storeId from visible URL
   }
-  return `https://${subdomain}.zylospace.com`; // User-friendly URL
+  return `http://${subdomain}.zylospace.com`; // User-friendly URL
 }

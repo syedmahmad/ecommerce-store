@@ -45,20 +45,31 @@ export const AddProductHeader = ({
   handleDeleteProduct,
 }: any) => {
   return (
-    <Card className="border-2 border-dashed border-gray-200 hover:border-gray-300 transition-colors">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-gray-50 rounded-t-lg p-4 sm:p-6">
+    <Card
+      className="border border-violet-200 rounded-2xl shadow-md 
+                 bg-gradient-to-br from-violet-50 via-indigo-50 to-blue-50
+                 hover:border-violet-400 transition-all"
+    >
+      <CardHeader
+        className="flex flex-col sm:flex-row items-start sm:items-center gap-4 
+                        rounded-t-2xl p-4 sm:p-6 border-b border-violet-100"
+      >
         <div className="flex-1">
-          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-semibold text-gray-900">
+            <Package className="h-5 w-5 sm:h-6 sm:w-6 text-violet-600" />
             <span>Product Inventory</span>
           </CardTitle>
-          <CardDescription className="mt-1 sm:mt-2 text-sm sm:text-base">
-            Manage your products - add new items, update prices, and track
-            inventory
+          <CardDescription className="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600">
+            Manage your products — add new items, update prices, and track
+            inventory.
           </CardDescription>
         </div>
+
+        {/* Add Product Button */}
         <Button
-          className="w-full sm:w-auto bg-primary hover:bg-primary/90 shadow-md"
+          className="w-full sm:w-auto px-4 py-2 rounded-xl 
+                 bg-gradient-to-r from-violet-500 to-indigo-500 text-white font-medium
+                 shadow-md hover:shadow-lg hover:from-violet-600 hover:to-indigo-600 transition"
           onClick={() => setIsAddProductOpen(true)}
           size="sm"
         >
@@ -279,16 +290,27 @@ export const AddProductHeader = ({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center p-6 text-center">
-            <PackageOpen className="h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium">No Products Found</h3>
-            <p className="text-sm text-gray-500 mb-4">
+          <div className="flex flex-col items-center justify-center p-8 text-center rounded-xl border border-gray-200/40 bg-white/60 backdrop-blur-lg shadow-sm">
+            {/* Icon */}
+            <div className="mb-4 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md">
+              <PackageOpen className="h-8 w-8" />
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              No Products Found
+            </h3>
+
+            {/* Subtitle */}
+            <p className="text-sm text-gray-500 mt-2 max-w-sm">
               You haven't added any products yet. Get started by adding your
               first product!
             </p>
+
+            {/* Button */}
             <Button
               onClick={() => setIsAddProductOpen(true)}
-              className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
+              className="mt-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-md transition-transform duration-300 hover:scale-105 w-full sm:w-auto"
               size="sm"
             >
               <Plus className="mr-2 h-4 w-4" />

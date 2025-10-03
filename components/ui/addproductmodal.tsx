@@ -188,29 +188,26 @@ export const AddNewProductModal = ({
     <Dialog open={isAddProductOpen} onOpenChange={setIsAddProductOpen}>
       <DialogContent className="sm:max-w-[95vw] lg:max-w-[925px] max-h-[90vh] overflow-y-auto w-[95vw]">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl sm:text-2xl font-bold text-gray-800 mb-1">
+          <DialogTitle className="text-center text-xl sm:text-2xl font-bold text-primary-600 mb-1">
             Add New Product
           </DialogTitle>
-          <DialogDescription className="text-center text-sm sm:text-base text-gray-600 mb-4">
+          <DialogDescription className="text-center text-sm sm:text-base text-gray-500 mb-4">
             Fill in the product details below. All fields are required unless
             marked optional.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-2">
+        <div className="space-y-8 py-4">
           {/* Section 1: Basic Information */}
-          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-            <h3 className="font-medium text-base sm:text-lg text-gray-700 mb-3 sm:mb-4">
+          <div className="bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-sm p-4 sm:p-6 rounded-xl">
+            <h3 className="font-semibold text-lg sm:text-xl mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Basic Information
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Name */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="name"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
-                >
+                <Label htmlFor="name" className="text-gray-700 font-medium">
                   Product Name <span className="text-red-500">*</span>
                 </Label>
                 <Input
@@ -220,20 +217,17 @@ export const AddNewProductModal = ({
                     setNewProduct({ ...newProduct, name: e.target.value })
                   }
                   placeholder="Enter product name"
-                  className="w-full text-sm sm:text-base"
+                  className="w-full text-sm sm:text-base focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               {/* Price */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="price"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
-                >
+                <Label htmlFor="price" className="text-gray-700 font-medium">
                   Price <span className="text-red-500">*</span>
                 </Label>
                 <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-gray-500 text-sm">
+                  <span className="absolute left-3 top-2.5 text-gray-500">
                     ₨
                   </span>
                   <Input
@@ -246,8 +240,7 @@ export const AddNewProductModal = ({
                         price: Number(e.target.value),
                       })
                     }
-                    placeholder=""
-                    className="w-full pl-8 text-sm sm:text-base"
+                    className="w-full pl-8 focus:ring-2 focus:ring-purple-500"
                     min="0"
                     step="0.01"
                   />
@@ -256,10 +249,7 @@ export const AddNewProductModal = ({
 
               {/* Stock */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="stock"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
-                >
+                <Label htmlFor="stock" className="text-gray-700 font-medium">
                   Stock Quantity
                 </Label>
                 <Input
@@ -271,16 +261,13 @@ export const AddNewProductModal = ({
                   placeholder="Enter stock quantity"
                   type="number"
                   min="0"
-                  className="w-full text-sm sm:text-base"
+                  className="w-full focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               {/* Status */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="status"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
-                >
+                <Label htmlFor="status" className="text-gray-700 font-medium">
                   Status <span className="text-red-500">*</span>
                 </Label>
                 <select
@@ -292,7 +279,7 @@ export const AddNewProductModal = ({
                       status: parseInt(e.target.value),
                     })
                   }
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
                 >
                   <option value="0">Inactive</option>
                   <option value="1">Active</option>
@@ -302,14 +289,14 @@ export const AddNewProductModal = ({
           </div>
 
           {/* Section 2: Description */}
-          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-            <h3 className="font-medium text-base sm:text-lg text-gray-700 mb-3 sm:mb-4">
+          <div className="bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-sm p-4 sm:p-6 rounded-xl">
+            <h3 className="font-semibold text-lg sm:text-xl mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Description
             </h3>
             <div className="space-y-2">
               <Label
                 htmlFor="description"
-                className="text-gray-700 font-medium text-sm sm:text-base"
+                className="text-gray-700 font-medium"
               >
                 Product Description
               </Label>
@@ -317,30 +304,24 @@ export const AddNewProductModal = ({
                 id="description"
                 value={newProduct.description || ""}
                 onChange={(e) =>
-                  setNewProduct({
-                    ...newProduct,
-                    description: e.target.value,
-                  })
+                  setNewProduct({ ...newProduct, description: e.target.value })
                 }
                 placeholder="Enter detailed product description"
-                className="min-h-[120px] text-sm sm:text-base"
+                className="min-h-[120px] focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
 
-          {/* Section 3: Discount & Images */}
-          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-            <h3 className="font-medium text-base sm:text-lg text-gray-700 mb-3 sm:mb-4">
+          {/* Section 3: Media & Pricing */}
+          <div className="bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-sm p-4 sm:p-6 rounded-xl">
+            <h3 className="font-semibold text-lg sm:text-xl mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Media & Pricing
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Discount */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="discount"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
-                >
+                <Label htmlFor="discount" className="text-gray-700 font-medium">
                   Discount (optional)
                 </Label>
                 <div className="relative">
@@ -358,7 +339,7 @@ export const AddNewProductModal = ({
                         discount: Number(e.target.value),
                       })
                     }
-                    className="w-full pl-8 text-sm sm:text-base"
+                    className="w-full pl-8 focus:ring-2 focus:ring-purple-500"
                     min="0"
                     max="100"
                   />
@@ -369,42 +350,39 @@ export const AddNewProductModal = ({
               <div className="space-y-2">
                 <Label
                   htmlFor="imageUpload"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
+                  className="text-gray-700 font-medium"
                 >
                   Product Images <span className="text-red-500">*</span>
                 </Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-md p-3 sm:p-4">
+                <div className="border-2 border-dashed border-gray-300 hover:border-purple-400 transition rounded-md p-4">
                   <input
                     id="imageUpload"
                     type="file"
-                    name="file"
                     accept="image/*"
                     multiple
                     onChange={(e) => handleImageUpload(e)}
-                    className="w-full text-xs sm:text-sm text-gray-500
-                          file:mr-2 sm:file:mr-4 file:py-1 sm:file:py-2 file:px-2 sm:file:px-4
-                          file:rounded-md file:border-0
-                          file:text-xs sm:file:text-sm file:font-semibold
-                          file:bg-blue-50 file:text-blue-700
-                          hover:file:bg-blue-100"
+                    className="w-full text-sm text-gray-500
+              file:mr-3 file:py-2 file:px-4
+              file:rounded-md file:border-0
+              file:font-semibold
+              file:bg-purple-50 file:text-purple-700
+              hover:file:bg-purple-100"
                   />
-                  <p className="text-xs text-gray-500 mt-1 sm:mt-2">
+                  <p className="text-xs text-gray-500 mt-2">
                     Upload high-quality product images (max 5MB each)
                   </p>
                   {newProduct.imageUrls.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap gap-3">
                       {newProduct.imageUrls.map((url, index) => (
-                        <div key={index} className="relative">
+                        <div key={index} className="relative group">
                           <img
                             src={url}
                             alt={`Product ${index + 1}`}
-                            className="h-16 w-16 object-cover rounded-md"
+                            className="h-20 w-20 object-cover rounded-md shadow-sm group-hover:scale-105 transition"
                           />
                           <button
                             type="button"
-                            // TODO: Need to look into it.
-                            // onClick={() => removeImage(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"
                           >
                             <X className="h-3 w-3" />
                           </button>
@@ -418,16 +396,13 @@ export const AddNewProductModal = ({
           </div>
 
           {/* Section 4: Sale Settings */}
-          <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 gap-2 sm:gap-0">
-              <h3 className="font-medium text-base sm:text-lg text-gray-700">
+          <div className="bg-white/60 backdrop-blur-md border border-gray-200/50 shadow-sm p-4 sm:p-6 rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+              <h3 className="font-semibold text-lg sm:text-xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 Sale Settings
               </h3>
               <div className="flex items-center space-x-2">
-                <Label
-                  htmlFor="isOnSale"
-                  className="text-gray-700 font-medium text-sm sm:text-base"
-                >
+                <Label htmlFor="isOnSale" className="text-gray-700 font-medium">
                   Enable Sale
                 </Label>
                 <select
@@ -439,14 +414,13 @@ export const AddNewProductModal = ({
                       isOnSale: parseInt(e.target.value, 10),
                     })
                   }
-                  className="border border-gray-300 rounded-md px-2 sm:px-3 py-1 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white"
                 >
                   <option value="0">No</option>
                   <option value="1">Yes</option>
                 </select>
               </div>
             </div>
-
             {newProduct.isOnSale === 1 && (
               <div className="space-y-3 sm:space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -581,7 +555,9 @@ export const AddNewProductModal = ({
           <button
             type="button"
             onClick={() => setIsAddProductOpen(false)}
-            className="px-3 sm:px-4 py-1 sm:py-2 rounded-md text-sm sm:text-base text-gray-700 font-medium bg-white border border-gray-300 hover:bg-gray-50"
+            className="px-3 sm:px-4 py-1 sm:py-2 rounded-md text-sm sm:text-base font-medium 
+               text-gray-700 bg-white border border-gray-300 
+               hover:bg-gray-100 transition-colors duration-200"
           >
             Cancel
           </button>
@@ -594,7 +570,11 @@ export const AddNewProductModal = ({
               !newProduct.price ||
               newProduct.imageUrls.length === 0
             }
-            className={`px-4 sm:px-6 py-1 sm:py-2 rounded-md text-sm sm:text-base text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-colors duration-200`}
+            className={`px-4 sm:px-6 py-1 sm:py-2 rounded-md text-sm sm:text-base text-white font-semibold 
+                bg-gradient-to-r from-purple-600 to-blue-600 
+                hover:from-purple-700 hover:to-blue-700 
+                disabled:opacity-50 disabled:cursor-not-allowed 
+                flex items-center justify-center gap-2 transition-all duration-200`}
           >
             {isUploading ? (
               <>

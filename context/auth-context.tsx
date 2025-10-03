@@ -52,8 +52,9 @@ export function AuthProvider({ children }: any) {
       const user = response.data;
 
       if (response.status === 201) {
-        toast.success(`Weclome ${user.name}`);
+        toast.success(`Welcome ${user.name}`);
         const { token } = response.data;
+        console.log("..........auth context...", response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
 
         // ✅ Store the token in a cookie
@@ -136,22 +137,23 @@ export function AuthProvider({ children }: any) {
 
   const requestPasswordReset = async (email: string) => {
     try {
-
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const response = await axios.post(`${API_URL}/auth/forgot-password`, {
         email,
       });
 
-      const resData  = response.data;
+      const resData = response.data;
 
       if (!resData.success) {
         throw new Error(resData?.data.error || "Password reset request failed");
       }
 
-      toast.success(`Password Rest link has been sent to: ${email}`)
+      toast.success(`Password Rest link has been sent to: ${email}`);
       return true;
     } catch (error: any) {
-      toast.error('Something went wrong while sending the reset link. Please try again.')
+      toast.error(
+        "Something went wrong while sending the reset link. Please try again."
+      );
       return false;
     }
   };
@@ -162,18 +164,15 @@ export function AuthProvider({ children }: any) {
     password: string
   ) => {
     try {
-      // 
+      //
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
       const response = await axios.post(`${API_URL}/auth/reset-password`, {
         email,
         resetToken: token,
-        password
+        password,
       });
 
-
-      console.log('response',response)
-
-
+      console.log("response", response);
 
       // const response = await fetch("/api/password-reset/confirm", {
       //   method: "POST",

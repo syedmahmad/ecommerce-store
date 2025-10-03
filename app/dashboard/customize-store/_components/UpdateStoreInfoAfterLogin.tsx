@@ -8,7 +8,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 import imageCompression from "browser-image-compression";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export const UpdateStoreInfoAfterLogin = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -159,6 +158,7 @@ export const UpdateStoreInfoAfterLogin = () => {
   };
 
   const [removing, setIsRemoving] = useState(false);
+
   const removeLogo = async (storeInfo: any) => {
     try {
       setIsRemoving(true);
@@ -287,14 +287,14 @@ export const UpdateStoreInfoAfterLogin = () => {
           <div className="md:grid md:grid-cols-3 md:gap-8">
             {/* Left side - Form */}
             <div className="md:col-span-2">
-              <div className="px-6 py-6 bg-white sm:p-6 shadow-lg rounded-xl border border-gray-100">
+              <div className="px-6 py-6 bg-white sm:p-6 shadow-sm rounded-xl border border-gray-100">
                 <form onSubmit={handleSubmit}>
                   <div className="space-y-8">
                     {/* Header Section */}
                     <div className="border-b border-gray-200 pb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <h3 className="text-lg font-semibold flex items-center">
                         <svg
-                          className="w-5 h-5 mr-2 text-indigo-600"
+                          className="w-5 h-5 mr-2 text-purple-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -306,7 +306,9 @@ export const UpdateStoreInfoAfterLogin = () => {
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        Header Information
+                        <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                          Header Information
+                        </span>
                       </h3>
                     </div>
 
@@ -325,7 +327,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                           id="name"
                           value={storeInfo.name}
                           onChange={handleInputChange}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border pl-4"
+                          className="block w-full rounded-md border-gray-100 shadow-sm focus:border-purple-600 focus:ring-purple-600 sm:text-sm p-2.5 border pl-4"
                           placeholder="Your store name"
                         />
                       </div>
@@ -340,7 +342,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                         Store Domain
                       </label>
                       <div className="flex rounded-md shadow-sm">
-                        <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm py-2.5">
+                        <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-100 bg-gray-50 px-3 text-gray-500 sm:text-sm py-2.5">
                           https://
                         </span>
                         <input
@@ -358,9 +360,9 @@ export const UpdateStoreInfoAfterLogin = () => {
                               },
                             });
                           }}
-                          className="block w-full min-w-0 flex-1 rounded-none border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border-y"
+                          className="block w-full min-w-0 flex-1 rounded-none border-gray-100 focus:border-purple-600 focus:ring-purple-600 sm:text-sm p-2.5 border-y"
                         />
-                        <span className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm py-2.5">
+                        <span className="inline-flex items-center rounded-r-md border border-l-0 border-gray-100 bg-gray-50 px-3 text-gray-500 sm:text-sm py-2.5">
                           .{storeInfo.domain.split(".").slice(1).join(".")}
                         </span>
                       </div>
@@ -385,7 +387,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                           value={storeInfo.contactNumber}
                           onChange={handleInputChange}
                           placeholder="3001234567"
-                          className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pl-12 p-2.5 border ${
+                          className={`block w-full rounded-md border-gray-100 shadow-sm focus:border-purple-600 focus:ring-purple-600 sm:text-sm pl-12 p-2.5 border ${
                             contactNumberError ? "border-red-500" : ""
                           }`}
                         />
@@ -407,7 +409,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                         Store Logo
                       </label>
                       <div className="flex items-center space-x-4">
-                        <div className="flex-shrink-0 h-16 w-16 rounded-full border-2 border-gray-200 overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <div className="flex-shrink-0 h-16 w-16 rounded-full border-2 border-gray-100 overflow-hidden bg-gray-100 flex items-center justify-center">
                           <img
                             className="h-full w-full object-cover"
                             src={
@@ -420,16 +422,19 @@ export const UpdateStoreInfoAfterLogin = () => {
                         </div>
                         <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                           {storeInfo.logo === null && (
-                          <button
-                            type="button"
-                            onClick={triggerFileInput}
-                            disabled={isLoading}
-                            aria-busy={isLoading}
-                            className={`inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
-                              ${isLoading ? 'opacity-50 cursor-not-allowed text-gray-400 bg-gray-100' : 'text-gray-700 hover:bg-gray-50'}
-                            `}
-                          >
-
+                            <button
+                              type="button"
+                              onClick={triggerFileInput}
+                              disabled={isLoading}
+                              aria-busy={isLoading}
+                              className={`inline-flex items-center rounded-md border border-gray-100 bg-white px-3 py-2 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 
+                    ${
+                      isLoading
+                        ? "opacity-50 cursor-not-allowed text-gray-400 bg-gray-100"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }
+                  `}
+                            >
                               {isLoading ? "Uploading..." : "Upload Logo"}
                               {isLoading && (
                                 <Loader2 className="ml-2 h-3 w-3 animate-spin" />
@@ -441,10 +446,10 @@ export const UpdateStoreInfoAfterLogin = () => {
                               type="button"
                               onClick={() => removeLogo(storeInfo)}
                               disabled={isLoading || removing}
-                              className={`inline-flex items-center rounded-md border px-3 py-2 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                              className={`inline-flex items-center rounded-md border px-3 py-2 text-xs font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 ${
                                 isLoading || removing
                                   ? "cursor-not-allowed bg-gray-100 text-gray-400 border-gray-200"
-                                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                                  : "bg-white text-gray-700 border-gray-100 hover:bg-gray-50"
                               }`}
                             >
                               {removing ? "Removing..." : "Remove Logo"}
@@ -470,9 +475,9 @@ export const UpdateStoreInfoAfterLogin = () => {
                     {/* Footer Section */}
                     <div className="pt-6 border-t border-gray-200">
                       <div className="pb-6">
-                        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                        <h3 className="text-lg font-semibold flex items-center">
                           <svg
-                            className="w-5 h-5 mr-2 text-indigo-600"
+                            className="w-5 h-5 mr-2 text-purple-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -490,7 +495,9 @@ export const UpdateStoreInfoAfterLogin = () => {
                               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                             />
                           </svg>
-                          Footer Information
+                          <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                            Footer Information
+                          </span>
                         </h3>
                       </div>
 
@@ -509,7 +516,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                           value={storeInfo.location}
                           onChange={handleInputChange}
                           maxLength={45}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border"
+                          className="block w-full rounded-md border-gray-100 shadow-sm focus:border-purple-600 focus:ring-purple-600 sm:text-sm p-2.5 border"
                           placeholder="Your store's physical address"
                         />
                         <div className="flex justify-between mt-1">
@@ -538,7 +545,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                           value={storeInfo?.description}
                           onChange={handleInputChange}
                           maxLength={45}
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border"
+                          className="block w-full rounded-md border-gray-100 shadow-sm focus:border-purple-600 focus:ring-purple-600 sm:text-sm p-2.5 border"
                           placeholder="Brief description for your store"
                         />
                         <div className="flex justify-between mt-1">
@@ -603,7 +610,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                       <button
                         type="submit"
                         disabled={isLoading}
-                        className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
+                        className="inline-flex items-center rounded-md border border-transparent bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:from-purple-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-200"
                       >
                         {isLoading ? (
                           <>
@@ -637,15 +644,19 @@ export const UpdateStoreInfoAfterLogin = () => {
 
             {/* Right side - Preview */}
             <div className="mt-5 md:mt-0 md:col-span-1">
-              <div className="px-6 py-6 bg-white sm:p-6 shadow-lg rounded-xl sticky top-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b border-gray-200">
-                  Store Preview
+              <div className="px-6 py-6 bg-white sm:p-6 shadow-sm rounded-xl border border-gray-100 sticky top-8">
+                {/* Title */}
+                <h2 className="text-xl font-bold mb-6 pb-2 border-b border-gray-100">
+                  <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    Store Preview
+                  </span>
                 </h2>
 
-                <div className="border border-gray-200 rounded-xl p-6 bg-gray-50">
+                {/* Preview Card */}
+                <div className="border border-gray-100 rounded-xl p-6 bg-gray-50">
                   <div className="flex flex-col items-center text-center space-y-4">
                     {/* Logo Preview */}
-                    <div className="h-28 w-28 rounded-full bg-white border-2 border-gray-200 overflow-hidden mb-4 shadow-sm">
+                    <div className="h-28 w-28 rounded-full bg-white border-2 border-gray-100 overflow-hidden mb-4 shadow-sm">
                       <img
                         className="h-full w-full object-cover"
                         src={
@@ -663,7 +674,7 @@ export const UpdateStoreInfoAfterLogin = () => {
                     </h3>
 
                     {/* Domain Preview */}
-                    <p className="text-sm text-indigo-600 font-medium">
+                    <p className="text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                       https://{storeInfo.domain}
                     </p>
 
@@ -685,8 +696,8 @@ export const UpdateStoreInfoAfterLogin = () => {
                       </div>
                     )}
 
-              {/* Location  */}
-                    {storeInfo.contactNumber ? (
+                    {/* Location Preview */}
+                    {storeInfo.location ? (
                       <div className="mt-2">
                         <p className="text-sm font-medium text-gray-700">
                           Location:
@@ -711,7 +722,8 @@ export const UpdateStoreInfoAfterLogin = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-200">
+                {/* Notes */}
+                <div className="mt-6 pt-4 border-t border-gray-100">
                   <h3 className="text-sm font-medium text-gray-700 mb-2">
                     Preview Notes
                   </h3>
