@@ -1,4 +1,3 @@
-// axios.ts
 import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
@@ -10,18 +9,31 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // 🔑 ensures cookies are sent with requests
 });
 
-// 🔹 Request Interceptor (inject JWT from cookies)
+// 🔹 Request Interceptor
 axiosInstance.interceptors.request.use((config) => {
-  const token = Cookies.get("authToken"); // ✅ get from cookie
+  // Read from cookie first
+  let token = Cookies.get("authToken");
+
+  // Fallback: read from localStorage (in case cookie not accessible in JS)
+  if (!token) {
+    const user = localStorage.getItem("user");
+    if (user) {
+      token = JSON.parse(user)?.token;
+    }
+  }
+
+  // Attach Authorization header if token exists
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
   return config;
 });
 
-// 🔹 Response Interceptor (centralized error handling)
+// 🔹 Response Interceptor
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError<any>) => {
@@ -34,6 +46,7 @@ axiosInstance.interceptors.response.use(
     ) {
       toast.warn(errorMessage);
       Cookies.remove("authToken");
+      localStorage.removeItem("user");
       window.location.href = "/";
     }
 
@@ -41,7 +54,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// 🔹 API Helpers (super clean now)
+// 🔹 API Helpers
 const GET = (endPoint: string, config?: any) =>
   axiosInstance.get(endPoint, config);
 const POST = (endPoint: string, data?: any, config?: any) =>

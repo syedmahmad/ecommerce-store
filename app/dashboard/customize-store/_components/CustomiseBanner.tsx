@@ -27,7 +27,7 @@ export const CustomiseBanner = () => {
         setUser(user);
       }
     }
-  }, [user]);
+  }, []);
 
   const getBannerInfoData = useQuery({
     queryKey: ["banner-info"],

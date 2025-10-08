@@ -49,7 +49,7 @@ export default function DashboardPage() {
   const { data } = useQuery({
     queryKey: ["our-customer-section", userId],
     queryFn: async () => {
-      const endpoint = `our-customer-section/${userId}`;
+      const endpoint = `our-customer-section/by-id/${userId}`;
       return GET(endpoint);
     },
     enabled: !!userId,

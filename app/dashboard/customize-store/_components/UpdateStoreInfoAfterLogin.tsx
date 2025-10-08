@@ -32,7 +32,6 @@ export const UpdateStoreInfoAfterLogin = () => {
   });
 
   const storeInfoFromBE = getStoreInfo?.data?.data;
-  console.log("storeInfoFromBE", getStoreInfo);
 
   const queryClient = useQueryClient();
   const reFetchStoreInfo = () => {
