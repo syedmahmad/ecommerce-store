@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import useScrollAnimation from "../../hooks/useScrollAnimation";
+"use client";
+
+import React from "react";
+import { motion } from "framer-motion";
+import { containerVariants, itemVariants, viewportOptions } from "@/constants/animations";
 
 interface AdvantageItemProps {
   iconClass: string;
   title: string;
   description: string;
 }
-
-import { motion } from "framer-motion";
 
 const AdvantageItem: React.FC<AdvantageItemProps> = ({
   iconClass,
@@ -88,32 +89,91 @@ const MetricCard: React.FC<MetricCardProps> = ({
 };
 
 const ZyloSpaceAdvantage: React.FC = () => {
-  // @ts-ignore
-  const sectionRef = useScrollAnimation<HTMLElement>();
-
   return (
-    <section id="advantage" className="py-20 bg-white" ref={sectionRef}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+    <section id="advantage" className="py-20 bg-white relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-20 left-20 w-64 h-64 bg-primary-100 rounded-full blur-3xl opacity-30"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOptions}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2
+            className="text-4xl lg:text-5xl font-bold text-neutral-900 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
             The <span className="gradient-text">ZyloSpace</span> Advantage
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-xl text-neutral-600 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             Discover why leading brands choose ZyloSpace over traditional
             e-commerce platforms. We're not just another solution – we're your
             growth partner.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
-          <div className="animate-slide-left">
+        <motion.div
+          className="grid lg:grid-cols-2 gap-16 items-center mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+          variants={containerVariants}
+        >
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.02 }}
+            className="relative"
+          >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-2xl blur-2xl opacity-30"
+              animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.4, 0.3],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
             <img
-              className="rounded-2xl shadow-xl"
+              className="relative rounded-2xl shadow-xl"
               src="/assets/advantages.png"
               alt="comparison chart showing ZyloSpace vs competitors, modern infographic design, purple and blue gradients"
             />
-          </div>
-          <div className="space-y-8 animate-slide-right">
+          </motion.div>
+          <motion.div
+            className="space-y-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportOptions}
+          >
             <AdvantageItem
               iconClass="fa-solid fa-bolt"
               title="Lightning-Fast Setup"
@@ -129,11 +189,33 @@ const ZyloSpaceAdvantage: React.FC = () => {
               title="Unlimited Scalability"
               description="From startup to enterprise. Our platform grows with you, handling millions of products and customers."
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-3xl p-12">
-          <div className="grid lg:grid-cols-4 gap-8">
+        <motion.div
+          className="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-3xl p-12 relative overflow-hidden"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOptions}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Animated background pattern */}
+          <motion.div
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `radial-gradient(circle, rgba(99, 102, 241, 0.3) 1px, transparent 1px)`,
+              backgroundSize: '30px 30px',
+            }}
+            animate={{
+              backgroundPosition: ['0 0', '30px 30px'],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+          <div className="grid lg:grid-cols-4 gap-8 relative z-10">
             <MetricCard
               iconClass="fa-solid fa-clock"
               value="< 2min"
@@ -159,7 +241,7 @@ const ZyloSpaceAdvantage: React.FC = () => {
               delay="0.3s"
             />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

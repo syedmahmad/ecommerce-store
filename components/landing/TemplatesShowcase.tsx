@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
-import useScrollAnimation from "../../hooks/useScrollAnimation";
+import { motion } from "framer-motion";
+import { itemVariants, cardHoverVariants, viewportOptions } from "@/constants/animations";
 
 interface TemplateCardProps {
   imageSrc: string;
@@ -7,7 +10,7 @@ interface TemplateCardProps {
   title: string;
   description: string;
   variations: string;
-  delay: string;
+  index: number;
 }
 
 const TemplateCard: React.FC<TemplateCardProps> = ({
@@ -16,60 +19,151 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
   title,
   description,
   variations,
-  delay,
+  index,
 }) => {
-  // @ts-ignore
-  const cardRef = useScrollAnimation<HTMLDivElement>();
   return (
-    <div
-      className="bg-white/10 glass-effect rounded-2xl p-6 hover-lift animate-fade-up"
-      style={{ animationDelay: delay }}
-      // @ts-ignore
-      ref={cardRef}
+    <motion.div
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewportOptions}
+      custom={index}
+      className="group relative bg-white/10 backdrop-blur-md rounded-2xl p-6 overflow-hidden border border-white/20 hover:border-white/40 transition-all"
+      whileHover={{ y: -8, scale: 1.02 }}
     >
-      <img className="rounded-xl mb-6" src={imageSrc} alt={imageAlt} />
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="text-gray-300 mb-4">{description}</p>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-400">{variations} variations</span>
-        {/* <button className="text-purple-400 hover:text-purple-300">
-          <i className="fa-solid fa-arrow-right"></i>
-        </button> */}
+      {/* Animated gradient overlay */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-secondary-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        initial={false}
+      />
+      
+      {/* Image with hover effect */}
+      <motion.div
+        className="relative rounded-xl mb-6 overflow-hidden"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.3 }}
+      >
+        <img className="w-full h-auto" src={imageSrc} alt={imageAlt} />
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-t from-primary-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+          initial={false}
+        />
+      </motion.div>
+      
+      <div className="relative z-10">
+        <h3 className="text-xl font-bold mb-2 text-white">{title}</h3>
+        <p className="text-primary-200 mb-4">{description}</p>
+        <div className="flex items-center justify-between">
+          <motion.span
+            className="text-sm text-primary-300"
+            whileHover={{ scale: 1.1 }}
+          >
+            {variations} variations
+          </motion.span>
+          <motion.div
+            className="text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity"
+            animate={{ x: [0, 5, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <i className="fa-solid fa-arrow-right"></i>
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const TemplatesShowcase: React.FC = () => {
-  // @ts-ignore
-  const sectionRef = useScrollAnimation<HTMLElement>();
-
   return (
     <section
       id="templates"
-      className="py-20 bg-gradient-to-br from-gray-900 to-purple-900 text-white"
-      ref={sectionRef}
+      className="py-20 bg-gradient-to-br from-neutral-900 via-primary-900 to-secondary-900 text-white relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+      {/* Animated background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute top-0 right-0 w-96 h-96 bg-primary-500 rounded-full blur-3xl opacity-20"
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, 50, 0],
+            y: [0, 30, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-0 left-0 w-96 h-96 bg-secondary-500 rounded-full blur-3xl opacity-20"
+          animate={{
+            scale: [1, 1.3, 1],
+            x: [0, -50, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Section Header */}
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOptions}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2
+            className="text-4xl lg:text-5xl font-bold mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
             Stunning Templates for Every Industry
-          </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-xl text-primary-200 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             Choose from our curated collection of professional templates. Each
             one is optimized for conversions and designed by world-class
             designers.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        {/* Template Cards Grid */}
+        <motion.div
+          className="grid md:grid-cols-3 gap-8 mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+              },
+            },
+          }}
+        >
           <TemplateCard
             imageSrc="/assets/template1.png"
             imageAlt="modern fashion e-commerce template, clean design, purple accents, product showcase"
             title="Fashion & Apparel"
             description="Perfect for clothing brands and fashion retailers"
             variations="12"
-            delay="0s"
+            index={0}
           />
           <TemplateCard
             imageSrc="/assets/template2.png"
@@ -77,7 +171,7 @@ const TemplatesShowcase: React.FC = () => {
             title="Electronics & Tech"
             description="Showcase gadgets and technology products"
             variations="8"
-            delay="0.1s"
+            index={1}
           />
           <TemplateCard
             imageSrc="/assets/template3.png"
@@ -85,16 +179,9 @@ const TemplatesShowcase: React.FC = () => {
             title="Home & Lifestyle"
             description="Beautiful templates for home goods and decor"
             variations="15"
-            delay="0.2s"
+            index={2}
           />
-        </div>
-
-        {/* <div className="text-center">
-          <button className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <i className="fa-solid fa-eye mr-2"></i>
-            View All 100+ Templates
-          </button>
-        </div> */}
+        </motion.div>
       </div>
     </section>
   );

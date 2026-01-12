@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle, Mail, Lock, LogIn } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -97,24 +97,31 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md rounded-2xl shadow-xl border border-gray-100 animate-fade-up bg-white">
-        <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-extrabold">
-            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Welcome Back
-            </span>
-          </CardTitle>
-          <CardDescription className="text-gray-600">
-            Sign in to continue to ZyloSpace
-          </CardDescription>
-        </CardHeader>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md">
+        <Card className="rounded-2xl shadow-2xl border-0 bg-white/80 backdrop-blur-sm overflow-hidden">
+          {/* Decorative gradient header */}
+          <div className="h-2 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600"></div>
+          
+          <CardHeader className="space-y-3 text-center pb-8 pt-8">
+            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg mb-2">
+              <LogIn className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-3xl font-extrabold tracking-tight">
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Welcome Back
+              </span>
+            </CardTitle>
+            <CardDescription className="text-gray-600 text-base">
+              Sign in to continue to ZyloSpace
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent className="space-y-6">
+          <CardContent className="space-y-6 px-8 pb-8">
           {(error || errorMessage) && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="border-red-200 bg-red-50 animate-in slide-in-from-top-2">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error || errorMessage}</AlertDescription>
+              <AlertDescription className="text-sm font-medium">{error || errorMessage}</AlertDescription>
             </Alert>
           )}
 
@@ -126,14 +133,17 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-gray-700">Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="name@example.com"
-                        className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
-                        {...field}
-                        disabled={isLoading}
-                      />
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          placeholder="name@example.com"
+                          className="pl-10 border-gray-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition-all duration-200 h-11"
+                          {...field}
+                          disabled={isLoading}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -146,21 +156,23 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-gray-700">Password</FormLabel>
                     <FormControl>
                       <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
-                          className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
+                          className="pl-10 pr-10 border-gray-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 transition-all duration-200 h-11"
                           {...field}
                           disabled={isLoading}
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword((prev) => !prev)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-600 transition-colors duration-200 p-1 rounded-md hover:bg-purple-50"
                           tabIndex={-1}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
                         >
                           {showPassword ? (
                             <EyeOff size={18} />
@@ -176,10 +188,10 @@ export default function LoginPage() {
               />
 
               {/* Forgot password */}
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-end pt-1">
                 <Link
                   href="/forgot-password"
-                  className="text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline"
+                  className="text-sm font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline transition-all duration-200 hover:opacity-80"
                 >
                   Forgot password?
                 </Link>
@@ -188,7 +200,7 @@ export default function LoginPage() {
               {/* Sign in Button */}
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 h-11 text-base font-semibold mt-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -197,43 +209,49 @@ export default function LoginPage() {
                     Signing in...
                   </>
                 ) : (
-                  "Sign in"
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign in
+                  </>
                 )}
               </Button>
             </form>
           </Form>
 
           {/* Divider */}
-          <div className="relative">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-500">
+              <span className="bg-white px-3 text-gray-500 font-medium tracking-wider">
                 Or continue with
               </span>
             </div>
           </div>
 
           {/* Google Button */}
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => console.log("Login Failed")}
-          />
-        </CardContent>
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => console.log("Login Failed")}
+            />
+          </div>
+          </CardContent>
 
-        <CardFooter className="flex justify-center">
+          <CardFooter className="flex justify-center border-t border-gray-100 bg-gray-50/50 py-6">
           <p className="text-sm text-gray-600">
             Don&apos;t have an account?{" "}
             <Link
               href="/register"
-              className="font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline"
+              className="font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline transition-all duration-200 hover:opacity-80"
             >
               Sign up
             </Link>
           </p>
-        </CardFooter>
-      </Card>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }

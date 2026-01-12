@@ -244,18 +244,20 @@ export default function RegisterPage() {
   }, [shouldProceed]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 px-4 py-12 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md shadow-lg rounded-xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center text-primary-600">
-            Create an account
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4 py-12 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md rounded-2xl shadow-xl border border-gray-100 animate-fade-up bg-white">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-extrabold">
+            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Create an account
+            </span>
           </CardTitle>
-          <CardDescription className="text-center text-gray-500">
+          <CardDescription className="text-gray-600">
             Enter your information to create an account
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           {error && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -265,20 +267,20 @@ export default function RegisterPage() {
 
           {/* Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               {/* Full Name */}
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">Full Name</FormLabel>
+                    <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="John Doe"
                         {...field}
                         disabled={isLoading}
-                        className="focus:ring-2 focus:ring-primary/50"
+                        className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                       />
                     </FormControl>
                     <FormMessage />
@@ -292,13 +294,13 @@ export default function RegisterPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">Email</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="name@example.com"
                         {...field}
                         disabled={isLoading}
-                        className="focus:ring-2 focus:ring-primary/50"
+                        className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                       />
                     </FormControl>
                     <FormMessage />
@@ -312,7 +314,7 @@ export default function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">Password</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -320,7 +322,7 @@ export default function RegisterPage() {
                           placeholder="••••••••"
                           {...field}
                           disabled={isLoading}
-                          className="focus:ring-2 focus:ring-primary/50"
+                          className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                         />
                         <button
                           type="button"
@@ -347,9 +349,7 @@ export default function RegisterPage() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">
-                      Confirm Password
-                    </FormLabel>
+                    <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -357,7 +357,7 @@ export default function RegisterPage() {
                           placeholder="••••••••"
                           {...field}
                           disabled={isLoading}
-                          className="focus:ring-2 focus:ring-primary/50"
+                          className="border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                         />
                         <button
                           type="button"
@@ -383,7 +383,7 @@ export default function RegisterPage() {
               {/* Submit */}
               <Button
                 type="submit"
-                className="w-full bg-primary hover:bg-primary/90"
+                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -404,7 +404,7 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-400">
+              <span className="bg-white px-2 text-gray-500">
                 Or continue with
               </span>
             </div>
@@ -422,7 +422,7 @@ export default function RegisterPage() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-primary hover:underline"
+              className="font-medium bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent hover:underline"
             >
               Sign in
             </Link>
@@ -441,18 +441,20 @@ export default function RegisterPage() {
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
           <DialogHeader>
-            <DialogTitle className="text-center text-primary-600">
-              Confirm Your Email
+            <DialogTitle className="text-center">
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent border-rounded">
+                Confirm Your Email
+              </span>
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="text-center space-y-3">
-              <Mail className="mx-auto h-12 w-12 text-primary" />
+              <Mail className="mx-auto h-12 w-12 text-purple-600" />
               <p className="text-lg font-medium text-gray-700">
                 Is this the correct email address?
               </p>
               <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <p className="font-semibold text-primary">
+                <p className="font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                   {form.getValues("email")}
                 </p>
               </div>
@@ -471,7 +473,7 @@ export default function RegisterPage() {
               </Button>
               <Button
                 type="button"
-                className="px-6 py-3 bg-primary hover:bg-primary/90"
+                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
                 onClick={() => {
                   setShouldProceed(true), setShowConfirmEmailModal(false);
                 }}
@@ -494,8 +496,10 @@ export default function RegisterPage() {
             onEscapeKeyDown={(e) => e.preventDefault()}
           >
             <DialogHeader>
-              <DialogTitle className="text-primary-600">
-                Verify Your Email
+              <DialogTitle>
+                <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  Verify Your Email
+                </span>
               </DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -542,7 +546,7 @@ export default function RegisterPage() {
                           document.getElementById(`otp-${index - 1}`)?.focus();
                         }
                       }}
-                      className="w-10 h-12 text-center text-xl focus:ring-2 focus:ring-primary/50"
+                      className="w-10 h-12 text-center text-xl border-gray-200 focus:border-purple-600 focus:ring-purple-600"
                     />
                   ))}
                 </div>
@@ -562,7 +566,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={handleOtpVerification}
                   disabled={isLoading || otp.length !== 6}
-                  className="bg-primary hover:bg-primary/90"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
                 >
                   {isLoading ? (
                     <>

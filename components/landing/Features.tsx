@@ -1,12 +1,15 @@
+"use client";
+
 import React from "react";
-import useScrollAnimation from "../../hooks/useScrollAnimation";
+// import { motion } from "framer-motion";
+import { itemVariants, viewportOptions } from "@/constants/animations";
 
 interface FeatureCardProps {
   iconClass: string;
   title: string;
   description: string;
   bulletPoints: string[];
-  delay: string;
+  index: number;
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -14,30 +17,65 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   title,
   description,
   bulletPoints,
-  delay,
+  index,
 }) => {
-  const cardRef = useScrollAnimation();
   return (
-    <div
-      className="bg-white rounded-2xl p-8 shadow-lg hover-lift animate-fade-up"
-      style={{ animationDelay: delay }}
-      // @ts-ignore
-      ref={cardRef}
+    <motion.div
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewportOptions}
+      custom={index}
+      className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
     >
-      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mb-6">
-        <i className={`${iconClass} text-white text-2xl`}></i>
-      </div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">{title}</h3>
-      <p className="text-gray-600 mb-6">{description}</p>
-      <ul className="space-y-2 text-sm text-gray-600">
-        {bulletPoints.map((point, index) => (
-          <li key={index} className="flex items-center">
-            <i className="fa-solid fa-check text-green-500 mr-2"></i>
+      {/* Animated gradient background on hover */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-primary-50 to-secondary-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        initial={false}
+      />
+
+      {/* Icon with animation */}
+      <motion.div
+        className="relative w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center mb-6 shadow-md"
+        whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.i
+          className={`${iconClass} text-white text-2xl`}
+          animate={{ y: [0, -5, 0] }}
+          transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 }}
+        />
+      </motion.div>
+
+      <h3 className="text-2xl font-bold text-neutral-900 mb-4 relative z-10">
+        {title}
+      </h3>
+      <p className="text-gray-600 mb-6 relative z-10">{description}</p>
+
+      <ul className="space-y-2 text-sm text-gray-600 relative z-10">
+        {bulletPoints.map((point, idx) => (
+          <motion.li
+            key={idx}
+            className="flex items-center"
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOptions}
+            transition={{ delay: 0.3 + idx * 0.1 }}
+          >
+            <motion.span
+              className="mr-2"
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={viewportOptions}
+              transition={{ delay: 0.4 + idx * 0.1, type: "spring" }}
+            >
+              <i className="fa-solid fa-check text-success-500"></i>
+            </motion.span>
             {point}
-          </li>
+          </motion.li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 };
 
@@ -55,49 +93,103 @@ const InfrastructureFeature: React.FC<InfrastructureFeatureProps> = ({
   description,
 }) => (
   <motion.div
-    className="flex items-start space-x-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition cursor-pointer relative group"
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    whileHover={{ scale: 1.02, y: -2 }}
-    transition={{ duration: 0.4, ease: "easeOut" }}
-    viewport={{ once: true }}
+    className="flex items-start space-x-4 p-4 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all cursor-pointer relative group overflow-hidden"
+    variants={itemVariants}
+    whileHover={{ scale: 1.03, y: -4 }}
+    transition={{ duration: 0.3, ease: "easeOut" }}
   >
+    {/* Animated background gradient */}
+    <motion.div
+      className="absolute inset-0 bg-gradient-to-br from-primary-50 to-secondary-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      initial={false}
+    />
+
     {/* Icon wrapper */}
-    <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+    <motion.div
+      className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center shadow-md z-10"
+      whileHover={{ rotate: [0, -10, 10, 0], scale: 1.1 }}
+      transition={{ duration: 0.5 }}
+    >
       <i className={`${iconClass} text-white text-lg`} />
-    </div>
+    </motion.div>
 
     {/* Text content */}
-    <div>
-      <h4 className="font-semibold text-gray-900 mb-1">{title}</h4>
-      <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+    <div className="relative z-10">
+      <h4 className="font-semibold text-neutral-900 mb-1">{title}</h4>
+      <p className="text-sm text-neutral-600 leading-relaxed">{description}</p>
     </div>
   </motion.div>
 );
 
 const Features: React.FC = () => {
-  // @ts-ignore
-  const sectionRef = useScrollAnimation<HTMLElement>();
-
   return (
     <section
       id="features"
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
-      ref={sectionRef}
+      className="py-20 bg-gradient-to-br from-neutral-50 via-primary-50/30 to-secondary-50/30 relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-            Everything You Need to
-            <span className="gradient-text"> Succeed Online</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-20 right-20 w-64 h-64 bg-primary-200 rounded-full blur-3xl opacity-20"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Section Header */}
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOptions}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2
+            className="text-4xl lg:text-5xl font-bold text-neutral-900 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            Everything You Need to{" "}
+            <span className="gradient-text">Succeed Online</span>
+          </motion.h2>
+          <motion.p
+            className="text-xl text-neutral-600 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             Our comprehensive e-commerce platform provides all the tools and
             features you need to build, launch, and scale your online business.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8 mb-16">
+        {/* Feature Cards Grid */}
+        <motion.div
+          className="grid lg:grid-cols-3 gap-8 mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.15,
+              },
+            },
+          }}
+        >
           <FeatureCard
             iconClass="fa-solid fa-rocket"
             title="Launch in Minutes"
@@ -107,7 +199,7 @@ const Features: React.FC = () => {
               "Pre-configured payment gateways",
               "Automated SSL certificates",
             ]}
-            delay="0s"
+            index={0}
           />
           <FeatureCard
             iconClass="fa-solid fa-palette"
@@ -118,7 +210,7 @@ const Features: React.FC = () => {
               "Customizable brand colors",
               "Advanced typography options",
             ]}
-            delay="0.1s"
+            index={1}
           />
           <FeatureCard
             iconClass="fa-solid fa-chart-line"
@@ -129,21 +221,54 @@ const Features: React.FC = () => {
               "Customer behavior tracking",
               "Conversion optimization",
             ]}
-            delay="0.2s"
+            index={2}
           />
-        </div>
+        </motion.div>
 
+        {/* Infrastructure Section */}
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="animate-slide-left">
-            <h3 className="text-3xl font-bold text-gray-900 mb-6">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.h3
+              className="text-3xl font-bold text-neutral-900 mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOptions}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
               Enterprise-Grade Infrastructure
-            </h3>
-            <p className="text-lg text-gray-600 mb-8">
+            </motion.h3>
+            <motion.p
+              className="text-lg text-neutral-600 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOptions}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               Built on cloud-native architecture with enterprise security,
               scalability, and reliability. Handle millions of visitors and
               transactions without breaking a sweat.
-            </p>
-            <div className="grid grid-cols-2 gap-6">
+            </motion.p>
+            <motion.div
+              className="grid grid-cols-2 gap-6"
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOptions}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0.3,
+                  },
+                },
+              }}
+            >
               <InfrastructureFeature
                 iconClass="fa-solid fa-shield-alt"
                 title="Bank-Level Security"
@@ -164,15 +289,34 @@ const Features: React.FC = () => {
                 title="SEO Optimized"
                 description="Rank higher on Google"
               />
-            </div>
-          </div>
-          <div className="animate-slide-right">
+            </motion.div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6 }}
+            whileHover={{ scale: 1.02 }}
+            className="relative"
+          >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-2xl blur-2xl opacity-30"
+              animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.4, 0.3],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
             <img
-              className="rounded-2xl shadow-2xl"
+              className="relative rounded-2xl shadow-2xl"
               src="/assets/entrprise.png"
               alt="modern server infrastructure dashboard with real-time monitoring, cloud architecture visualization, purple and blue theme"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

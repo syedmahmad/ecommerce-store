@@ -1,6 +1,8 @@
+"use client";
+
 import React from "react";
-import useScrollAnimation from "../../hooks/useScrollAnimation";
 import { motion } from "framer-motion";
+import { itemVariants, viewportOptions } from "@/constants/animations";
 
 interface TechFeatureProps {
   iconClass: string;
@@ -53,77 +55,162 @@ interface TechIconProps {
 const TechIcon: React.FC<TechIconProps> = ({ iconClass, label, color }) => (
   <motion.div
     className="text-center cursor-pointer"
-    whileHover={{ scale: 1.2, rotate: 5 }} // 👈 animation on hover
-    whileTap={{ scale: 0.95 }} // 👈 nice press effect
+    variants={itemVariants}
+    whileHover={{ scale: 1.2, rotate: 5, y: -5 }}
+    whileTap={{ scale: 0.95 }}
     transition={{ type: "spring", stiffness: 300 }}
   >
-    <i
+    <motion.i
       className={`${iconClass} text-4xl mb-2`}
       style={{ color: color || "#9CA3AF" }}
-    ></i>
-    <p className="text-sm text-gray-600">{label}</p>
+      animate={{ y: [0, -5, 0] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+    ></motion.i>
+    <p className="text-sm text-neutral-600">{label}</p>
   </motion.div>
 );
 
 const TechnologyStack: React.FC = () => {
-  // @ts-ignore
-  const sectionRef = useScrollAnimation<HTMLElement>();
-
   return (
     <section
       id="technology"
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
-      ref={sectionRef}
+      className="py-20 bg-gradient-to-br from-neutral-50 via-primary-50/30 to-secondary-50/30 relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute bottom-20 right-20 w-64 h-64 bg-secondary-200 rounded-full blur-3xl opacity-20"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, -90, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={viewportOptions}
+          transition={{ duration: 0.6 }}
+        >
+          <motion.h2
+            className="text-4xl lg:text-5xl font-bold text-neutral-900 mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
             Built with{" "}
             <span className="gradient-text">Cutting-Edge Technology</span>
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          </motion.h2>
+          <motion.p
+            className="text-xl text-neutral-600 max-w-3xl mx-auto"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             Our platform leverages the latest technologies to ensure your store
             is fast, secure, and scalable. Experience the future of e-commerce
             today.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
-          <div className="animate-slide-left">
-            <div className="space-y-8">
-              <TechFeature
-                iconClass="fa-solid fa-cloud"
-                title="Cloud-Native Architecture"
-                description="Built on modern cloud infrastructure for maximum reliability and performance."
-                gradientFrom="from-purple-500"
-                gradientTo="to-blue-500"
-              />
-              <TechFeature
-                iconClass="fa-solid fa-robot"
-                title="AI-Powered Features"
-                description="Machine learning algorithms optimize your store performance and customer experience."
-                gradientFrom="from-green-500"
-                gradientTo="to-teal-500"
-              />
-              <TechFeature
-                iconClass="fa-solid fa-shield-alt"
-                title="Enterprise Security"
-                description="Bank-level encryption and security protocols protect your business and customers."
-                gradientFrom="from-orange-500"
-                gradientTo="to-red-500"
-              />
-            </div>
-          </div>
-          <div className="animate-slide-right">
+        <motion.div
+          className="grid lg:grid-cols-2 gap-16 items-center mb-16"
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2,
+              },
+            },
+          }}
+        >
+          <motion.div
+            className="space-y-8"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6 }}
+          >
+            <TechFeature
+              iconClass="fa-solid fa-cloud"
+              title="Cloud-Native Architecture"
+              description="Built on modern cloud infrastructure for maximum reliability and performance."
+              gradientFrom="from-primary-500"
+              gradientTo="to-secondary-500"
+            />
+            <TechFeature
+              iconClass="fa-solid fa-robot"
+              title="AI-Powered Features"
+              description="Machine learning algorithms optimize your store performance and customer experience."
+              gradientFrom="from-green-500"
+              gradientTo="to-teal-500"
+            />
+            <TechFeature
+              iconClass="fa-solid fa-shield-alt"
+              title="Enterprise Security"
+              description="Bank-level encryption and security protocols protect your business and customers."
+              gradientFrom="from-orange-500"
+              gradientTo="to-red-500"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={viewportOptions}
+            transition={{ duration: 0.6 }}
+            whileHover={{ scale: 1.02 }}
+            className="relative"
+          >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-br from-primary-400 to-secondary-400 rounded-2xl blur-2xl opacity-30"
+              animate={{
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.4, 0.3],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
             <img
-              className="rounded-2xl shadow-2xl"
+              className="relative rounded-2xl shadow-2xl"
               src="/assets/technology-image.png"
               alt="modern technology stack visualization, cloud infrastructure, AI components, security layers, purple and blue theme"
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="grid md:grid-cols-6 gap-8 items-center opacity-60">
+        <motion.div
+          className="grid md:grid-cols-6 gap-8 items-center opacity-60"
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportOptions}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 0.6,
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.3,
+              },
+            },
+          }}
+        >
           <TechIcon
             iconClass="fa-brands fa-aws"
             label="AWS Cloud"
@@ -154,7 +241,7 @@ const TechnologyStack: React.FC = () => {
             label="SSL/TLS"
             color="#000000"
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
